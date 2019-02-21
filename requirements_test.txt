@@ -1,0 +1,18 @@
+#
+# Testing requirements
+#
+-r requirements_build.txt
+
+
+jsonpickle==1.*
+mock==2.0.*; python_version <= '2.7'
+numpy==1.16.*
+prospector==0.12.*
+pyhamcrest==1.9.*
+pytest==3.5.*
+pytest-xdist==1.22.*
+pytest-cov==2.5.*
+requests-mock==1.5.*
+testfixtures==5.4.*
+tox==3.0.*
+twine==1.11.*

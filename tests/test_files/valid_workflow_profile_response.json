@@ -1,0 +1,20 @@
+{
+    "meta": {},
+    "profiles": [
+        {
+            "ref": "testmock:profile-1",
+            "owner": "testmock",
+            "name": "profile-1",
+            "title": "profile-1",
+            "createdAt": "2017-08-22T14:41:02.987Z",
+            "createdBy": "root:sysadmin",
+            "updatedAt": "2017-08-22T14:41:02.987Z",
+            "updatedBy": "root:sysadmin",
+            "version": "8fb052848cdd2a85ee21349265c294fc49730fb0",
+            "secrets": {
+                "awsKey1": "aws_secret_1",
+                "ftpKey1": "ftp_key_2"
+            }
+        }
+    ]
+}

@@ -1,0 +1,8 @@
+{
+    "statusCode": 200,
+    "message": "Validation Succeed",
+    "validation": {
+        "source": "query",
+        "keys": []
+    }
+}

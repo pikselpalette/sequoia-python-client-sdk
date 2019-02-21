@@ -1,0 +1,248 @@
+{
+    "meta": {
+        "totalCount": 232,
+        "perPage": 100,
+        "page": 3,
+        "first": "/data/assets?count=true&fields=ref%2Cname%2CcontentRef%2Ctype%2Curl%2CfileFormat%2Ctitle%2CfileSize%2Ctags&owner=testmock&page=1&perPage=100&withContentRef=testmock%3A0968d155-77ec-450c-ae68-47f8936e2121%7C%7Ctestmock%3A1f62e6bb-b995-4b50-be1e-9825dfecb275%7C%7Ctestmock%3A4569ad10-3912-42a1-b769-83456e69ae50%7C%7Ctestmock%3A5cc87697-bab8-4776-89a4-a788dc7acdda%7C%7Ctestmock%3A73601df6-9b99-4008-b6b1-4ccc80b93cfe%7C%7Ctestmock%3A92e7f35c-5b9b-41e1-ae4f-bbda1d89f0e1%7C%7Ctestmock%3AY3JpZDovL2JiYy5jby51ay8yODk0MDA0MjI%7C%7Ctestmock%3AY3JpZDovL2JiYy5jby51ay8yODk0MDA0MjM%7C%7Ctestmock%3Aba01f7f2-17c8-4775-8934-ceb2f3a0f810%7C%7Ctestmock%3Ad5b61cb8-955a-4f34-ad60-a1b22a240077",
+        "prev": "/data/assets?count=true&fields=ref%2Cname%2CcontentRef%2Ctype%2Curl%2CfileFormat%2Ctitle%2CfileSize%2Ctags&owner=testmock&page=2&perPage=100&withContentRef=testmock%3A0968d155-77ec-450c-ae68-47f8936e2121%7C%7Ctestmock%3A1f62e6bb-b995-4b50-be1e-9825dfecb275%7C%7Ctestmock%3A4569ad10-3912-42a1-b769-83456e69ae50%7C%7Ctestmock%3A5cc87697-bab8-4776-89a4-a788dc7acdda%7C%7Ctestmock%3A73601df6-9b99-4008-b6b1-4ccc80b93cfe%7C%7Ctestmock%3A92e7f35c-5b9b-41e1-ae4f-bbda1d89f0e1%7C%7Ctestmock%3AY3JpZDovL2JiYy5jby51ay8yODk0MDA0MjI%7C%7Ctestmock%3AY3JpZDovL2JiYy5jby51ay8yODk0MDA0MjM%7C%7Ctestmock%3Aba01f7f2-17c8-4775-8934-ceb2f3a0f810%7C%7Ctestmock%3Ad5b61cb8-955a-4f34-ad60-a1b22a240077",
+        "last": "/data/assets?count=true&fields=ref%2Cname%2CcontentRef%2Ctype%2Curl%2CfileFormat%2Ctitle%2CfileSize%2Ctags&owner=testmock&page=3&perPage=100&withContentRef=testmock%3A0968d155-77ec-450c-ae68-47f8936e2121%7C%7Ctestmock%3A1f62e6bb-b995-4b50-be1e-9825dfecb275%7C%7Ctestmock%3A4569ad10-3912-42a1-b769-83456e69ae50%7C%7Ctestmock%3A5cc87697-bab8-4776-89a4-a788dc7acdda%7C%7Ctestmock%3A73601df6-9b99-4008-b6b1-4ccc80b93cfe%7C%7Ctestmock%3A92e7f35c-5b9b-41e1-ae4f-bbda1d89f0e1%7C%7Ctestmock%3AY3JpZDovL2JiYy5jby51ay8yODk0MDA0MjI%7C%7Ctestmock%3AY3JpZDovL2JiYy5jby51ay8yODk0MDA0MjM%7C%7Ctestmock%3Aba01f7f2-17c8-4775-8934-ceb2f3a0f810%7C%7Ctestmock%3Ad5b61cb8-955a-4f34-ad60-a1b22a240077"
+    },
+    "assets": [
+        {
+            "ref": "testmock:e50e8072-1be0-4b9c-8204-10d736f3de65",
+            "name": "e50e8072-1be0-4b9c-8204-10d736f3de65",
+            "title": "44c6170a-2c03-42ce-bfa3-101fec955188",
+            "type": "application",
+            "contentRef": "testmock:1f62e6bb-b995-4b50-be1e-9825dfecb275"
+        },
+        {
+            "ref": "testmock:e68f8dab-be37-4493-ad54-4cb99739cbe4",
+            "name": "e68f8dab-be37-4493-ad54-4cb99739cbe4",
+            "title": "44c6170a-2c03-42ce-bfa3-101fec955188",
+            "type": "application",
+            "contentRef": "testmock:ba01f7f2-17c8-4775-8934-ceb2f3a0f810"
+        },
+        {
+            "ref": "testmock:e691cc96-5121-43f1-bde2-52a826bfc24d",
+            "name": "e691cc96-5121-43f1-bde2-52a826bfc24d",
+            "title": "44c6170a-2c03-42ce-bfa3-101fec955188",
+            "type": "application",
+            "contentRef": "testmock:ba01f7f2-17c8-4775-8934-ceb2f3a0f810"
+        },
+        {
+            "ref": "testmock:e718cedd-2957-42df-beeb-48c79b20176c",
+            "name": "e718cedd-2957-42df-beeb-48c79b20176c",
+            "title": "44c6170a-2c03-42ce-bfa3-101fec955188",
+            "type": "application",
+            "contentRef": "testmock:ba01f7f2-17c8-4775-8934-ceb2f3a0f810"
+        },
+        {
+            "ref": "testmock:ea3cd979-9f64-46ed-9701-6eaae988d09b",
+            "name": "ea3cd979-9f64-46ed-9701-6eaae988d09b",
+            "title": "44c6170a-2c03-42ce-bfa3-101fec955188",
+            "type": "application",
+            "contentRef": "testmock:ba01f7f2-17c8-4775-8934-ceb2f3a0f810"
+        },
+        {
+            "ref": "testmock:ea83e769-de23-4904-aca6-ef2e897f201a",
+            "name": "ea83e769-de23-4904-aca6-ef2e897f201a",
+            "title": "44c6170a-2c03-42ce-bfa3-101fec955188",
+            "type": "application",
+            "contentRef": "testmock:ba01f7f2-17c8-4775-8934-ceb2f3a0f810"
+        },
+        {
+            "ref": "testmock:eb2f280c-9c7f-4821-a36b-4fe1c29639d9",
+            "name": "eb2f280c-9c7f-4821-a36b-4fe1c29639d9",
+            "title": "44c6170a-2c03-42ce-bfa3-101fec955188",
+            "type": "application",
+            "contentRef": "testmock:ba01f7f2-17c8-4775-8934-ceb2f3a0f810"
+        },
+        {
+            "ref": "testmock:ec46081e-2cee-407c-963f-8bdc89ddacbe",
+            "name": "ec46081e-2cee-407c-963f-8bdc89ddacbe",
+            "title": "44c6170a-2c03-42ce-bfa3-101fec955188",
+            "type": "application",
+            "contentRef": "testmock:ba01f7f2-17c8-4775-8934-ceb2f3a0f810"
+        },
+        {
+            "ref": "testmock:ecf0e405-9ead-431f-88f8-c0bb4d8118c0",
+            "name": "ecf0e405-9ead-431f-88f8-c0bb4d8118c0",
+            "title": "A picture of the moon",
+            "tags": [
+                "todo",
+                "usage:boxart"
+            ],
+            "type": "video",
+            "fileFormat": "mp4",
+            "fileSize": 1024,
+            "contentRef": "testmock:73601df6-9b99-4008-b6b1-4ccc80b93cfe"
+        },
+        {
+            "ref": "testmock:ecfa1978-b558-4dad-a26f-e6e0c743a4a3",
+            "name": "ecfa1978-b558-4dad-a26f-e6e0c743a4a3",
+            "title": "44c6170a-2c03-42ce-bfa3-101fec955188",
+            "type": "application",
+            "contentRef": "testmock:ba01f7f2-17c8-4775-8934-ceb2f3a0f810"
+        },
+        {
+            "ref": "testmock:ed532a13-6b02-41f3-882f-42e5ee797c6b",
+            "name": "ed532a13-6b02-41f3-882f-42e5ee797c6b",
+            "title": "44c6170a-2c03-42ce-bfa3-101fec955188",
+            "type": "application",
+            "contentRef": "testmock:1f62e6bb-b995-4b50-be1e-9825dfecb275"
+        },
+        {
+            "ref": "testmock:ed68e5d8-c5f3-44ae-aa6a-3b41f8d650eb",
+            "name": "ed68e5d8-c5f3-44ae-aa6a-3b41f8d650eb",
+            "title": "44c6170a-2c03-42ce-bfa3-101fec955188",
+            "type": "application",
+            "contentRef": "testmock:1f62e6bb-b995-4b50-be1e-9825dfecb275"
+        },
+        {
+            "ref": "testmock:ef236082-d060-47cb-b425-f9bdb5eba39d",
+            "name": "ef236082-d060-47cb-b425-f9bdb5eba39d",
+            "title": "44c6170a-2c03-42ce-bfa3-101fec955188",
+            "type": "application",
+            "contentRef": "testmock:ba01f7f2-17c8-4775-8934-ceb2f3a0f810"
+        },
+        {
+            "ref": "testmock:ef2982be-4c80-4410-87e8-1f2cc61d1ee3",
+            "name": "ef2982be-4c80-4410-87e8-1f2cc61d1ee3",
+            "title": "44c6170a-2c03-42ce-bfa3-101fec955188",
+            "type": "application",
+            "contentRef": "testmock:ba01f7f2-17c8-4775-8934-ceb2f3a0f810"
+        },
+        {
+            "ref": "testmock:f0377369-876f-42ee-a7f7-b079f1569568",
+            "name": "f0377369-876f-42ee-a7f7-b079f1569568",
+            "title": "44c6170a-2c03-42ce-bfa3-101fec955188",
+            "type": "application",
+            "contentRef": "testmock:ba01f7f2-17c8-4775-8934-ceb2f3a0f810"
+        },
+        {
+            "ref": "testmock:f1512d7a-568c-498c-9421-28fe54ac2969",
+            "name": "f1512d7a-568c-498c-9421-28fe54ac2969",
+            "title": "44c6170a-2c03-42ce-bfa3-101fec955188",
+            "type": "application",
+            "contentRef": "testmock:1f62e6bb-b995-4b50-be1e-9825dfecb275"
+        },
+        {
+            "ref": "testmock:f264484d-8559-4b54-a2c4-f97839202fd0",
+            "name": "f264484d-8559-4b54-a2c4-f97839202fd0",
+            "title": "44c6170a-2c03-42ce-bfa3-101fec955188",
+            "type": "application",
+            "contentRef": "testmock:ba01f7f2-17c8-4775-8934-ceb2f3a0f810"
+        },
+        {
+            "ref": "testmock:f343710e-a0f2-4d0b-b2fe-379c7d6bd379",
+            "name": "f343710e-a0f2-4d0b-b2fe-379c7d6bd379",
+            "title": "44c6170a-2c03-42ce-bfa3-101fec955188",
+            "type": "application",
+            "contentRef": "testmock:1f62e6bb-b995-4b50-be1e-9825dfecb275"
+        },
+        {
+            "ref": "testmock:f386df3d-82d6-4c36-8323-29f65177d8c0",
+            "name": "f386df3d-82d6-4c36-8323-29f65177d8c0",
+            "title": "44c6170a-2c03-42ce-bfa3-101fec955188",
+            "type": "application",
+            "contentRef": "testmock:ba01f7f2-17c8-4775-8934-ceb2f3a0f810"
+        },
+        {
+            "ref": "testmock:f3a8f169-4821-486c-a6bb-b867e5b73abe",
+            "name": "f3a8f169-4821-486c-a6bb-b867e5b73abe",
+            "title": "44c6170a-2c03-42ce-bfa3-101fec955188",
+            "type": "application",
+            "contentRef": "testmock:ba01f7f2-17c8-4775-8934-ceb2f3a0f810"
+        },
+        {
+            "ref": "testmock:f3f658af-ea2f-4045-ae8e-1ea6e9d630ff",
+            "name": "f3f658af-ea2f-4045-ae8e-1ea6e9d630ff",
+            "title": "44c6170a-2c03-42ce-bfa3-101fec955188",
+            "type": "application",
+            "contentRef": "testmock:ba01f7f2-17c8-4775-8934-ceb2f3a0f810"
+        },
+        {
+            "ref": "testmock:f5ddce66-247c-4c3f-ac8a-55dfa416fbac",
+            "name": "f5ddce66-247c-4c3f-ac8a-55dfa416fbac",
+            "title": "44c6170a-2c03-42ce-bfa3-101fec955188",
+            "type": "application",
+            "contentRef": "testmock:4569ad10-3912-42a1-b769-83456e69ae50"
+        },
+        {
+            "ref": "testmock:f6b33bbd-5efd-4b35-ad22-c8a5a3964be3",
+            "name": "f6b33bbd-5efd-4b35-ad22-c8a5a3964be3",
+            "title": "44c6170a-2c03-42ce-bfa3-101fec955188",
+            "type": "application",
+            "contentRef": "testmock:1f62e6bb-b995-4b50-be1e-9825dfecb275"
+        },
+        {
+            "ref": "testmock:f998554e-768e-4f18-9e86-d5a0a88eaf96",
+            "name": "f998554e-768e-4f18-9e86-d5a0a88eaf96",
+            "title": "44c6170a-2c03-42ce-bfa3-101fec955188",
+            "type": "application",
+            "contentRef": "testmock:ba01f7f2-17c8-4775-8934-ceb2f3a0f810"
+        },
+        {
+            "ref": "testmock:fa278ee0-602a-4a91-80c7-692cbbe5877c",
+            "name": "fa278ee0-602a-4a91-80c7-692cbbe5877c",
+            "title": "44c6170a-2c03-42ce-bfa3-101fec955188",
+            "type": "application",
+            "contentRef": "testmock:1f62e6bb-b995-4b50-be1e-9825dfecb275"
+        },
+        {
+            "ref": "testmock:fc12c450-90c7-4dcb-9b9a-9d87f57165a9",
+            "name": "fc12c450-90c7-4dcb-9b9a-9d87f57165a9",
+            "title": "44c6170a-2c03-42ce-bfa3-101fec955188",
+            "type": "application",
+            "contentRef": "testmock:0968d155-77ec-450c-ae68-47f8936e2121"
+        },
+        {
+            "ref": "testmock:fc6a228d-0867-4327-aaa0-d4f43fea350d",
+            "name": "fc6a228d-0867-4327-aaa0-d4f43fea350d",
+            "title": "44c6170a-2c03-42ce-bfa3-101fec955188",
+            "type": "application",
+            "contentRef": "testmock:ba01f7f2-17c8-4775-8934-ceb2f3a0f810"
+        },
+        {
+            "ref": "testmock:fc7f3bc6-aca5-4f55-af31-6a94033eea2f",
+            "name": "fc7f3bc6-aca5-4f55-af31-6a94033eea2f",
+            "title": "44c6170a-2c03-42ce-bfa3-101fec955188",
+            "type": "application",
+            "contentRef": "testmock:ba01f7f2-17c8-4775-8934-ceb2f3a0f810"
+        },
+        {
+            "ref": "testmock:fc8174d0-17a9-47c1-b5d0-0bb5b7f6e660",
+            "name": "fc8174d0-17a9-47c1-b5d0-0bb5b7f6e660",
+            "title": "44c6170a-2c03-42ce-bfa3-101fec955188",
+            "type": "application",
+            "contentRef": "testmock:1f62e6bb-b995-4b50-be1e-9825dfecb275"
+        },
+        {
+            "ref": "testmock:fca86e76-0da5-43b5-87c9-13f38781e9ea",
+            "name": "fca86e76-0da5-43b5-87c9-13f38781e9ea",
+            "title": "44c6170a-2c03-42ce-bfa3-101fec955188",
+            "type": "application",
+            "contentRef": "testmock:73601df6-9b99-4008-b6b1-4ccc80b93cfe"
+        },
+        {
+            "ref": "testmock:feb45d09-0aaa-4d3c-8bd9-fa8620c0a359",
+            "name": "feb45d09-0aaa-4d3c-8bd9-fa8620c0a359",
+            "title": "A picture of the moon",
+            "tags": [
+                "todo",
+                "usage:boxart"
+            ],
+            "type": "video",
+            "fileFormat": "mp4",
+            "fileSize": 1024,
+            "contentRef": "testmock:d5b61cb8-955a-4f34-ad60-a1b22a240077"
+        },
+        {
+            "ref": "testmock:ffe67031-9ee1-44a0-8bcd-248d2dc821b9",
+            "name": "ffe67031-9ee1-44a0-8bcd-248d2dc821b9",
+            "title": "44c6170a-2c03-42ce-bfa3-101fec955188",
+            "type": "application",
+            "contentRef": "testmock:1f62e6bb-b995-4b50-be1e-9825dfecb275"
+        }
+    ]
+}

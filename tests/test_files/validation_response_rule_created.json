@@ -1,0 +1,22 @@
+{
+    "meta": {},
+    "rules": [
+        {
+            "ref": "test:content-movie-validation",
+            "owner": "test",
+            "name": "content-movie-validation",
+            "title": "Validation Rules for Movies",
+            "createdAt": "2018-10-05T05:13:56.717Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-10-05T05:13:56.717Z",
+            "updatedBy": "root:qa-automation",
+            "version": "2c47b18d836fb07fcac437ab0b1dbf675e53ecd6",
+            "active": true,
+            "service": "metadata",
+            "resource": "contents",
+            "facts": [
+                "{\"title\": [\"required\", {\"max_length\": 20}], \"alternativeIdentifiers\": {\"nested_object\": {\"crid\": \"required\"}}, \"ratings\": {\"nested_object\": {}} }"
+            ]
+        }
+    ]
+}

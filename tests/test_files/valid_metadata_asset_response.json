@@ -1,0 +1,25 @@
+{
+  "meta": {
+    "page": 1,
+    "perPage": 100,
+    "first": "/data/assets?owner=testmock&withContentRef=testmock%3AsampleContent&page=1&perPage=100"
+  },
+  "assets": [
+    {
+      "ref": "testmock:reference",
+      "owner": "testmock",
+      "name": "reference",
+      "title": "192e78ad-25d1-47f8-b539-19053a2b4a6f",
+      "createdAt": "2017-09-12T08:01:36.317Z",
+      "createdBy": "root:system-piksel-ingest-manager",
+      "updatedAt": "2017-09-12T08:01:36.317Z",
+      "updatedBy": "root:system-piksel-ingest-manager",
+      "version": "8aef9579a2afb1497cb7918b508a7ffe656aa7c8",
+      "type": "application",
+      "mediaType": "application",
+      "fullMediaType": "application/octet-stream",
+      "contentRef": "testmock:sampleContent",
+      "active": true
+    }
+  ]
+}

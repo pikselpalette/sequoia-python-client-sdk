@@ -1,0 +1,10 @@
+#
+# Project requirements
+#
+chardet==3.0.*
+enum34==1.1.*
+idna==2.*
+oauthlib==2.0.*
+requests==2.11.1
+requests-oauthlib==0.8.*
+urllib3==1.*

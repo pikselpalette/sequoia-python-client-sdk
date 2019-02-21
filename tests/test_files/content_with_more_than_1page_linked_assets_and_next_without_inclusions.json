@@ -1,0 +1,2662 @@
+{
+    "meta": {
+        "perPage": 100,
+        "page": 1,
+        "first": "/data/contents?owner=testmock&page=1&perPage=100",
+        "next": "/data/contents?owner=testmock&page=2&perPage=100"
+    },
+    "contents": [
+        {
+            "ref": "testmock:0968d155-77ec-450c-ae68-47f8936e2121",
+            "owner": "testmock",
+            "name": "0968d155-77ec-450c-ae68-47f8936e2121",
+            "title": "0968d155-77ec-450c-ae68-47f8936e2121",
+            "createdAt": "2018-11-27T09:40:36.945Z",
+            "createdBy": "root:system-piksel-compute-manager",
+            "updatedAt": "2018-11-27T09:40:36.945Z",
+            "updatedBy": "root:system-piksel-compute-manager",
+            "version": "4ee0256b08d6113d3d6991a6adc5a3e5e55a95a6",
+            "type": "episode",
+            "active": true
+        },
+        {
+            "ref": "testmock:1f62e6bb-b995-4b50-be1e-9825dfecb275",
+            "owner": "testmock",
+            "name": "1f62e6bb-b995-4b50-be1e-9825dfecb275",
+            "title": "1f62e6bb-b995-4b50-be1e-9825dfecb275",
+            "createdAt": "2018-11-27T09:40:11.954Z",
+            "createdBy": "root:system-piksel-compute-manager",
+            "updatedAt": "2018-11-27T09:40:11.954Z",
+            "updatedBy": "root:system-piksel-compute-manager",
+            "version": "0b77777791dd6995516180f6ba4f1e42816f4506",
+            "type": "episode",
+            "active": true
+        },
+        {
+            "ref": "testmock:4569ad10-3912-42a1-b769-83456e69ae50",
+            "owner": "testmock",
+            "name": "4569ad10-3912-42a1-b769-83456e69ae50",
+            "title": "4569ad10-3912-42a1-b769-83456e69ae50",
+            "createdAt": "2018-11-27T08:25:48.813Z",
+            "createdBy": "root:system-piksel-compute-manager",
+            "updatedAt": "2018-11-27T08:25:48.813Z",
+            "updatedBy": "root:system-piksel-compute-manager",
+            "version": "4c2635f2e19d91ae8dfa928d291b4a906615d81d",
+            "type": "episode",
+            "active": true
+        },
+        {
+            "ref": "testmock:5cc87697-bab8-4776-89a4-a788dc7acdda",
+            "owner": "testmock",
+            "name": "5cc87697-bab8-4776-89a4-a788dc7acdda",
+            "title": "5cc87697-bab8-4776-89a4-a788dc7acdda",
+            "createdAt": "2018-11-27T09:43:11.836Z",
+            "createdBy": "root:system-piksel-compute-manager",
+            "updatedAt": "2018-11-27T09:43:11.836Z",
+            "updatedBy": "root:system-piksel-compute-manager",
+            "version": "9ff02addba1e37496a65672afe8028e796aad041",
+            "type": "episode",
+            "active": true
+        },
+        {
+            "ref": "testmock:73601df6-9b99-4008-b6b1-4ccc80b93cfe",
+            "owner": "testmock",
+            "name": "73601df6-9b99-4008-b6b1-4ccc80b93cfe",
+            "title": "73601df6-9b99-4008-b6b1-4ccc80b93cfe",
+            "createdAt": "2018-11-27T09:57:57.121Z",
+            "createdBy": "root:system-piksel-compute-manager",
+            "updatedAt": "2018-11-27T09:57:57.121Z",
+            "updatedBy": "root:system-piksel-compute-manager",
+            "version": "2965212cf3c7ba78d48f9408b9c8a1b1a1a1701c",
+            "type": "episode",
+            "active": true
+        },
+        {
+            "ref": "testmock:92e7f35c-5b9b-41e1-ae4f-bbda1d89f0e1",
+            "owner": "testmock",
+            "name": "92e7f35c-5b9b-41e1-ae4f-bbda1d89f0e1",
+            "title": "92e7f35c-5b9b-41e1-ae4f-bbda1d89f0e1",
+            "createdAt": "2018-11-27T08:31:27.661Z",
+            "createdBy": "root:system-piksel-compute-manager",
+            "updatedAt": "2018-11-27T08:31:27.661Z",
+            "updatedBy": "root:system-piksel-compute-manager",
+            "version": "a13ba0605f8c717d2092d498ec55457ad1411c71",
+            "type": "episode",
+            "active": true
+        },
+        {
+            "ref": "testmock:98b34b66-83b7-4fcb-977d-e56c98ee24e8",
+            "owner": "testmock",
+            "name": "98b34b66-83b7-4fcb-977d-e56c98ee24e8",
+            "title": "98b34b66-83b7-4fcb-977d-e56c98ee24e8",
+            "createdAt": "2018-11-29T10:17:25.556Z",
+            "createdBy": "root:system-piksel-compute-manager",
+            "updatedAt": "2018-11-29T10:17:25.556Z",
+            "updatedBy": "root:system-piksel-compute-manager",
+            "version": "446f1509fdc8d69b09af773d240ad16f4094f1d7",
+            "type": "episode",
+            "active": true
+        },
+        {
+            "ref": "testmock:Y3JpZDovL2JiYy5jby51ay8yODk0MDA0MjI",
+            "owner": "testmock",
+            "name": "Y3JpZDovL2JiYy5jby51ay8yODk0MDA0MjI",
+            "title": "Breakfast",
+            "tags": [
+                "breakfast news",
+                "topical"
+            ],
+            "custom": {
+                "identifier": "crid://bbc.co.uk/289400422"
+            },
+            "createdAt": "2018-11-27T07:01:39.582Z",
+            "createdBy": "root:system-piksel-compute-manager",
+            "updatedAt": "2018-11-27T07:01:39.582Z",
+            "updatedBy": "root:system-piksel-compute-manager",
+            "version": "81148e68b7bb0d05f410db94f5f5853d7220b713",
+            "type": "other",
+            "sortTitle": "Breakfast",
+            "longSynopsis": "All the latest news, sport, business and weather from the BBC's Breakfast team. [S]",
+            "mediumSynopsis": "All the latest news, sport, business and weather from the BBC's Breakfast team. [S]",
+            "shortSynopsis": "All the latest news, sport, business and weather from the BBC's Breakfast team. [S]",
+            "duration": "PT02H30M00S",
+            "active": true,
+            "categoryRefs": [
+                "testmock:RGFpbHkgbmV3cw",
+                "testmock:V2VhdGhlciBmb3JlY2FzdHM",
+                "testmock:QnVsbGV0aW4",
+                "testmock:SU5GT1JN",
+                "testmock:U3BvcnRz"
+            ]
+        },
+        {
+            "ref": "testmock:Y3JpZDovL2JiYy5jby51ay8yODk0MDA0MjM",
+            "owner": "testmock",
+            "name": "Y3JpZDovL2JiYy5jby51ay8yODk0MDA0MjM",
+            "title": "Breakfast",
+            "tags": [
+                "breakfast news",
+                "topical"
+            ],
+            "custom": {
+                "identifier": "crid://bbc.co.uk/289400423"
+            },
+            "createdAt": "2018-11-27T07:01:39.582Z",
+            "createdBy": "root:system-piksel-compute-manager",
+            "updatedAt": "2018-11-27T07:01:39.582Z",
+            "updatedBy": "root:system-piksel-compute-manager",
+            "version": "92d655502f0610ab090083bea71b47180846cd07",
+            "type": "other",
+            "sortTitle": "Breakfast",
+            "longSynopsis": "All the latest news, sport, business and weather from the BBC's Breakfast team. [S]",
+            "mediumSynopsis": "All the latest news, sport, business and weather from the BBC's Breakfast team. [S]",
+            "shortSynopsis": "All the latest news, sport, business and weather from the BBC's Breakfast team. [S]",
+            "duration": "PT02H30M00S",
+            "active": true,
+            "categoryRefs": [
+                "testmock:RGFpbHkgbmV3cw",
+                "testmock:V2VhdGhlciBmb3JlY2FzdHM",
+                "testmock:QnVsbGV0aW4",
+                "testmock:SU5GT1JN",
+                "testmock:U3BvcnRz"
+            ]
+        },
+        {
+            "ref": "testmock:ba01f7f2-17c8-4775-8934-ceb2f3a0f810",
+            "owner": "testmock",
+            "name": "ba01f7f2-17c8-4775-8934-ceb2f3a0f810",
+            "title": "ba01f7f2-17c8-4775-8934-ceb2f3a0f810",
+            "createdAt": "2018-11-27T11:24:12.573Z",
+            "createdBy": "root:system-piksel-compute-manager",
+            "updatedAt": "2018-11-27T11:24:12.573Z",
+            "updatedBy": "root:system-piksel-compute-manager",
+            "version": "cc2d93f5ec3ad8fda3fedead276963126c781b35",
+            "type": "episode",
+            "active": true
+        },
+        {
+            "ref": "testmock:d5b61cb8-955a-4f34-ad60-a1b22a240077",
+            "owner": "testmock",
+            "name": "d5b61cb8-955a-4f34-ad60-a1b22a240077",
+            "title": "d5b61cb8-955a-4f34-ad60-a1b22a240077",
+            "createdAt": "2018-11-27T08:26:10.356Z",
+            "createdBy": "root:system-piksel-compute-manager",
+            "updatedAt": "2018-11-27T08:26:10.356Z",
+            "updatedBy": "root:system-piksel-compute-manager",
+            "version": "262ccf434a3be3ec4451d6b092c9f4a1462c6552",
+            "type": "episode",
+            "active": true
+        },
+        {
+            "ref": "testmock:e04e0777-c0bc-4131-bce8-debdfc1091d5",
+            "owner": "testmock",
+            "name": "e04e0777-c0bc-4131-bce8-debdfc1091d5",
+            "title": "e04e0777-c0bc-4131-bce8-debdfc1091d5",
+            "createdAt": "2018-11-27T08:57:53.995Z",
+            "createdBy": "root:system-piksel-compute-manager",
+            "updatedAt": "2018-11-27T08:57:53.995Z",
+            "updatedBy": "root:system-piksel-compute-manager",
+            "version": "8ac1332cc40544ce38c98b2d88281a15af236d2a",
+            "type": "episode",
+            "active": true
+        },
+        {
+            "ref": "testmock:f458507c-4b9b-4cf5-95ed-bd86d63c4abe",
+            "owner": "testmock",
+            "name": "f458507c-4b9b-4cf5-95ed-bd86d63c4abe",
+            "title": "f458507c-4b9b-4cf5-95ed-bd86d63c4abe",
+            "createdAt": "2018-11-27T09:40:12.369Z",
+            "createdBy": "root:system-piksel-compute-manager",
+            "updatedAt": "2018-11-27T09:40:12.369Z",
+            "updatedBy": "root:system-piksel-compute-manager",
+            "version": "659709055d39678e50efdf67a1ba54a65127a5f8",
+            "type": "episode",
+            "active": true
+        },
+        {
+            "ref": "testmock:f52569f8-dd2e-484f-a0cc-3c1cc467e8ed",
+            "owner": "testmock",
+            "name": "f52569f8-dd2e-484f-a0cc-3c1cc467e8ed",
+            "title": "f52569f8-dd2e-484f-a0cc-3c1cc467e8ed",
+            "createdAt": "2018-11-27T11:24:13.094Z",
+            "createdBy": "root:system-piksel-compute-manager",
+            "updatedAt": "2018-11-27T11:24:13.094Z",
+            "updatedBy": "root:system-piksel-compute-manager",
+            "version": "4c446c20574e1a9142fd9c973c4567ae66c44947",
+            "type": "episode",
+            "active": true
+        },
+        {
+            "ref": "testmock:f870af52-1ea4-4eb7-8ad6-28ce5a91cc25",
+            "owner": "testmock",
+            "name": "f870af52-1ea4-4eb7-8ad6-28ce5a91cc25",
+            "title": "f870af52-1ea4-4eb7-8ad6-28ce5a91cc25",
+            "createdAt": "2018-11-29T10:17:25.951Z",
+            "createdBy": "root:system-piksel-compute-manager",
+            "updatedAt": "2018-11-29T10:17:25.951Z",
+            "updatedBy": "root:system-piksel-compute-manager",
+            "version": "5a108d700f48dc94c44c626469033631ec717ee9",
+            "type": "episode",
+            "active": true
+        },
+        {
+            "ref": "testmock:fba7175b-b4a8-444c-9f74-4ef6eed3be6e",
+            "owner": "testmock",
+            "name": "fba7175b-b4a8-444c-9f74-4ef6eed3be6e",
+            "title": "fba7175b-b4a8-444c-9f74-4ef6eed3be6e",
+            "createdAt": "2018-11-27T08:29:33.742Z",
+            "createdBy": "root:system-piksel-compute-manager",
+            "updatedAt": "2018-11-27T08:29:33.742Z",
+            "updatedBy": "root:system-piksel-compute-manager",
+            "version": "84108db13ad675bd5f4d0d53f3bb282f715dd4f9",
+            "type": "episode",
+            "active": true
+        },
+        {
+            "ref": "testmock:movie-piksel-com-17574",
+            "owner": "testmock",
+            "name": "movie-piksel-com-17574",
+            "title": "The Shawshank Redemption",
+            "createdAt": "2018-11-28T17:31:00.591Z",
+            "createdBy": "piksel:8c0952d3-d889-4697-b1ee-206b124be5a5",
+            "updatedAt": "2018-11-28T17:31:00.591Z",
+            "updatedBy": "piksel:8c0952d3-d889-4697-b1ee-206b124be5a5",
+            "version": "d504c722da21d1f963549380d85f7a0cd36b6017",
+            "type": "movie",
+            "longSynopsis": "Accountant Andy Dufresne (Tim Robbins) is sent to prison in the Forties for the murder of his unfaithful wife and her lover, despite protesting his innocence. He slowly comes to terms with the injustices of the corrupt prison system and quietly inspires some of his fellow prison inmates to have a more positive outlook on life. Meanwhile, the Governor of the prison discovers Dufresne's book-keeping talents and recruits him to do a spot of creative accountancy. Fellow inmate, ageing gangster 'Red' (Morgan Freeman), uses his connections to take care of Dufresne's material needs, and narrates the story of his friend's term in jail through to the late Sixties.",
+            "mediumSynopsis": "Accountant Andy Dufresne (Tim Robbins) is sent to prison in the Forties for the murder of his unfaithful wife and her lover, despite protesting his innocence. He slowly comes to terms with the injustices of the corrupt prison system and quietly inspires some of his fellow prison inmates to have a more positive outlook on life.",
+            "shortSynopsis": "Accountant Andy Dufresne (Tim Robbins) is sent to prison in the Forties for the murder of his unfaithful wife and her lover, despite protesting his innocence.",
+            "ratings": {
+                "BBFC": "15",
+                "MPAA": "R"
+            },
+            "active": true
+        },
+        {
+            "ref": "testmock:resource-name-1",
+            "alternativeIdentifiers": {
+                "tel": "0800100100",
+                "said": "something"
+            },
+            "owner": "testmock",
+            "name": "resource-name-1",
+            "title": "Interstellar",
+            "localisedTitle": {
+                "en": "Interstellar",
+                "it": "Interstellar",
+                "hu": "A csillagok k?z?tt"
+            },
+            "tags": [
+                "todo",
+                "usage:boxart"
+            ],
+            "scores": {
+                "imdb.a3431": 0.9,
+                "fuse": 2
+            },
+            "createdAt": "2018-11-29T10:21:18.504Z",
+            "createdBy": "root:system-piksel-compute-manager",
+            "updatedAt": "2018-11-29T10:21:18.504Z",
+            "updatedBy": "root:system-piksel-compute-manager",
+            "version": "ec95c4498b07a5aaa4984c5c3bafd8bca48beb3a",
+            "type": "episode",
+            "sortTitle": "Interstellar",
+            "localisedSortTitle": {
+                "en": "Interstellar",
+                "it": "Interstellar",
+                "hu": "Csillagok k?z?tt"
+            },
+            "collateCharacter": "I",
+            "localisedCollateCharacter": {
+                "en": "I",
+                "it": "I",
+                "hu": "Cs"
+            },
+            "longSynopsis": "The long synopsis of the content",
+            "localisedLongSynopsis": {
+                "en": "The long synopsis of the content",
+                "it": "Sinopsi lunga del contenuto"
+            },
+            "mediumSynopsis": "The medium synopsis of the content",
+            "localisedMediumSynopsis": {
+                "en": "The medium synopsis of the content",
+                "it": "Sinopsi media del contenuto"
+            },
+            "shortSynopsis": "The short synopsis of the content",
+            "localisedShortSynopsis": {
+                "en": "The short synopsis of the content",
+                "it": "Sinopsi corta del contenuto"
+            },
+            "order": 2,
+            "numberOfChildren": 2,
+            "availabilityStartAt": "2016-01-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-04-01T12:00:00.000Z",
+            "releaseYear": 2009,
+            "firstAiredAt": "2014-04-01T12:00:00.000Z",
+            "duration": "PT1H30M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true,
+            "memberRefs": [
+                "testmock:content-1",
+                "testmock:content-2"
+            ],
+            "parentRef": "testmock:content-2",
+            "categoryRefs": [
+                "testmock:category-1",
+                "testmock:category-2"
+            ],
+            "providerRefs": [
+                "testmock:provider-3",
+                "testmock:provider-4"
+            ],
+            "productionLocations": [
+                "GB",
+                "CH"
+            ]
+        },
+        {
+            "ref": "testmock:resource-name-2",
+            "alternativeIdentifiers": {
+                "tel": "0800100100",
+                "said": "something"
+            },
+            "owner": "testmock",
+            "name": "resource-name-2",
+            "title": "Interstellar",
+            "localisedTitle": {
+                "en": "Interstellar",
+                "it": "Interstellar",
+                "hu": "A csillagok k?z?tt"
+            },
+            "tags": [
+                "todo",
+                "usage:boxart"
+            ],
+            "scores": {
+                "imdb.a3431": 0.9,
+                "fuse": 2
+            },
+            "createdAt": "2018-11-29T10:21:18.786Z",
+            "createdBy": "root:system-piksel-compute-manager",
+            "updatedAt": "2018-11-29T10:21:18.786Z",
+            "updatedBy": "root:system-piksel-compute-manager",
+            "version": "44b47953b72183613608f7ee4f211b3bc8393daa",
+            "type": "episode",
+            "sortTitle": "Interstellar",
+            "localisedSortTitle": {
+                "en": "Interstellar",
+                "it": "Interstellar",
+                "hu": "Csillagok k?z?tt"
+            },
+            "collateCharacter": "I",
+            "localisedCollateCharacter": {
+                "en": "I",
+                "it": "I",
+                "hu": "Cs"
+            },
+            "longSynopsis": "The long synopsis of the content",
+            "localisedLongSynopsis": {
+                "en": "The long synopsis of the content",
+                "it": "Sinopsi lunga del contenuto"
+            },
+            "mediumSynopsis": "The medium synopsis of the content",
+            "localisedMediumSynopsis": {
+                "en": "The medium synopsis of the content",
+                "it": "Sinopsi media del contenuto"
+            },
+            "shortSynopsis": "The short synopsis of the content",
+            "localisedShortSynopsis": {
+                "en": "The short synopsis of the content",
+                "it": "Sinopsi corta del contenuto"
+            },
+            "order": 2,
+            "numberOfChildren": 2,
+            "availabilityStartAt": "2016-01-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-04-01T12:00:00.000Z",
+            "releaseYear": 2009,
+            "firstAiredAt": "2014-04-01T12:00:00.000Z",
+            "duration": "PT1H30M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true,
+            "memberRefs": [
+                "testmock:content-1",
+                "testmock:content-2"
+            ],
+            "parentRef": "testmock:content-2",
+            "categoryRefs": [
+                "testmock:category-1",
+                "testmock:category-3"
+            ],
+            "providerRefs": [
+                "testmock:provider-3",
+                "testmock:provider-4"
+            ],
+            "productionLocations": [
+                "GB",
+                "CH"
+            ]
+        },
+        {
+            "ref": "testmock:testabcgxnmj_1",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testabcgxnmj_1",
+            "title": "Interstellar",
+            "createdAt": "2018-11-28T09:24:35.776Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-28T09:24:35.776Z",
+            "updatedBy": "root:qa-automation",
+            "version": "7a4dea6728063de67c67b935efab7d2844b9b3b3",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Interstellar...",
+            "mediumSynopsis": "Medium synopsis for Interstellar...",
+            "shortSynopsis": "Short synopsis for Interstellar...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 2014,
+            "duration": "PT1H20M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true
+        },
+        {
+            "ref": "testmock:testabcgxnmj_2",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testabcgxnmj_2",
+            "title": "Matrix",
+            "createdAt": "2018-11-28T09:24:35.776Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-28T09:24:35.776Z",
+            "updatedBy": "root:qa-automation",
+            "version": "ddd5ea5c60dc13685d2e38ffdd467be6de3513b6",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Matrix...",
+            "mediumSynopsis": "Medium synopsis for Matrix...",
+            "shortSynopsis": "Short synopsis for Matrix...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 2005,
+            "duration": "PT1H50M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true
+        },
+        {
+            "ref": "testmock:testabcgxnmj_3",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testabcgxnmj_3",
+            "title": "Closer",
+            "createdAt": "2018-11-28T09:24:35.776Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-28T09:24:35.776Z",
+            "updatedBy": "root:qa-automation",
+            "version": "c76bc3547230d7116e5f7a9df660c1b97b4788ef",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Closer...",
+            "mediumSynopsis": "Medium synopsis for Closer...",
+            "shortSynopsis": "Short synopsis for Closer...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 2014,
+            "duration": "PT1H30M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true
+        },
+        {
+            "ref": "testmock:testahwqkute",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testahwqkute",
+            "title": "Interstellar",
+            "createdAt": "2018-11-27T07:25:26.650Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-27T07:25:26.650Z",
+            "updatedBy": "root:qa-automation",
+            "version": "4d0b59291ab8a18257ff46fdd1e62e006b363b4c",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Interstellar...",
+            "mediumSynopsis": "Medium synopsis for Interstellar...",
+            "shortSynopsis": "Short synopsis for Interstellar...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 2014,
+            "duration": "PT1H20M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true
+        },
+        {
+            "ref": "testmock:testakfsdvmr",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testakfsdvmr",
+            "title": "Interstellar",
+            "createdAt": "2018-11-28T10:23:27.066Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-28T10:23:27.066Z",
+            "updatedBy": "root:qa-automation",
+            "version": "355c0c65134d4b77d3deceb6c82a1fdaee2904db",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Interstellar...",
+            "mediumSynopsis": "Medium synopsis for Interstellar...",
+            "shortSynopsis": "Short synopsis for Interstellar...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 2014,
+            "duration": "PT1H20M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true
+        },
+        {
+            "ref": "testmock:testamvsoywi_1",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testamvsoywi_1",
+            "title": "Interstellar",
+            "createdAt": "2018-11-28T11:03:00.464Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-28T11:03:00.464Z",
+            "updatedBy": "root:qa-automation",
+            "version": "74441cdf6d9a284ce4dcc7b7450383889bc85542",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Interstellar...",
+            "mediumSynopsis": "Medium synopsis for Interstellar...",
+            "shortSynopsis": "Short synopsis for Interstellar...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 2014,
+            "duration": "PT1H20M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true
+        },
+        {
+            "ref": "testmock:testamvsoywi_2",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testamvsoywi_2",
+            "title": "Matrix",
+            "createdAt": "2018-11-28T11:03:00.464Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-28T11:03:00.464Z",
+            "updatedBy": "root:qa-automation",
+            "version": "1695a889617e7b1c28fb748c8fa6070ee1286eda",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Matrix...",
+            "mediumSynopsis": "Medium synopsis for Matrix...",
+            "shortSynopsis": "Short synopsis for Matrix...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 2005,
+            "duration": "PT1H50M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true
+        },
+        {
+            "ref": "testmock:testamvsoywi_3",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testamvsoywi_3",
+            "title": "Closer",
+            "createdAt": "2018-11-28T11:03:00.464Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-28T11:03:00.464Z",
+            "updatedBy": "root:qa-automation",
+            "version": "999f74439c5fbd81c5faae7fd5410f6249330d14",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Closer...",
+            "mediumSynopsis": "Medium synopsis for Closer...",
+            "shortSynopsis": "Short synopsis for Closer...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 2014,
+            "duration": "PT1H30M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true
+        },
+        {
+            "ref": "testmock:testanxkuybf",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testanxkuybf",
+            "title": "Interstellar",
+            "createdAt": "2018-11-28T11:57:10.738Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-28T11:57:10.738Z",
+            "updatedBy": "root:qa-automation",
+            "version": "00f1847a2be938b3eae5f495eb476eafa3cc5c53",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Interstellar...",
+            "mediumSynopsis": "Medium synopsis for Interstellar...",
+            "shortSynopsis": "Short synopsis for Interstellar...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 2014,
+            "duration": "PT1H20M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true
+        },
+        {
+            "ref": "testmock:testarfoudzw",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testarfoudzw",
+            "title": "Interstellar",
+            "createdAt": "2018-11-28T12:08:18.277Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-28T12:08:18.277Z",
+            "updatedBy": "root:qa-automation",
+            "version": "074fdc17e94cb4e6118ae750e1739c7afea97f47",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Interstellar...",
+            "mediumSynopsis": "Medium synopsis for Interstellar...",
+            "shortSynopsis": "Short synopsis for Interstellar...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 2014,
+            "duration": "PT1H20M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true
+        },
+        {
+            "ref": "testmock:testaxlwgqbj",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testaxlwgqbj",
+            "title": "Interstellar",
+            "createdAt": "2018-11-27T07:00:36.904Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-27T07:00:36.904Z",
+            "updatedBy": "root:qa-automation",
+            "version": "ace575338c553b6e8a617d7e50941924537bb22d",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Interstellar...",
+            "mediumSynopsis": "Medium synopsis for Interstellar...",
+            "shortSynopsis": "Short synopsis for Interstellar...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 2014,
+            "duration": "PT1H20M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true
+        },
+        {
+            "ref": "testmock:testazgqducy",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testazgqducy",
+            "title": "Interstellar",
+            "createdAt": "2018-11-28T10:34:16.912Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-28T10:34:16.912Z",
+            "updatedBy": "root:qa-automation",
+            "version": "eb79156a96a87e60c7d9d398027d7028a63179cb",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Interstellar...",
+            "mediumSynopsis": "Medium synopsis for Interstellar...",
+            "shortSynopsis": "Short synopsis for Interstellar...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 2014,
+            "duration": "PT1H20M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true
+        },
+        {
+            "ref": "testmock:testbexntpyr",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testbexntpyr",
+            "title": "Interstellar",
+            "createdAt": "2018-11-28T12:09:10.332Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-28T12:09:10.332Z",
+            "updatedBy": "root:qa-automation",
+            "version": "9e95eb39b3adb255d74edfc29ab51bd83995ab8b",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Interstellar...",
+            "mediumSynopsis": "Medium synopsis for Interstellar...",
+            "shortSynopsis": "Short synopsis for Interstellar...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 2014,
+            "duration": "PT1H20M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true
+        },
+        {
+            "ref": "testmock:testbltpzwci",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testbltpzwci",
+            "title": "Interstellar",
+            "createdAt": "2018-11-27T07:25:35.287Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-27T07:25:35.287Z",
+            "updatedBy": "root:qa-automation",
+            "version": "979390a1944d0479625c2056ff5b2b2c71d34802",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Interstellar...",
+            "mediumSynopsis": "Medium synopsis for Interstellar...",
+            "shortSynopsis": "Short synopsis for Interstellar...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 2014,
+            "duration": "PT1H20M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true
+        },
+        {
+            "ref": "testmock:testboxawcme_1",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testboxawcme_1",
+            "title": "Sing",
+            "createdAt": "2018-11-28T10:10:21.159Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-28T10:10:21.159Z",
+            "updatedBy": "root:qa-automation",
+            "version": "46e521aaff76e3c36d01e6e1e55abef3d78a36ee",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Sing...",
+            "mediumSynopsis": "Medium synopsis for Sing...",
+            "shortSynopsis": "Short synopsis for Sing...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 2016,
+            "duration": "PT1H20M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true,
+            "categoryRefs": [
+                "testmock:Sports",
+                "testmock:Bulletin"
+            ]
+        },
+        {
+            "ref": "testmock:testboxawcme_2",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testboxawcme_2",
+            "title": "Matrix",
+            "createdAt": "2018-11-28T10:10:21.159Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-28T10:10:21.159Z",
+            "updatedBy": "root:qa-automation",
+            "version": "7bce214cc90a48e99bc0afc0859a59983ac4f33c",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Matrix...",
+            "mediumSynopsis": "Medium synopsis for Matrix...",
+            "shortSynopsis": "Short synopsis for Matrix...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 1999,
+            "duration": "PT1H20M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true,
+            "categoryRefs": [
+                "testmock:forecasts",
+                "testmock:Bulletin"
+            ]
+        },
+        {
+            "ref": "testmock:testbpzedqay",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testbpzedqay",
+            "title": "Interstellar",
+            "createdAt": "2018-11-28T10:59:47.751Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-28T10:59:47.751Z",
+            "updatedBy": "root:qa-automation",
+            "version": "f4939d147cb2a334893ecb90b46d84d27fa89246",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Interstellar...",
+            "mediumSynopsis": "Medium synopsis for Interstellar...",
+            "shortSynopsis": "Short synopsis for Interstellar...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 2014,
+            "duration": "PT1H20M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true
+        },
+        {
+            "ref": "testmock:testcbwoiepm",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testcbwoiepm",
+            "title": "Interstellar",
+            "createdAt": "2018-11-27T07:43:35.362Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-27T07:43:35.362Z",
+            "updatedBy": "root:qa-automation",
+            "version": "1fd404d02301f793cc6de4317d5abd0bbc14bb64",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Interstellar...",
+            "mediumSynopsis": "Medium synopsis for Interstellar...",
+            "shortSynopsis": "Short synopsis for Interstellar...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 2014,
+            "duration": "PT1H20M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true
+        },
+        {
+            "ref": "testmock:testciazgbne_1",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testciazgbne_1",
+            "title": "Interstellar",
+            "createdAt": "2018-11-27T06:46:33.657Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-27T06:46:33.657Z",
+            "updatedBy": "root:qa-automation",
+            "version": "85d6389c6b4bf41e3dcf0863d5aa9b8fbd6af8bb",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Interstellar...",
+            "mediumSynopsis": "Medium synopsis for Interstellar...",
+            "shortSynopsis": "Short synopsis for Interstellar...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 2014,
+            "duration": "PT1H20M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true
+        },
+        {
+            "ref": "testmock:testciazgbne_2",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testciazgbne_2",
+            "title": "Matrix",
+            "createdAt": "2018-11-27T06:46:33.657Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-27T06:46:33.657Z",
+            "updatedBy": "root:qa-automation",
+            "version": "88add508727ea42db76f1be0a4832ee4df949edc",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Matrix...",
+            "mediumSynopsis": "Medium synopsis for Matrix...",
+            "shortSynopsis": "Short synopsis for Matrix...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 2005,
+            "duration": "PT1H50M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true
+        },
+        {
+            "ref": "testmock:testciazgbne_3",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testciazgbne_3",
+            "title": "Closer",
+            "createdAt": "2018-11-27T06:46:33.657Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-27T06:46:33.657Z",
+            "updatedBy": "root:qa-automation",
+            "version": "9bcffff3d2e715a02670c5ad4592bb9d8fc8506c",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Closer...",
+            "mediumSynopsis": "Medium synopsis for Closer...",
+            "shortSynopsis": "Short synopsis for Closer...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 2014,
+            "duration": "PT1H30M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true
+        },
+        {
+            "ref": "testmock:testclemnkiy",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testclemnkiy",
+            "title": "Interstellar",
+            "createdAt": "2018-11-28T12:08:50.101Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-28T12:08:50.101Z",
+            "updatedBy": "root:qa-automation",
+            "version": "9ce3acb57da7e1e794fe2940408f5d70407f2005",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Interstellar...",
+            "mediumSynopsis": "Medium synopsis for Interstellar...",
+            "shortSynopsis": "Short synopsis for Interstellar...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 2014,
+            "duration": "PT1H20M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true
+        },
+        {
+            "ref": "testmock:testcokmhnbr",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testcokmhnbr",
+            "title": "Interstellar",
+            "createdAt": "2018-11-27T07:44:21.024Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-27T07:44:21.024Z",
+            "updatedBy": "root:qa-automation",
+            "version": "550d87082d619d86841da97579dd74a77ebe4c81",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Interstellar...",
+            "mediumSynopsis": "Medium synopsis for Interstellar...",
+            "shortSynopsis": "Short synopsis for Interstellar...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 2014,
+            "duration": "PT1H20M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true
+        },
+        {
+            "ref": "testmock:testcpmveths_1",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testcpmveths_1",
+            "title": "Interstellar",
+            "createdAt": "2018-11-27T07:11:08.056Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-27T07:11:08.056Z",
+            "updatedBy": "root:qa-automation",
+            "version": "27b6c8bc3500f55042f84babe57d5287eb8eafdf",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Interstellar...",
+            "mediumSynopsis": "Medium synopsis for Interstellar...",
+            "shortSynopsis": "Short synopsis for Interstellar...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 2014,
+            "duration": "PT1H20M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true
+        },
+        {
+            "ref": "testmock:testcpmveths_2",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testcpmveths_2",
+            "title": "Matrix",
+            "createdAt": "2018-11-27T07:11:08.056Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-27T07:11:08.056Z",
+            "updatedBy": "root:qa-automation",
+            "version": "e649e14ff31da4ee1c5e2bcb17cbecd5492411da",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Matrix...",
+            "mediumSynopsis": "Medium synopsis for Matrix...",
+            "shortSynopsis": "Short synopsis for Matrix...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 2005,
+            "duration": "PT1H50M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true
+        },
+        {
+            "ref": "testmock:testcpmveths_3",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testcpmveths_3",
+            "title": "Closer",
+            "createdAt": "2018-11-27T07:11:08.056Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-27T07:11:08.056Z",
+            "updatedBy": "root:qa-automation",
+            "version": "96de5ef92373aec7e8547cb15279649aef4464c7",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Closer...",
+            "mediumSynopsis": "Medium synopsis for Closer...",
+            "shortSynopsis": "Short synopsis for Closer...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 2014,
+            "duration": "PT1H30M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true
+        },
+        {
+            "ref": "testmock:testcqzxdgel_1",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testcqzxdgel_1",
+            "title": "Sing",
+            "createdAt": "2018-11-28T11:03:22.256Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-28T11:03:22.256Z",
+            "updatedBy": "root:qa-automation",
+            "version": "004f5e49954a94b7763630b1b232fd6e654bd2f6",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Sing...",
+            "mediumSynopsis": "Medium synopsis for Sing...",
+            "shortSynopsis": "Short synopsis for Sing...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 2016,
+            "duration": "PT1H20M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true,
+            "categoryRefs": [
+                "testmock:Sports",
+                "testmock:Bulletin"
+            ]
+        },
+        {
+            "ref": "testmock:testcqzxdgel_2",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testcqzxdgel_2",
+            "title": "Matrix",
+            "createdAt": "2018-11-28T11:03:22.256Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-28T11:03:22.256Z",
+            "updatedBy": "root:qa-automation",
+            "version": "3f8008893733a94b8acb7e0db7235077ca3d9ea2",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Matrix...",
+            "mediumSynopsis": "Medium synopsis for Matrix...",
+            "shortSynopsis": "Short synopsis for Matrix...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 1999,
+            "duration": "PT1H20M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true,
+            "categoryRefs": [
+                "testmock:forecasts",
+                "testmock:Bulletin"
+            ]
+        },
+        {
+            "ref": "testmock:testcvsrjdwa",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testcvsrjdwa",
+            "title": "Interstellar",
+            "createdAt": "2018-11-27T07:51:20.803Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-27T07:51:20.803Z",
+            "updatedBy": "root:qa-automation",
+            "version": "8bcb0e7457144a750f99a559554a7cebd462992f",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Interstellar...",
+            "mediumSynopsis": "Medium synopsis for Interstellar...",
+            "shortSynopsis": "Short synopsis for Interstellar...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 2014,
+            "duration": "PT1H20M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true
+        },
+        {
+            "ref": "testmock:testcxhraysp",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testcxhraysp",
+            "title": "Interstellar",
+            "createdAt": "2018-11-28T11:13:49.357Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-28T11:13:49.357Z",
+            "updatedBy": "root:qa-automation",
+            "version": "0600e29fe0cd6dc99489c11a813189bb95a85cd7",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Interstellar...",
+            "mediumSynopsis": "Medium synopsis for Interstellar...",
+            "shortSynopsis": "Short synopsis for Interstellar...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 2014,
+            "duration": "PT1H20M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true
+        },
+        {
+            "ref": "testmock:testdcjkganx",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testdcjkganx",
+            "title": "Interstellar",
+            "createdAt": "2018-11-27T07:25:26.591Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-27T07:25:26.591Z",
+            "updatedBy": "root:qa-automation",
+            "version": "d10aa3fb87315b9a2424ca04a415780c8b465538",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Interstellar...",
+            "mediumSynopsis": "Medium synopsis for Interstellar...",
+            "shortSynopsis": "Short synopsis for Interstellar...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 2014,
+            "duration": "PT1H20M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true
+        },
+        {
+            "ref": "testmock:testdfmszkei",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testdfmszkei",
+            "title": "Interstellar",
+            "createdAt": "2018-11-27T07:00:19.823Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-27T07:00:19.823Z",
+            "updatedBy": "root:qa-automation",
+            "version": "4d5fed35d3339bcfba0a1f78c20b172b343ffcfd",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Interstellar...",
+            "mediumSynopsis": "Medium synopsis for Interstellar...",
+            "shortSynopsis": "Short synopsis for Interstellar...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 2014,
+            "duration": "PT1H20M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true
+        },
+        {
+            "ref": "testmock:testdlngmtpu",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testdlngmtpu",
+            "title": "Interstellar",
+            "createdAt": "2018-11-27T07:25:29.570Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-27T07:25:29.570Z",
+            "updatedBy": "root:qa-automation",
+            "version": "19f0318af7ee0acf01a1adff3a325de1365c22e9",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Interstellar...",
+            "mediumSynopsis": "Medium synopsis for Interstellar...",
+            "shortSynopsis": "Short synopsis for Interstellar...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 2014,
+            "duration": "PT1H20M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true
+        },
+        {
+            "ref": "testmock:testeamdnxhr",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testeamdnxhr",
+            "title": "Interstellar",
+            "createdAt": "2018-11-28T11:55:36.799Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-28T11:55:36.799Z",
+            "updatedBy": "root:qa-automation",
+            "version": "5560bc3e0f4f7d0a526dd332a71373e635ed6248",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Interstellar...",
+            "mediumSynopsis": "Medium synopsis for Interstellar...",
+            "shortSynopsis": "Short synopsis for Interstellar...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 2014,
+            "duration": "PT1H20M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true
+        },
+        {
+            "ref": "testmock:testebhoijyn",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testebhoijyn",
+            "title": "Interstellar",
+            "createdAt": "2018-11-28T11:55:30.612Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-28T11:55:30.612Z",
+            "updatedBy": "root:qa-automation",
+            "version": "f73ce13736c2f2cb08dc98c89bd1f6358a36aefe",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Interstellar...",
+            "mediumSynopsis": "Medium synopsis for Interstellar...",
+            "shortSynopsis": "Short synopsis for Interstellar...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 2014,
+            "duration": "PT1H20M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true
+        },
+        {
+            "ref": "testmock:testecumrhjx_1",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testecumrhjx_1",
+            "title": "Sing",
+            "createdAt": "2018-11-28T11:03:13.204Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-28T11:03:13.204Z",
+            "updatedBy": "root:qa-automation",
+            "version": "d0a069380f35c69eaf791f14dca4d682a523aae2",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Sing...",
+            "mediumSynopsis": "Medium synopsis for Sing...",
+            "shortSynopsis": "Short synopsis for Sing...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 2016,
+            "duration": "PT1H20M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true,
+            "categoryRefs": [
+                "testmock:Sports",
+                "testmock:Bulletin"
+            ]
+        },
+        {
+            "ref": "testmock:testecumrhjx_2",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testecumrhjx_2",
+            "title": "Matrix",
+            "createdAt": "2018-11-28T11:03:13.204Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-28T11:03:13.204Z",
+            "updatedBy": "root:qa-automation",
+            "version": "018c9fea7c85cd934c95cf9c421fe6dde3f2e98b",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Matrix...",
+            "mediumSynopsis": "Medium synopsis for Matrix...",
+            "shortSynopsis": "Short synopsis for Matrix...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 1999,
+            "duration": "PT1H20M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true,
+            "categoryRefs": [
+                "testmock:forecasts",
+                "testmock:Bulletin"
+            ]
+        },
+        {
+            "ref": "testmock:testegilzumb_1",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testegilzumb_1",
+            "title": "Sing",
+            "createdAt": "2018-11-27T07:11:51.032Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-27T07:11:51.032Z",
+            "updatedBy": "root:qa-automation",
+            "version": "98d74927116e0d86ffb1eeae0624a13a9426a232",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Sing...",
+            "mediumSynopsis": "Medium synopsis for Sing...",
+            "shortSynopsis": "Short synopsis for Sing...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 2016,
+            "duration": "PT1H20M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true,
+            "categoryRefs": [
+                "testmock:Sports",
+                "testmock:Bulletin"
+            ]
+        },
+        {
+            "ref": "testmock:testegilzumb_2",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testegilzumb_2",
+            "title": "Matrix",
+            "createdAt": "2018-11-27T07:11:51.032Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-27T07:11:51.032Z",
+            "updatedBy": "root:qa-automation",
+            "version": "d00ab6f68f7e84cae0ffcf2d9d2481b5adc36454",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Matrix...",
+            "mediumSynopsis": "Medium synopsis for Matrix...",
+            "shortSynopsis": "Short synopsis for Matrix...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 1999,
+            "duration": "PT1H20M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true,
+            "categoryRefs": [
+                "testmock:forecasts",
+                "testmock:Bulletin"
+            ]
+        },
+        {
+            "ref": "testmock:testehswlxvq",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testehswlxvq",
+            "title": "Interstellar",
+            "createdAt": "2018-11-28T11:00:47.273Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-28T11:00:47.273Z",
+            "updatedBy": "root:qa-automation",
+            "version": "ac232cd89f778e47eaa3513df0ee80e9a2a68cd1",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Interstellar...",
+            "mediumSynopsis": "Medium synopsis for Interstellar...",
+            "shortSynopsis": "Short synopsis for Interstellar...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 2014,
+            "duration": "PT1H20M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true
+        },
+        {
+            "ref": "testmock:testekdmgxst_1",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testekdmgxst_1",
+            "title": "Sing",
+            "createdAt": "2018-11-28T11:01:47.135Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-28T11:01:47.135Z",
+            "updatedBy": "root:qa-automation",
+            "version": "f7f863b2b9a5083d6c8822fead1d9279fb3b1826",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Sing...",
+            "mediumSynopsis": "Medium synopsis for Sing...",
+            "shortSynopsis": "Short synopsis for Sing...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 2016,
+            "duration": "PT1H20M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true,
+            "categoryRefs": [
+                "testmock:Sports",
+                "testmock:Bulletin"
+            ]
+        },
+        {
+            "ref": "testmock:testekdmgxst_2",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testekdmgxst_2",
+            "title": "Matrix",
+            "createdAt": "2018-11-28T11:01:47.135Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-28T11:01:47.135Z",
+            "updatedBy": "root:qa-automation",
+            "version": "f097dda723db817176c74744f5e16e87de5be97c",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Matrix...",
+            "mediumSynopsis": "Medium synopsis for Matrix...",
+            "shortSynopsis": "Short synopsis for Matrix...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 1999,
+            "duration": "PT1H20M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true,
+            "categoryRefs": [
+                "testmock:forecasts",
+                "testmock:Bulletin"
+            ]
+        },
+        {
+            "ref": "testmock:testemyjtkcd",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testemyjtkcd",
+            "title": "Interstellar",
+            "createdAt": "2018-11-27T07:00:16.673Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-27T07:00:16.673Z",
+            "updatedBy": "root:qa-automation",
+            "version": "fbeed47285f81259b65b526aa3d1b338c4233d5d",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Interstellar...",
+            "mediumSynopsis": "Medium synopsis for Interstellar...",
+            "shortSynopsis": "Short synopsis for Interstellar...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 2014,
+            "duration": "PT1H20M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true
+        },
+        {
+            "ref": "testmock:testenkhocmt",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testenkhocmt",
+            "title": "Interstellar",
+            "createdAt": "2018-11-27T07:51:37.852Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-27T07:51:37.852Z",
+            "updatedBy": "root:qa-automation",
+            "version": "74948ffaa22eca6ca5928557fbb955a4f41a79f2",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Interstellar...",
+            "mediumSynopsis": "Medium synopsis for Interstellar...",
+            "shortSynopsis": "Short synopsis for Interstellar...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 2014,
+            "duration": "PT1H20M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true
+        },
+        {
+            "ref": "testmock:testespgyrhu",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testespgyrhu",
+            "title": "Interstellar",
+            "createdAt": "2018-11-27T07:19:38.652Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-27T07:19:38.652Z",
+            "updatedBy": "root:qa-automation",
+            "version": "35776cd858ffe66dc6d95d706a415160aef9725e",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Interstellar...",
+            "mediumSynopsis": "Medium synopsis for Interstellar...",
+            "shortSynopsis": "Short synopsis for Interstellar...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 2014,
+            "duration": "PT1H20M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true
+        },
+        {
+            "ref": "testmock:testevajtqus_1",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testevajtqus_1",
+            "title": "Sing",
+            "createdAt": "2018-11-27T08:02:00.436Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-27T08:02:00.436Z",
+            "updatedBy": "root:qa-automation",
+            "version": "25b9cca647d49fbae1479078449845d27179ffa3",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Sing...",
+            "mediumSynopsis": "Medium synopsis for Sing...",
+            "shortSynopsis": "Short synopsis for Sing...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 2016,
+            "duration": "PT1H20M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true,
+            "categoryRefs": [
+                "testmock:Sports",
+                "testmock:Bulletin"
+            ]
+        },
+        {
+            "ref": "testmock:testevajtqus_2",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testevajtqus_2",
+            "title": "Matrix",
+            "createdAt": "2018-11-27T08:02:00.436Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-27T08:02:00.436Z",
+            "updatedBy": "root:qa-automation",
+            "version": "50f2e895315b2955877312ece43f69d1dddb12e4",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Matrix...",
+            "mediumSynopsis": "Medium synopsis for Matrix...",
+            "shortSynopsis": "Short synopsis for Matrix...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 1999,
+            "duration": "PT1H20M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true,
+            "categoryRefs": [
+                "testmock:forecasts",
+                "testmock:Bulletin"
+            ]
+        },
+        {
+            "ref": "testmock:testevlkpxca_1",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testevlkpxca_1",
+            "title": "Interstellar",
+            "createdAt": "2018-11-28T10:09:25.494Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-28T10:09:25.494Z",
+            "updatedBy": "root:qa-automation",
+            "version": "894b37c63f49166402833df3d601f13fc31e9688",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Interstellar...",
+            "mediumSynopsis": "Medium synopsis for Interstellar...",
+            "shortSynopsis": "Short synopsis for Interstellar...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 2014,
+            "duration": "PT1H20M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true
+        },
+        {
+            "ref": "testmock:testevlkpxca_2",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testevlkpxca_2",
+            "title": "Matrix",
+            "createdAt": "2018-11-28T10:09:25.494Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-28T10:09:25.494Z",
+            "updatedBy": "root:qa-automation",
+            "version": "3ffda80215c0d4550e1b692a2f81c92ee7cd4da5",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Matrix...",
+            "mediumSynopsis": "Medium synopsis for Matrix...",
+            "shortSynopsis": "Short synopsis for Matrix...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 2005,
+            "duration": "PT1H50M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true
+        },
+        {
+            "ref": "testmock:testevlkpxca_3",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testevlkpxca_3",
+            "title": "Closer",
+            "createdAt": "2018-11-28T10:09:25.494Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-28T10:09:25.494Z",
+            "updatedBy": "root:qa-automation",
+            "version": "fb4b0d55ce6fb152319b23c4418ffef7a06dfcc7",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Closer...",
+            "mediumSynopsis": "Medium synopsis for Closer...",
+            "shortSynopsis": "Short synopsis for Closer...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 2014,
+            "duration": "PT1H30M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true
+        },
+        {
+            "ref": "testmock:testfdjnuhqx",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testfdjnuhqx",
+            "title": "Interstellar",
+            "createdAt": "2018-11-28T10:47:35.465Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-28T10:47:35.465Z",
+            "updatedBy": "root:qa-automation",
+            "version": "c62dffa94293a9a26d8a0ce55c382a36c04ba725",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Interstellar...",
+            "mediumSynopsis": "Medium synopsis for Interstellar...",
+            "shortSynopsis": "Short synopsis for Interstellar...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 2014,
+            "duration": "PT1H20M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true
+        },
+        {
+            "ref": "testmock:testfdvintep_1",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testfdvintep_1",
+            "title": "Sing",
+            "createdAt": "2018-11-27T07:36:45.445Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-27T07:36:45.445Z",
+            "updatedBy": "root:qa-automation",
+            "version": "ed2f42d7d5ef0bfc67818f0145896722d1114ea3",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Sing...",
+            "mediumSynopsis": "Medium synopsis for Sing...",
+            "shortSynopsis": "Short synopsis for Sing...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 2016,
+            "duration": "PT1H20M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true,
+            "categoryRefs": [
+                "testmock:Sports",
+                "testmock:Bulletin"
+            ]
+        },
+        {
+            "ref": "testmock:testfdvintep_2",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testfdvintep_2",
+            "title": "Matrix",
+            "createdAt": "2018-11-27T07:36:45.445Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-27T07:36:45.445Z",
+            "updatedBy": "root:qa-automation",
+            "version": "a7d863636c5684dce32e73f7b1258b36cbaa6700",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Matrix...",
+            "mediumSynopsis": "Medium synopsis for Matrix...",
+            "shortSynopsis": "Short synopsis for Matrix...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 1999,
+            "duration": "PT1H20M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true,
+            "categoryRefs": [
+                "testmock:forecasts",
+                "testmock:Bulletin"
+            ]
+        },
+        {
+            "ref": "testmock:testfgjbumqv_1",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testfgjbumqv_1",
+            "title": "Sing",
+            "createdAt": "2018-11-28T09:25:03.735Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-28T09:25:03.735Z",
+            "updatedBy": "root:qa-automation",
+            "version": "5fa440abebc79da68ea14a520acf1187bed74a62",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Sing...",
+            "mediumSynopsis": "Medium synopsis for Sing...",
+            "shortSynopsis": "Short synopsis for Sing...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 2016,
+            "duration": "PT1H20M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true,
+            "categoryRefs": [
+                "testmock:Sports",
+                "testmock:Bulletin"
+            ]
+        },
+        {
+            "ref": "testmock:testfgjbumqv_2",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testfgjbumqv_2",
+            "title": "Matrix",
+            "createdAt": "2018-11-28T09:25:03.735Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-28T09:25:03.735Z",
+            "updatedBy": "root:qa-automation",
+            "version": "cc0bd9dbe550a2d43ff141761275e287cca74625",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Matrix...",
+            "mediumSynopsis": "Medium synopsis for Matrix...",
+            "shortSynopsis": "Short synopsis for Matrix...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 1999,
+            "duration": "PT1H20M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true,
+            "categoryRefs": [
+                "testmock:forecasts",
+                "testmock:Bulletin"
+            ]
+        },
+        {
+            "ref": "testmock:testfqlxidny",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testfqlxidny",
+            "title": "Interstellar",
+            "createdAt": "2018-11-27T07:25:23.983Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-27T07:25:23.983Z",
+            "updatedBy": "root:qa-automation",
+            "version": "74dc827ba59fbb4355967bb6226baf689cd1306d",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Interstellar...",
+            "mediumSynopsis": "Medium synopsis for Interstellar...",
+            "shortSynopsis": "Short synopsis for Interstellar...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 2014,
+            "duration": "PT1H20M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true
+        },
+        {
+            "ref": "testmock:testfunlwkre",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testfunlwkre",
+            "title": "Interstellar",
+            "createdAt": "2018-11-28T10:47:47.591Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-28T10:47:47.591Z",
+            "updatedBy": "root:qa-automation",
+            "version": "1d03d29e10cc514694f5d608d0ce78fc5d396eb3",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Interstellar...",
+            "mediumSynopsis": "Medium synopsis for Interstellar...",
+            "shortSynopsis": "Short synopsis for Interstellar...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 2014,
+            "duration": "PT1H20M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true
+        },
+        {
+            "ref": "testmock:testfvhtelnp",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testfvhtelnp",
+            "title": "Interstellar",
+            "createdAt": "2018-11-27T07:19:56.047Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-27T07:19:56.047Z",
+            "updatedBy": "root:qa-automation",
+            "version": "83e46692b1ec506797d4d539a81cded6bc68215a",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Interstellar...",
+            "mediumSynopsis": "Medium synopsis for Interstellar...",
+            "shortSynopsis": "Short synopsis for Interstellar...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 2014,
+            "duration": "PT1H20M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true
+        },
+        {
+            "ref": "testmock:testgajnpykd",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testgajnpykd",
+            "title": "Interstellar",
+            "createdAt": "2018-11-27T07:00:25.696Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-27T07:00:25.696Z",
+            "updatedBy": "root:qa-automation",
+            "version": "b59281fb5cf38e6640d15f2763b7b4abec19e4ce",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Interstellar...",
+            "mediumSynopsis": "Medium synopsis for Interstellar...",
+            "shortSynopsis": "Short synopsis for Interstellar...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 2014,
+            "duration": "PT1H20M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true
+        },
+        {
+            "ref": "testmock:testgehxatrz_1",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testgehxatrz_1",
+            "title": "Sing",
+            "createdAt": "2018-11-27T08:00:27.413Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-27T08:00:27.413Z",
+            "updatedBy": "root:qa-automation",
+            "version": "6a56ab818dd7fd0081cb6b82a9d3868e603198c2",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Sing...",
+            "mediumSynopsis": "Medium synopsis for Sing...",
+            "shortSynopsis": "Short synopsis for Sing...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 2016,
+            "duration": "PT1H20M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true,
+            "categoryRefs": [
+                "testmock:Sports",
+                "testmock:Bulletin"
+            ]
+        },
+        {
+            "ref": "testmock:testgehxatrz_2",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testgehxatrz_2",
+            "title": "Matrix",
+            "createdAt": "2018-11-27T08:00:27.413Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-27T08:00:27.413Z",
+            "updatedBy": "root:qa-automation",
+            "version": "d383c2505d565cc9c9f76448f2bae92084940243",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Matrix...",
+            "mediumSynopsis": "Medium synopsis for Matrix...",
+            "shortSynopsis": "Short synopsis for Matrix...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 1999,
+            "duration": "PT1H20M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true,
+            "categoryRefs": [
+                "testmock:forecasts",
+                "testmock:Bulletin"
+            ]
+        },
+        {
+            "ref": "testmock:testgmlfvcps",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testgmlfvcps",
+            "title": "Interstellar",
+            "createdAt": "2018-11-28T11:00:20.064Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-28T11:00:20.064Z",
+            "updatedBy": "root:qa-automation",
+            "version": "2f705e2d4aa404f4fe3b7076e5ca9973e7a4924e",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Interstellar...",
+            "mediumSynopsis": "Medium synopsis for Interstellar...",
+            "shortSynopsis": "Short synopsis for Interstellar...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 2014,
+            "duration": "PT1H20M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true
+        },
+        {
+            "ref": "testmock:testhbmiwyus",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testhbmiwyus",
+            "title": "Interstellar",
+            "createdAt": "2018-11-28T10:32:57.610Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-28T10:32:57.610Z",
+            "updatedBy": "root:qa-automation",
+            "version": "e076713de976400f105a90018a88b46187cd2471",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Interstellar...",
+            "mediumSynopsis": "Medium synopsis for Interstellar...",
+            "shortSynopsis": "Short synopsis for Interstellar...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 2014,
+            "duration": "PT1H20M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true
+        },
+        {
+            "ref": "testmock:testhlkrqocw",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testhlkrqocw",
+            "title": "Interstellar",
+            "createdAt": "2018-11-28T10:04:04.856Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-28T10:04:04.856Z",
+            "updatedBy": "root:qa-automation",
+            "version": "f32361ca216b2d59ca0cca456ad6130f9dd62ce0",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Interstellar...",
+            "mediumSynopsis": "Medium synopsis for Interstellar...",
+            "shortSynopsis": "Short synopsis for Interstellar...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 2014,
+            "duration": "PT1H20M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true
+        },
+        {
+            "ref": "testmock:testhlounsqy",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testhlounsqy",
+            "title": "Interstellar",
+            "createdAt": "2018-11-28T11:56:27.884Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-28T11:56:27.884Z",
+            "updatedBy": "root:qa-automation",
+            "version": "744efad62f9ffbb948a97f5063f0021c64f53960",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Interstellar...",
+            "mediumSynopsis": "Medium synopsis for Interstellar...",
+            "shortSynopsis": "Short synopsis for Interstellar...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 2014,
+            "duration": "PT1H20M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true
+        },
+        {
+            "ref": "testmock:testhrpywvmn_1",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testhrpywvmn_1",
+            "title": "Sing",
+            "createdAt": "2018-11-27T07:36:48.607Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-27T07:36:48.607Z",
+            "updatedBy": "root:qa-automation",
+            "version": "3a01ac768a5fe891b66b18204a922794e30b3fd5",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Sing...",
+            "mediumSynopsis": "Medium synopsis for Sing...",
+            "shortSynopsis": "Short synopsis for Sing...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 2016,
+            "duration": "PT1H20M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true,
+            "categoryRefs": [
+                "testmock:Sports",
+                "testmock:Bulletin"
+            ]
+        },
+        {
+            "ref": "testmock:testhrpywvmn_2",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testhrpywvmn_2",
+            "title": "Matrix",
+            "createdAt": "2018-11-27T07:36:48.607Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-27T07:36:48.607Z",
+            "updatedBy": "root:qa-automation",
+            "version": "ea6bae11dec27c849c2a900294fc5207a268f729",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Matrix...",
+            "mediumSynopsis": "Medium synopsis for Matrix...",
+            "shortSynopsis": "Short synopsis for Matrix...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 1999,
+            "duration": "PT1H20M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true,
+            "categoryRefs": [
+                "testmock:forecasts",
+                "testmock:Bulletin"
+            ]
+        },
+        {
+            "ref": "testmock:testhwutrpnv",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testhwutrpnv",
+            "title": "Interstellar",
+            "createdAt": "2018-11-28T11:13:38.632Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-28T11:13:38.632Z",
+            "updatedBy": "root:qa-automation",
+            "version": "af2022d6e4e6e90d03392600920cbb5569de807b",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Interstellar...",
+            "mediumSynopsis": "Medium synopsis for Interstellar...",
+            "shortSynopsis": "Short synopsis for Interstellar...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 2014,
+            "duration": "PT1H20M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true
+        },
+        {
+            "ref": "testmock:testhxgylazm",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testhxgylazm",
+            "title": "Interstellar",
+            "createdAt": "2018-11-27T06:52:39.351Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-27T06:52:39.351Z",
+            "updatedBy": "root:qa-automation",
+            "version": "83abb3613aff6abc27bc8d8567c139e52bda9351",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Interstellar...",
+            "mediumSynopsis": "Medium synopsis for Interstellar...",
+            "shortSynopsis": "Short synopsis for Interstellar...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 2014,
+            "duration": "PT1H20M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true
+        },
+        {
+            "ref": "testmock:testihdgpqbc",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testihdgpqbc",
+            "title": "Interstellar",
+            "createdAt": "2018-11-27T07:00:14.047Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-27T07:00:14.047Z",
+            "updatedBy": "root:qa-automation",
+            "version": "648b4ef50829f8fb9e67c683648b991a52bd9274",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Interstellar...",
+            "mediumSynopsis": "Medium synopsis for Interstellar...",
+            "shortSynopsis": "Short synopsis for Interstellar...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 2014,
+            "duration": "PT1H20M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true
+        },
+        {
+            "ref": "testmock:testinocapmh",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testinocapmh",
+            "title": "Interstellar",
+            "createdAt": "2018-11-28T11:01:05.717Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-28T11:01:05.717Z",
+            "updatedBy": "root:qa-automation",
+            "version": "3544468a44fe97f5d19835ec866da4998e0a015a",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Interstellar...",
+            "mediumSynopsis": "Medium synopsis for Interstellar...",
+            "shortSynopsis": "Short synopsis for Interstellar...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 2014,
+            "duration": "PT1H20M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true
+        },
+        {
+            "ref": "testmock:testitkplyzq_1",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testitkplyzq_1",
+            "title": "Sing",
+            "createdAt": "2018-11-28T11:45:24.406Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-28T11:45:24.406Z",
+            "updatedBy": "root:qa-automation",
+            "version": "b10eb3e6f444816074a321c78c0b647219bb4b0c",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Sing...",
+            "mediumSynopsis": "Medium synopsis for Sing...",
+            "shortSynopsis": "Short synopsis for Sing...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 2016,
+            "duration": "PT1H20M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true,
+            "categoryRefs": [
+                "testmock:Sports",
+                "testmock:Bulletin"
+            ]
+        },
+        {
+            "ref": "testmock:testitkplyzq_2",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testitkplyzq_2",
+            "title": "Matrix",
+            "createdAt": "2018-11-28T11:45:24.406Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-28T11:45:24.406Z",
+            "updatedBy": "root:qa-automation",
+            "version": "5b75e8fa1c3344a3853b578ee817a6dbbbedd4d9",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Matrix...",
+            "mediumSynopsis": "Medium synopsis for Matrix...",
+            "shortSynopsis": "Short synopsis for Matrix...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 1999,
+            "duration": "PT1H20M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true,
+            "categoryRefs": [
+                "testmock:forecasts",
+                "testmock:Bulletin"
+            ]
+        },
+        {
+            "ref": "testmock:testixmweucl_1",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testixmweucl_1",
+            "title": "Sing",
+            "createdAt": "2018-11-28T11:44:42.326Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-28T11:44:42.326Z",
+            "updatedBy": "root:qa-automation",
+            "version": "9724ed2c3254df29eaf816375134f04ac7f0255e",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Sing...",
+            "mediumSynopsis": "Medium synopsis for Sing...",
+            "shortSynopsis": "Short synopsis for Sing...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 2016,
+            "duration": "PT1H20M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true,
+            "categoryRefs": [
+                "testmock:Sports",
+                "testmock:Bulletin"
+            ]
+        },
+        {
+            "ref": "testmock:testixmweucl_2",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testixmweucl_2",
+            "title": "Matrix",
+            "createdAt": "2018-11-28T11:44:42.326Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-28T11:44:42.326Z",
+            "updatedBy": "root:qa-automation",
+            "version": "a0c98c0989fb4700cc8e17039d3ca81ed5108473",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Matrix...",
+            "mediumSynopsis": "Medium synopsis for Matrix...",
+            "shortSynopsis": "Short synopsis for Matrix...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 1999,
+            "duration": "PT1H20M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true,
+            "categoryRefs": [
+                "testmock:forecasts",
+                "testmock:Bulletin"
+            ]
+        },
+        {
+            "ref": "testmock:testjdanroxh",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testjdanroxh",
+            "title": "Interstellar",
+            "createdAt": "2018-11-28T11:55:33.693Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-28T11:55:33.693Z",
+            "updatedBy": "root:qa-automation",
+            "version": "83c255d74111ae3a5ea5f208046d2f0a3bc2ecfa",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Interstellar...",
+            "mediumSynopsis": "Medium synopsis for Interstellar...",
+            "shortSynopsis": "Short synopsis for Interstellar...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 2014,
+            "duration": "PT1H20M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true
+        },
+        {
+            "ref": "testmock:testjgiopalq",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testjgiopalq",
+            "title": "Interstellar",
+            "createdAt": "2018-11-28T11:00:31.433Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-28T11:00:31.433Z",
+            "updatedBy": "root:qa-automation",
+            "version": "02d13d5b71fd5abe6d1de967e5ccec3a95f5ab0e",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Interstellar...",
+            "mediumSynopsis": "Medium synopsis for Interstellar...",
+            "shortSynopsis": "Short synopsis for Interstellar...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 2014,
+            "duration": "PT1H20M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true
+        },
+        {
+            "ref": "testmock:testjgoiexnv_1",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testjgoiexnv_1",
+            "title": "Sing",
+            "createdAt": "2018-11-27T06:45:36.405Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-27T06:45:36.405Z",
+            "updatedBy": "root:qa-automation",
+            "version": "a5aa40cee025e8115566564227642517a4c42641",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Sing...",
+            "mediumSynopsis": "Medium synopsis for Sing...",
+            "shortSynopsis": "Short synopsis for Sing...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 2016,
+            "duration": "PT1H20M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true,
+            "categoryRefs": [
+                "testmock:Sports",
+                "testmock:Bulletin"
+            ]
+        },
+        {
+            "ref": "testmock:testjgoiexnv_2",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testjgoiexnv_2",
+            "title": "Matrix",
+            "createdAt": "2018-11-27T06:45:36.405Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-27T06:45:36.405Z",
+            "updatedBy": "root:qa-automation",
+            "version": "b6a12569d91302d7561b9f304e487e10bbc6de6e",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Matrix...",
+            "mediumSynopsis": "Medium synopsis for Matrix...",
+            "shortSynopsis": "Short synopsis for Matrix...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 1999,
+            "duration": "PT1H20M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true,
+            "categoryRefs": [
+                "testmock:forecasts",
+                "testmock:Bulletin"
+            ]
+        },
+        {
+            "ref": "testmock:testjphrctln_1",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testjphrctln_1",
+            "title": "Sing",
+            "createdAt": "2018-11-27T07:37:51.705Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-27T07:37:51.705Z",
+            "updatedBy": "root:qa-automation",
+            "version": "f2849e75931d7fc670392e7c37802800d656051b",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Sing...",
+            "mediumSynopsis": "Medium synopsis for Sing...",
+            "shortSynopsis": "Short synopsis for Sing...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 2016,
+            "duration": "PT1H20M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true,
+            "categoryRefs": [
+                "testmock:Sports",
+                "testmock:Bulletin"
+            ]
+        },
+        {
+            "ref": "testmock:testjphrctln_2",
+            "alternativeIdentifiers": {
+                "myId": "s3://myLocation.xml"
+            },
+            "owner": "testmock",
+            "name": "testjphrctln_2",
+            "title": "Matrix",
+            "createdAt": "2018-11-27T07:37:51.705Z",
+            "createdBy": "root:qa-automation",
+            "updatedAt": "2018-11-27T07:37:51.705Z",
+            "updatedBy": "root:qa-automation",
+            "version": "faa2cc166d65cdeccb7ad96427923ed9339d60a2",
+            "type": "movie",
+            "longSynopsis": "Long synopsis for Matrix...",
+            "mediumSynopsis": "Medium synopsis for Matrix...",
+            "shortSynopsis": "Short synopsis for Matrix...",
+            "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+            "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+            "releaseYear": 1999,
+            "duration": "PT1H20M",
+            "ratings": {
+                "BBFC": "PG"
+            },
+            "active": true,
+            "categoryRefs": [
+                "testmock:forecasts",
+                "testmock:Bulletin"
+            ]
+        }
+    ]
+}

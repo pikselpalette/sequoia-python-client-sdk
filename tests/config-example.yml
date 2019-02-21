@@ -1,0 +1,8 @@
+sequoia:
+    username: sequoia-user
+    password: sequoia-password
+    owner: test_mock
+    registry: https://registry-sandbox.sequoia.piksel.com/services/
+ingest:
+    username: ingest-user
+    password: ingest-password
