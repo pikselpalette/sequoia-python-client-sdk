@@ -32,7 +32,7 @@ _LONG_DESCRIPTION = read_file('README.rst') + '\n\n' + read_file('HISTORY.rst')
 _CLASSIFIERS = (
     'Development Status :: 5 - Production/Stable',
     'Intended Audience :: Developers',
-    'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
+    'License :: OSI Approved :: Apache Software License',
     'Natural Language :: English',
     'Programming Language :: Python',
     'Programming Language :: Python :: 2.7',
@@ -50,6 +50,7 @@ setup(
     version='1.2.0',
     description=sequoia.__description__,
     long_description=_LONG_DESCRIPTION,
+    license='Apache',
     author=sequoia.__author__,
     maintainer=sequoia.__author__,
     url=sequoia.__url__,
