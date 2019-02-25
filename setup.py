@@ -50,6 +50,7 @@ setup(
     version='1.2.0',
     description=sequoia.__description__,
     long_description=_LONG_DESCRIPTION,
+    long_description_content_type='text/x-rst',
     license='Apache',
     author=sequoia.__author__,
     maintainer=sequoia.__author__,
