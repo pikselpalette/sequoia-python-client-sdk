@@ -25,6 +25,8 @@ class Build(Main):
         'clinner_piksel_extensions.python.test.pytest',
         'clinner_piksel_extensions.python.test.test',
         'clinner_piksel_extensions.python.package.package',
+        'clinner_piksel_extensions.piksel.upload_artifact.upload_artifact',
+        'clinner_piksel_extensions.piksel.download_artifact.download_artifact',
         'clinner_piksel_extensions.python.deploy.deploy',
         'clinner_piksel_extensions.python.install.install',
         'clinner_piksel_extensions.python.bump.bump'
