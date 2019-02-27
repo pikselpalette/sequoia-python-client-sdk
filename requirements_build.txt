@@ -4,6 +4,4 @@
 -r requirements.txt
 
 boto3
-clinner
-clinner_piksel_extensions
 colorama

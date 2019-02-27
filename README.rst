@@ -191,12 +191,16 @@ Preparing environment
 Create new virtualenv
 ---------------------
 
-You can create a new virtual environment and install all the dependencies with the commands:
+It's encouraging to create a new virtual environment and install all the dependencies in it. 
+You can use these commands:
 
 .. code-block:: python
 
-    ./make virtualenv
-    ./make prepare
+    mkdir -p ~/.virtualenvs
+    virtualenv -p python3.6 ~/.virtualenvs/sequoia-python-client-sdk
+    workon sequoia-python-client-sdk
+    pip install -r requirements.txt
+    pip install -r requirements_test.txt
 
 
 
@@ -212,11 +216,7 @@ Using ``pytest`` option will run all the unit tests over your environment.
 
 .. code-block:: python
 
-    ./make pytest
-
-.. code-block:: python
-
-    ./make pytest -m "not integration_test"
+    make test
 
 Run tests on every compatible python version
 --------------------------------------------
@@ -225,7 +225,7 @@ While using the option ``test`` will set up a virtual environment for the suppor
 
 .. code-block:: python
 
-    ./make test
+    make test-all
 
 Lint
 ----
@@ -234,5 +234,5 @@ To make sure the code fulfills the format run
 
 .. code-block:: python
 
-    ./make prospector
+    make lint
 

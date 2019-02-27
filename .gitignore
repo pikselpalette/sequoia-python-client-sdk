@@ -103,5 +103,7 @@ python_boilerplate/
 .python-version
 .virtualenvs
 
+.vscode/
+
 # Customized
 config.yml
