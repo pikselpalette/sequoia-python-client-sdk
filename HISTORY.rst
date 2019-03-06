@@ -17,6 +17,6 @@ History
 1.2.0 (2019-03-06)
 ------------------
 
-* Libreries urllib3 and requests upgraded to solve security issues:
+* Libraries `urllib3` and `requests` upgraded to solve security issues:
     - `CVE-2018-20060 <https://nvd.nist.gov/vuln/detail/CVE-2018-20060>`_
     - `CVE-2018-18074 <https://nvd.nist.gov/vuln/detail/CVE-2018-18074>`_
