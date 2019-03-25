@@ -47,7 +47,7 @@ _KEYWORDS = ' '.join([
 
 setup(
     name='sequoia-client-sdk',
-    version='1.2.0',
+    version='1.2.1',
     description=sequoia.__description__,
     long_description=_LONG_DESCRIPTION,
     long_description_content_type='text/x-rst',
