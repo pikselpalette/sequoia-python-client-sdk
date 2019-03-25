@@ -20,6 +20,6 @@ class TestGeneric(unittest.TestCase):
 
     def _load_config_yaml(self):
         with open("./tests/config.yml", 'r') as ymlfile:
-            cfg = json.loads(json.dumps(yaml.load(ymlfile)),
+            cfg = json.loads(json.dumps(yaml.safe_load(ymlfile)),
                              object_hook=lambda d: namedtuple('X', d.keys())(*d.values()))
         return cfg
