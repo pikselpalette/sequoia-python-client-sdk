@@ -4,7 +4,7 @@ import sys
 import pytest
 import requests
 import requests_mock
-from hamcrest import assert_that, instance_of, is_in, none, equal_to
+from hamcrest import assert_that, instance_of, is_in, none, equal_to, is_
 from jsonpickle import json
 
 from sequoia import auth, http, error
@@ -120,15 +120,15 @@ class HttpExecutorTest(unittest.TestCase):
         assert_that(sequoia_error.value.cause, none())
 
     def test_request_given_post_method_and_server_returns_an_error_code_then_that_error_should_be_populated(self):
-        self.adapter.register_uri('POST', 'mock://test.com', text='some json value', status_code=403)
+        self.adapter.register_uri('POST', 'mock://test.com', text='{"error": "some json value"}', status_code=403)
 
         http_executor = http.HttpExecutor(auth.Auth("client_id", "client_secret"), session=self.session_mock)
 
         with pytest.raises(error.HttpError) as sequoia_error:
             http_executor.request("POST", "mock://test.com")
 
-        assert_that(sequoia_error.value.status_code, 403)
-        assert_that(sequoia_error.value.message, 'some json value')
+        assert_that(sequoia_error.value.status_code, is_(403))
+        assert_that(sequoia_error.value.message, is_({'error': 'some json value'}))
         assert_that(sequoia_error.value.cause, none())
 
     def test_request_given_server_returns_an_error_then_the_request_should_be_retried(self):
@@ -140,6 +140,50 @@ class HttpExecutorTest(unittest.TestCase):
 
         http_executor = http.HttpExecutor(auth.Auth("client_id", "client_secret"), session=self.session_mock)
 
+        response = http_executor.request("GET", "mock://test.com")
+
+        assert_that(response.data, equal_to(json.loads(json_response)))
+
+    def test_request_given_server_returns_an_error_then_the_request_should_be_retried_10_times_by_default(self):
+
+        json_response = '{"resp2": "resp2"}'
+
+        self.adapter.register_uri('GET', 'mock://test.com', [{'text': 'resp1', 'status_code': 500},
+                                                             {'text': 'resp1', 'status_code': 500},
+                                                             {'text': 'resp1', 'status_code': 500},
+                                                             {'text': 'resp1', 'status_code': 500},
+                                                             {'text': 'resp1', 'status_code': 500},
+                                                             {'text': 'resp1', 'status_code': 500},
+                                                             {'text': 'resp1', 'status_code': 500},
+                                                             {'text': 'resp1', 'status_code': 500},
+                                                             {'text': 'resp1', 'status_code': 500},
+                                                             {'text': 'resp1', 'status_code': 500},
+                                                             {'text': json_response, 'status_code': 200}])
+
+        http_executor = http.HttpExecutor(auth.Auth("client_id", "client_secret"), session=self.session_mock)
+        with pytest.raises(error.HttpError) as sequoia_error:
+            http_executor.request("GET", "mock://test.com")
+
+        assert_that(sequoia_error.value.status_code, is_(500))
+
+    def test_request_given_server_returns_an_error_then_the_request_should_be_retried_configured_times_by_default(self):
+
+        json_response = '{"resp2": "resp2"}'
+
+        self.adapter.register_uri('GET', 'mock://test.com', [{'text': 'resp1', 'status_code': 500},
+                                                             {'text': 'resp1', 'status_code': 500},
+                                                             {'text': 'resp1', 'status_code': 500},
+                                                             {'text': 'resp1', 'status_code': 500},
+                                                             {'text': 'resp1', 'status_code': 500},
+                                                             {'text': 'resp1', 'status_code': 500},
+                                                             {'text': 'resp1', 'status_code': 500},
+                                                             {'text': 'resp1', 'status_code': 500},
+                                                             {'text': 'resp1', 'status_code': 500},
+                                                             {'text': 'resp1', 'status_code': 500},
+                                                             {'text': json_response, 'status_code': 200}])
+
+        http_executor = http.HttpExecutor(auth.Auth("client_id", "client_secret"), session=self.session_mock,
+                                          backoff_strategy={'interval': 0, 'max_tries': 11})
         response = http_executor.request("GET", "mock://test.com")
 
         assert_that(response.data, equal_to(json.loads(json_response)))

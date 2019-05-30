@@ -33,7 +33,6 @@ class Client(object):
         self._auth = auth.Auth(**auth_kwargs)
         self._proxies = proxies
         self._user_agent = user_agent
-        self._backoff_strategy = backoff_strategy
         self._create_client()
         self._register_adapters(adapters)
         self._request_timeout = request_timeout or env.DEFAULT_REQUEST_TIMEOUT_SECONDS
@@ -42,7 +41,8 @@ class Client(object):
                                        proxies=self._proxies,
                                        user_agent=self._user_agent,
                                        session=self._oauth,
-                                       request_timeout=self._request_timeout
+                                       request_timeout=self._request_timeout,
+                                       backoff_strategy=backoff_strategy
                                        )
         self._populate_registry()
 

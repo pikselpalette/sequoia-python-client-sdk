@@ -3,9 +3,9 @@
     :align: center
     :alt: Piksel Palette
 
-##########################
+#########################
 Python Sequoia Client SDK
-##########################
+#########################
 A Python Client SDK for interacting with client services.
 
 The central idea is that Client SDK allows python application code to communicate with the `Piksel Palette`_ RESTful RESTful services.
@@ -22,9 +22,9 @@ Installation
     pip install sequoia-client-sdk
 
 
-******
+*****
 Usage
-******
+*****
 
 
 Creating a SequoiaClient
@@ -53,7 +53,7 @@ An endpoint defines the resource on which to perform the operations.
 
 
 API methods
-============
+===========
 
 Read
 ----
@@ -130,7 +130,7 @@ For now it can be used only for Inclusions
 
 
 Paginating results
-===================
+==================
 
 Iterator
 --------
@@ -177,6 +177,29 @@ If linked response is not used as an iterator, only first page of linked resourc
             asset_name = linked_asset['name']
 
 
+
+Retrying requests
+=================
+When a request is returning a retrievable status code, a retry strategy can be configured with ``backoff_strategy``. By default ``backoff_strategy`` is
+
+  .. code-block:: python
+
+   {'wait_gen': backoff.constant, 'interval': 0, 'max_tries': 10}
+
+We can set a different backoff strategy.
+
+    .. code-block:: python
+
+        client = Client("https://registry-sandbox.sequoia.piksel.com/services/testmock",
+                        grant_client_id="clientId",
+                        grant_client_secret="clientSecret",
+                        backoff_strategy= {'wait_gen': backoff.expo, 'base':2, 'factor': 1, 'max_tries': 5, 'max_time': 300}
+                        )
+
+Here an exponential strategy will be used, with a base of 2 and factor 1.
+
+For more info about backoff strategies https://github.com/litl/backoff
+
 ***********
 Development
 ***********
@@ -191,7 +214,7 @@ Preparing environment
 Create new virtualenv
 ---------------------
 
-It's encouraging to create a new virtual environment and install all the dependencies in it. 
+It's encouraging to create a new virtual environment and install all the dependencies in it.
 You can use these commands:
 
 .. code-block:: python
