@@ -193,7 +193,7 @@ We can set a different backoff strategy.
         client = Client("https://registry-sandbox.sequoia.piksel.com/services/testmock",
                         grant_client_id="clientId",
                         grant_client_secret="clientSecret",
-                        backoff_strategy= {'wait_gen': backoff.expo, 'base':2, 'factor': 1, 'max_tries': 5, 'max_time': 300}
+                        backoff_strategy={'wait_gen': backoff.expo, 'base':2, 'factor': 1, 'max_tries': 5, 'max_time': 300}
                         )
 
 Here an exponential strategy will be used, with a base of 2 and factor 1.
