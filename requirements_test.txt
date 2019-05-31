@@ -7,7 +7,7 @@
 jsonpickle==1.*
 mock==2.0.*; python_version <= '2.7'
 numpy==1.16.*
-prospector==0.12.*
+prospector==1.1.*
 pyhamcrest==1.9.*
 pytest==3.5.*
 pytest-xdist==1.22.*

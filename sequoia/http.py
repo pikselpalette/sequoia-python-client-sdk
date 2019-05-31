@@ -8,9 +8,8 @@ import backoff
 from requests import Session
 from requests.exceptions import RequestException, ConnectionError, Timeout, TooManyRedirects
 
-import sequoia.env as env
 from sequoia import __version__ as client_version, util
-from sequoia import error
+from sequoia import error, env
 
 try:
     from distro import linux_distribution
@@ -31,7 +30,7 @@ except ImportError:
         return '', '', '', ''
 
 
-class HttpExecutor(object):
+class HttpExecutor:
     os_info = platform()
     os_versions = {
         'Linux': "%s (%s)" % (linux_distribution()[0], os_info),
@@ -149,7 +148,7 @@ class HttpExecutor(object):
         return self.request('DELETE', url, params=params, resource_name=resource_name)
 
 
-class HttpResponse(object):
+class HttpResponse:
     """Wraps the response object providing raw access via the
     underscore prefix, e.g. _status_code. The response data object
     is available via the _data_ property.
