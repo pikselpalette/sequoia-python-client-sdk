@@ -1,3 +1,4 @@
+import copy
 import logging
 from collections import OrderedDict
 from collections import namedtuple
@@ -92,7 +93,7 @@ class HttpExecutor:
                                                   error.HttpError),
                                                  giveup=fatal_code,
                                                  on_backoff=backoff_hdlr,
-                                                 **self.backoff_strategy)(self._request)
+                                                 **copy.deepcopy(self.backoff_strategy))(self._request)
         return decorated_request(method,
                                  url,
                                  data=data,
