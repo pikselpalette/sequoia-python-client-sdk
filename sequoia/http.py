@@ -1,3 +1,4 @@
+import copy
 import logging
 from collections import OrderedDict
 from collections import namedtuple
@@ -10,7 +11,6 @@ from requests.exceptions import RequestException, ConnectionError, Timeout, TooM
 
 from sequoia import __version__ as client_version, util
 from sequoia import error, env
-from sequoia.sequoia_backoff import SequoiaBackoff
 
 try:
     from distro import linux_distribution
@@ -53,7 +53,7 @@ class HttpExecutor:
         if user_agent is not None:
             self.user_agent = user_agent + self.user_agent
 
-        self.sequoia_backoff = SequoiaBackoff(backoff_strategy or HttpExecutor.DEFAULT_BACKOFF_CONF)
+        self.backoff_strategy = backoff_strategy or HttpExecutor.DEFAULT_BACKOFF_CONF
 
         self.get_delay = get_delay
         self.session = session or Session()
@@ -80,10 +80,24 @@ class HttpExecutor:
         return HttpResponse(response, resource_name)
 
     def request(self, method, url, data=None, params=None, headers=None, retry_count=0, resource_name=None):
-        return self.sequoia_backoff.run_with_backoff(self._request, method, url, data=data,
-                                                     params=params, headers=headers,
-                                                     retry_count=retry_count,
-                                                     resource_name=resource_name)
+        def fatal_code(e):
+            return isinstance(e, error.HttpError) and \
+                   400 <= e.status_code < 500 and e.status_code != 429
+
+        def backoff_hdlr(details):
+            logging.warning('Retry `%s` for args `%s` and kwargs `%s`', details['tries'], details['args'],
+                            details['kwargs'])
+
+        decorated_request = backoff.on_exception(self.backoff_strategy.pop('wait_gen', backoff.constant),
+                                                 (error.ConnectionError, error.Timeout, error.TooManyRedirects,
+                                                  error.HttpError),
+                                                 giveup=fatal_code,
+                                                 on_backoff=backoff_hdlr,
+                                                 **copy.deepcopy(self.backoff_strategy))(self._request)
+        return decorated_request(method, url, data=data,
+                                 params=params, headers=headers,
+                                 retry_count=retry_count,
+                                 resource_name=resource_name)
 
     def _request(self, method, url, data=None, params=None, headers=None, retry_count=0, resource_name=None):
         request_headers = util.merge_dicts(self.common_headers, headers)
