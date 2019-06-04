@@ -5,7 +5,6 @@ from collections import namedtuple
 from platform import platform, system
 from sys import version_info as vi
 
-import backoff
 from requests import Session
 from requests.exceptions import RequestException, ConnectionError, Timeout, TooManyRedirects
 
@@ -46,7 +45,7 @@ class HttpExecutor:
         os_versions.get(system(), ''),
     )
 
-    DEFAULT_BACKOFF_CONF = {'wait_gen': backoff.constant, 'interval': 0, 'max_tries': 10}
+    DEFAULT_BACKOFF_CONF = {'interval': 0, 'max_tries': 10}
 
     def __init__(self, auth, session=None, proxies=None, user_agent=None, get_delay=None, request_timeout=None,
                  backoff_strategy=None):
@@ -80,6 +79,8 @@ class HttpExecutor:
         return HttpResponse(response, resource_name)
 
     def request(self, method, url, data=None, params=None, headers=None, retry_count=0, resource_name=None):
+        import backoff
+
         def fatal_code(e):
             return isinstance(e, error.HttpError) and \
                    400 <= e.status_code < 500 and e.status_code != 429
