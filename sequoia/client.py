@@ -14,15 +14,14 @@ except ImportError:
     from urllib import urlencode
     from urlparse import urlparse, parse_qs
 
-import sequoia.env as env
-from sequoia import error, http, registry, auth
+from sequoia import error, http, registry, auth, env
 from sequoia.auth import AuthType
 from sequoia.http import HttpResponse
 
 DIRECT_MODEL = 'direct'
 
 
-class Client(object):
+class Client:
     """OAuth2 Compliant Client SDK for interacting with Sequoia services.
     """
 
@@ -33,7 +32,6 @@ class Client(object):
         self._auth = auth.Auth(**auth_kwargs)
         self._proxies = proxies
         self._user_agent = user_agent
-        self._backoff_strategy = backoff_strategy
         self._create_client()
         self._register_adapters(adapters)
         self._request_timeout = request_timeout or env.DEFAULT_REQUEST_TIMEOUT_SECONDS
@@ -42,7 +40,8 @@ class Client(object):
                                        proxies=self._proxies,
                                        user_agent=self._user_agent,
                                        session=self._oauth,
-                                       request_timeout=self._request_timeout
+                                       request_timeout=self._request_timeout,
+                                       backoff_strategy=backoff_strategy
                                        )
         self._populate_registry()
 
@@ -98,7 +97,7 @@ class Client(object):
         return self.__dict__.get(item)
 
 
-class ServiceProxy(object):
+class ServiceProxy:
     _service_models = dict()
 
     def __init__(self, http, service, model_resolution=None):
@@ -131,7 +130,7 @@ class ServiceProxy(object):
         return BusinessEndpointProxy(self._http, self._service, path_template=path_template)
 
 
-class ResourceEndpointProxy(object):
+class ResourceEndpointProxy:
     """Proxy endpoint providing read/store/browse operations over Sequoia API endpoint.
     """
 
@@ -217,7 +216,7 @@ class ResourceEndpointProxy(object):
                and e.message['message'] == 'document cannot be changed - versions do not match'
 
 
-class LinkedResourcesPageBrowser(object):
+class LinkedResourcesPageBrowser:
     def __init__(self, endpoint, main_page_browser, resource, owner):
         self._endpoint = endpoint
         self._owner = owner
@@ -278,7 +277,7 @@ class LinkedResourcesPageBrowser(object):
         return []
 
 
-class PageBrowser(object):
+class PageBrowser:
     """
     Sequoia resource service pagination browser. This browser will fetch the content of `prefetch_pages` first pages
     and then will do lazy pagination load of rest of pages till finding a page with no next link.
@@ -345,8 +344,8 @@ class PageBrowser(object):
         if self.next_url:
             self.next_url, response = self._fetch(self.next_url)
             return response
-        else:
-            raise StopIteration()
+
+        raise StopIteration()
 
     def next(self):
         return self.__next__()
@@ -365,7 +364,7 @@ class PageBrowser(object):
         return 'owner' in parse_qs(result.query)
 
 
-class BusinessEndpointProxy(object):
+class BusinessEndpointProxy:
     """Proxy endpoint providing read/store/browse operations over Sequoia API Business Endpoints with NOAUTH.
     """
 
@@ -395,7 +394,7 @@ class BusinessEndpointProxy(object):
         return {'owner': owner}
 
 
-class ResponseBuilder(object):
+class ResponseBuilder:
 
     def __init__(self, descriptor=None, criteria=None):
         # TODO Discover model in installed libraries
@@ -403,13 +402,16 @@ class ResponseBuilder(object):
         self._criteria = criteria
 
     def build(self, response_json, resource_name):
-        if self._criteria and self._descriptor and response_json.get(resource_name):
-            return [self._create_model_instance(resource_name, resource, response_json.get('linked')) for
-                    resource in response_json.get(resource_name)]
-        elif response_json.get(resource_name):
-            return response_json.get(resource_name)
+        if response_json.get(resource_name):
+            return self._build_with_criteria_and_descriptor(response_json, resource_name)
         logging.warning('Resource `%s` not found in response.', resource_name)
         return None
+
+    def _build_with_criteria_and_descriptor(self, response_json, resource_name):
+        if self._criteria and self._descriptor:
+            return [self._create_model_instance(resource_name, resource, response_json.get('linked')) for
+                    resource in response_json.get(resource_name)]
+        return response_json.get(resource_name)
 
     def _get_class_name(self, main_resource_name):
         return self._descriptor['resourcefuls'][main_resource_name]['singularName']

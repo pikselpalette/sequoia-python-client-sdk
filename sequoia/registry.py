@@ -18,7 +18,7 @@ class Registry(dict):
             self[registered_service.name] = registered_service
 
 
-class RegisteredService(object):
+class RegisteredService:
     def __init__(self, service_data):
         self.name = service_data['name']
         self.owner = service_data['owner']

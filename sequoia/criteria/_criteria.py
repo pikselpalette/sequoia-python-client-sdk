@@ -3,7 +3,7 @@ import enum
 __all__ = ['Criteria', 'Inclusion', 'StringExpressionFactory']
 
 
-class Criteria(object):
+class Criteria:
     def __init__(self):
         self.inclusion_entries = set()
         self.criterion_entries = set()
@@ -38,7 +38,7 @@ class Criteria(object):
             inclusion.add_field_entries(params)
 
 
-class Inclusion(object):
+class Inclusion:
     def __init__(self, resource_name):
         self.resource_name = resource_name
         self.fields_entries = set()
@@ -62,7 +62,7 @@ class Inclusion(object):
         return self.resource_name
 
 
-class FieldSelector(object):
+class FieldSelector:
     def __init__(self, field_name):
         self.field = field_name
 
@@ -78,7 +78,7 @@ class FieldSelector(object):
         return self.field.__hash__()
 
 
-class SimpleExpression(object):
+class SimpleExpression:
     def __init__(self, property_name, value, op):
         self.property_name = property_name
         self.value = value
@@ -88,7 +88,7 @@ class SimpleExpression(object):
         query_string[self.property_name] = str(self.value)
 
 
-class StringExpressionFactory(object):
+class StringExpressionFactory:
     def __init__(self, property_name):
         self.property_name = property_name
 
