@@ -1,7 +1,7 @@
 #
 # Project requirements
 #
-astroid==2.2.5; python_version > '2.7'
+astroid==2.0.4; python_version > '2.7'
 backoff==1.8.*
 chardet==3.0.*
 enum34==1.1.*
