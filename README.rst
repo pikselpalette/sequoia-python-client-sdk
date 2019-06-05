@@ -204,7 +204,7 @@ For more info about backoff strategies https://github.com/litl/backoff
 Development
 ***********
 
-It has been tested for Python 2.7, 3.5 and 3.6
+It has been tested for Python 3.5 and 3.6
 
 You can use the included command line tool `make <make>`_ to work with this project
 
@@ -244,7 +244,7 @@ Using ``pytest`` option will run all the unit tests over your environment.
 Run tests on every compatible python version
 --------------------------------------------
 
-While using the option ``test`` will set up a virtual environment for the supported version of Python, i.e. 2.7, 3.5 and 3.6 and will run all the tests on each of them.
+While using the option ``test`` will set up a virtual environment for the supported version of Python, i.e. 3.5 and 3.6 and will run all the tests on each of them.
 
 .. code-block:: python
 
