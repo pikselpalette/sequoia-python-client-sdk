@@ -22,6 +22,7 @@ pylint:
     - raising-bad-type
     - not-callable
     - redefined-builtin
+    - useless-object-inheritance
   options:
     max-line-length: 120
     max-args: 8

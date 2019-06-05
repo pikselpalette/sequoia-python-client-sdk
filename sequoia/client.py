@@ -21,7 +21,7 @@ from sequoia.http import HttpResponse
 DIRECT_MODEL = 'direct'
 
 
-class Client:
+class Client(object):
     """OAuth2 Compliant Client SDK for interacting with Sequoia services.
     """
 
@@ -97,7 +97,7 @@ class Client:
         return self.__dict__.get(item)
 
 
-class ServiceProxy:
+class ServiceProxy(object):
     _service_models = dict()
 
     def __init__(self, http, service, model_resolution=None):
@@ -130,7 +130,7 @@ class ServiceProxy:
         return BusinessEndpointProxy(self._http, self._service, path_template=path_template)
 
 
-class ResourceEndpointProxy:
+class ResourceEndpointProxy(object):
     """Proxy endpoint providing read/store/browse operations over Sequoia API endpoint.
     """
 
@@ -216,7 +216,7 @@ class ResourceEndpointProxy:
                and e.message['message'] == 'document cannot be changed - versions do not match'
 
 
-class LinkedResourcesPageBrowser:
+class LinkedResourcesPageBrowser(object):
     def __init__(self, endpoint, main_page_browser, resource, owner):
         self._endpoint = endpoint
         self._owner = owner
@@ -277,7 +277,7 @@ class LinkedResourcesPageBrowser:
         return []
 
 
-class PageBrowser:
+class PageBrowser(object):
     """
     Sequoia resource service pagination browser. This browser will fetch the content of `prefetch_pages` first pages
     and then will do lazy pagination load of rest of pages till finding a page with no next link.
@@ -364,7 +364,7 @@ class PageBrowser:
         return 'owner' in parse_qs(result.query)
 
 
-class BusinessEndpointProxy:
+class BusinessEndpointProxy(object):
     """Proxy endpoint providing read/store/browse operations over Sequoia API Business Endpoints with NOAUTH.
     """
 
@@ -394,7 +394,7 @@ class BusinessEndpointProxy:
         return {'owner': owner}
 
 
-class ResponseBuilder:
+class ResponseBuilder(object):
 
     def __init__(self, descriptor=None, criteria=None):
         # TODO Discover model in installed libraries

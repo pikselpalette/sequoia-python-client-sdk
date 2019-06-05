@@ -13,7 +13,7 @@ class AuthType(enum.Enum):
     BYO_TOKEN = 3
 
 
-class Auth:
+class Auth(object):
     """Provides authentication logic for Sequoia API requests, support
     potentially a range of authentication schemes depending upon the
     provided credentials."""

@@ -147,7 +147,7 @@ class HttpExecutor:
         return self.request('DELETE', url, params=params, resource_name=resource_name)
 
 
-class HttpResponse:
+class HttpResponse(object):
     """Wraps the response object providing raw access via the
     underscore prefix, e.g. _status_code. The response data object
     is available via the _data_ property.
