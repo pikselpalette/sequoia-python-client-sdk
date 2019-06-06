@@ -25,3 +25,12 @@ History
 ------------------
 
 * Load yaml config file for testing in a safer way as specified in `PyYAML <https://github.com/yaml/pyyaml/wiki/PyYAML-yaml.load(input)-Deprecation>`_
+
+2.0.0 (2019-06-06)
+------------------
+
+* Removing python 2.7 compatibility
+
+* Adding backoff to http requests. Configurable backoff from client creation
+
+* Libraries `urllib3` and `requests` upgraded to solve security issues
