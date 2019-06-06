@@ -35,7 +35,6 @@ _CLASSIFIERS = (
     'License :: OSI Approved :: Apache Software License',
     'Natural Language :: English',
     'Programming Language :: Python',
-    'Programming Language :: Python :: 2.7',
     'Programming Language :: Python :: 3.5',
     'Programming Language :: Python :: 3.6',
     'Topic :: Software Development :: Libraries :: Python Modules',
@@ -47,7 +46,7 @@ _KEYWORDS = ' '.join([
 
 setup(
     name='sequoia-client-sdk',
-    version='1.2.1',
+    version='2.0.0',
     description=sequoia.__description__,
     long_description=_LONG_DESCRIPTION,
     long_description_content_type='text/x-rst',
