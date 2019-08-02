@@ -1,7 +1,6 @@
 SHELL=/bin/bash
 CWD=$(shell pwd)
 
-
 default: clean test
 
 clean:

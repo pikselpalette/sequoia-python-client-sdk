@@ -34,3 +34,8 @@ History
 * Adding backoff to http requests. Configurable backoff from client creation
 
 * Libraries `urllib3` and `requests` upgraded to solve security issues
+
+SNAPSHOT (...)
+--------------
+
+* Modifying setup.cfg to allow different version formats (i.e development versions)
