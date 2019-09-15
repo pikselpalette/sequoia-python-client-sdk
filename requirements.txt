@@ -6,7 +6,6 @@ backoff==1.8.*
 chardet==3.0.*
 enum34==1.1.*
 idna==2.*
-oauthlib==2.0.*
 requests==2.22.*
-requests-oauthlib==0.8.*
+requests-oauthlib==1.2.*
 urllib3==1.25.*
