@@ -299,8 +299,6 @@ class PageBrowser(object):
     def _prefetch(self, pages):
         i = pages
         while i:
-            # TODO JOC dELETE ME
-            print(f'****** Prefetch {i} - {self.next_url}')
             self.next_url, response = self._fetch(self.next_url)
             if response:
                 self._prefetch_queue.append(response)
@@ -310,11 +308,6 @@ class PageBrowser(object):
             i -= 1
 
     def _fetch(self, next_url):
-        # TODO Warning: notice that using continue can end up in an infinite loop
-
-        # TODO JOC dELETE ME
-        print(f'****** fetch {next_url}')
-
         self._remove_owner_if_needed(self.params, next_url)
         response = self._endpoint.http.get(next_url, self.params, resource_name=self._resource_name)
         response_wrapper = self._get_response(self._endpoint, response)
