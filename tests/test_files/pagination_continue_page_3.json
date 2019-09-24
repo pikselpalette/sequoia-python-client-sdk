@@ -1,0 +1,21 @@
+{
+    "meta": {
+        "perPage": 2
+    },
+    "contents": [
+        {
+            "ref": "test:0065ab4e-caf9-4096-8b3b-df4a8f3f19dd_aligned_primary",
+            "owner": "test",
+            "name": "0065ab4e-caf9-4096-8b3b-df4a8f3f19dd_aligned_primary",
+            "title": "0065ab4e-caf9-4096-8b3b-df4a8f3f19dd_aligned_primary",
+            "createdAt": "2019-08-30T15:15:28.607Z",
+            "createdBy": "root:system-piksel-compute-manager",
+            "updatedAt": "2019-08-30T15:15:28.607Z",
+            "updatedBy": "root:system-piksel-compute-manager",
+            "version": "851d3f0e01455d2bcb43223750d3e09d25f35d29",
+            "type": "version",
+            "active": true,
+            "parentRef": "test:0065ab4e-caf9-4096-8b3b-df4a8f3f19dd"
+        }
+    ]
+}

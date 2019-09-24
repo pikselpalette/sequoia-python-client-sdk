@@ -2,7 +2,7 @@ sequoia:
     username: sequoia-user
     password: sequoia-password
     owner: test_mock
-    registry: https://registry-sandbox.sequoia.piksel.com/services/
+    registry: https://registry.sandbox.eu-west-1.palettedev.aws.pikselpalette.com/services/
 ingest:
     username: ingest-user
     password: ingest-password

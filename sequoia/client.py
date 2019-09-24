@@ -313,6 +313,9 @@ class PageBrowser(object):
         response_wrapper = self._get_response(self._endpoint, response)
         if self._next_page(response):
             return '%s%s' % (self._endpoint.service.location, self._next_page(response)), response_wrapper
+        elif self._continue_param(response):
+            return self._build_url_from_continue_param(response), response_wrapper
+
         return None, response_wrapper
 
     def _get_response(self, endpoint, response):
@@ -322,6 +325,12 @@ class PageBrowser(object):
     def _build_url(self):
         url_without_params = '%s/data/%s' % (self._endpoint.service.location, self._resource_name)
         return '%s?%s' % (url_without_params, self.query_string) if self.query_string else url_without_params
+
+    def _continue_param(self, response):
+        return response.data['meta']['continue'] if 'continue' in response.data['meta'] else ''
+
+    def _build_url_from_continue_param(self, response):
+        return self._endpoint.service.location + self._continue_param(response)
 
     def linked(self, resource):
         pb = PageBrowser(endpoint=self._endpoint, resource_name=self._resource_name,
