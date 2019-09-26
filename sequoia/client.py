@@ -11,7 +11,7 @@ except ImportError:
     from urlparse import urlparse, parse_qs
 
 from sequoia import error, http, registry, env
-from sequoia.auth import AuthFactory
+from sequoia.auth import AuthFactory, AuthType
 from sequoia.http import HttpResponse
 
 DIRECT_MODEL = 'direct'
@@ -30,27 +30,32 @@ class Client(object):
         self._proxies = proxies
         self._user_agent = user_agent
         self._model_resolution = model_resolution
-        self._registry = registry.Registry(self._registry_url, self._http_executor_without_auth(backoff_strategy))
+        self._registry = self._initialize_registry(adapters, backoff_strategy)
 
-        self._auth = AuthFactory.get_auth(token_url=self._get_token_url(), **auth_kwargs)
+        self._auth = AuthFactory.create(token_url=self._get_token_url(),
+                                        request_timeout=self._request_timeout,
+                                        **auth_kwargs)
         self._auth.register_adapters(adapters)
-        self._auth.create_session(request_timeout=self._request_timeout)
+        self._auth.init_session()
 
         self._http = http.HttpExecutor(self._auth,
                                        proxies=self._proxies,
                                        user_agent=self._user_agent,
                                        session=self._auth.session,
                                        request_timeout=self._request_timeout,
-                                       backoff_strategy=backoff_strategy
-                                       )
+                                       backoff_strategy=backoff_strategy)
 
-    def _http_executor_without_auth(self, backoff_strategy):
-        return http.HttpExecutor(None,
-                                 proxies=self._proxies,
-                                 user_agent=self._user_agent,
-                                 request_timeout=self._request_timeout,
-                                 backoff_strategy=backoff_strategy
-                                 )
+    def _initialize_registry(self, adapters, backoff_strategy):
+        auth = AuthFactory.create(auth_type=AuthType.NO_AUTH)
+        auth.register_adapters(adapters)
+        http_executor = http.HttpExecutor(auth,
+                                          proxies=self._proxies,
+                                          user_agent=self._user_agent,
+                                          session=auth.session,
+                                          request_timeout=self._request_timeout,
+                                          backoff_strategy=backoff_strategy)
+
+        return registry.Registry(self._registry_url, http_executor)
 
     def _get_token_url(self):
         identity = self._registry['identity'].location

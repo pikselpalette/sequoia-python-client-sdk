@@ -55,10 +55,9 @@ class HttpExecutor:
         self.backoff_strategy = backoff_strategy or HttpExecutor.DEFAULT_BACKOFF_CONF
 
         self.get_delay = get_delay
-        self._auth = auth
         self.session = session or Session()
         self.session.proxies = proxies or {}
-        self.session.auth = self._auth
+        self.session.auth = auth
         self.common_headers = {
             'User-Agent': self.user_agent,
             "Content-Type": "application/vnd.piksel+json",
@@ -119,20 +118,23 @@ class HttpExecutor:
                                 retry_count=retry_count, resource_name=resource_name)
 
         if response.status_code == 401:
-            try:
-                # This can raise AuthorisationError and should not be retried
-                self._auth.refresh_token(request_timeout=self.request_timeout)
-                self.session.auth = self._auth
-                return self.request(method, url, data=data, params=params, headers=request_headers,
-                                    retry_count=retry_count, resource_name=resource_name)
-            except NotImplementedError:
-                # Auth type does not provide refresh_token
-                pass
+            return self._refresh_token_and_retry_request(response, method, url, data=data, params=params,
+                                                         headers=request_headers, retry_count=retry_count,
+                                                         resource_name=resource_name)
 
         if 400 <= response.status_code <= 600:
             self._raise_sequoia_error(response)
 
         return self.return_response(response, resource_name=resource_name)
+
+    def _refresh_token_and_retry_request(self, response, *request_args, **request_kwargs):
+        try:
+            # This can raise AuthorisationError and should not be retried
+            self.session.auth.refresh_token()
+            return self.request(*request_args, **request_kwargs)
+        except NotImplementedError:
+            # Auth type does not provide refresh_token
+            self._raise_sequoia_error(response)
 
     def _raise_sequoia_error(self, response=None, request_error=None):
         if isinstance(request_error, ConnectionError):
