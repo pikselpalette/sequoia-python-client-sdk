@@ -55,9 +55,10 @@ class HttpExecutor:
         self.backoff_strategy = backoff_strategy or HttpExecutor.DEFAULT_BACKOFF_CONF
 
         self.get_delay = get_delay
+        self._auth = auth
         self.session = session or Session()
         self.session.proxies = proxies or {}
-        self.session.auth = auth
+        self.session.auth = self._auth
         self.common_headers = {
             'User-Agent': self.user_agent,
             "Content-Type": "application/vnd.piksel+json",
@@ -83,7 +84,8 @@ class HttpExecutor:
 
         def fatal_code(e):
             return isinstance(e, error.HttpError) and \
-                   400 <= e.status_code < 500 and e.status_code != 429
+                   400 <= e.status_code < 500 and e.status_code != 429 \
+                   or isinstance(e, error.AuthorisationError)
 
         def backoff_hdlr(details):
             logging.warning('Retry `%s` for args `%s` and kwargs `%s`', details['tries'], details['args'],
@@ -115,6 +117,17 @@ class HttpExecutor:
         if response.is_redirect:
             return self.request(method, response.headers['location'], data=data, params=params, headers=request_headers,
                                 retry_count=retry_count, resource_name=resource_name)
+
+        if response.status_code == 401:
+            try:
+                # This can raise AuthorisationError and should not be retried
+                self._auth.refresh_token(request_timeout=self.request_timeout)
+                self.session.auth = self._auth
+                return self.request(method, url, data=data, params=params, headers=request_headers,
+                                    retry_count=retry_count, resource_name=resource_name)
+            except NotImplementedError:
+                # Auth type does not provide refresh_token
+                pass
 
         if 400 <= response.status_code <= 600:
             self._raise_sequoia_error(response)

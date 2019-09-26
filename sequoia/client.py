@@ -3,10 +3,6 @@ import logging
 import re
 from string import Template
 
-import requests
-import requests_oauthlib
-from oauthlib.oauth2 import BackendApplicationClient, OAuth2Error, OAuth2Token
-
 # Python 2 and 3: urllib compatibility between both versions
 try:
     from urllib.parse import urlencode, urlparse, parse_qs
@@ -14,8 +10,8 @@ except ImportError:
     from urllib import urlencode
     from urlparse import urlparse, parse_qs
 
-from sequoia import error, http, registry, auth, env
-from sequoia.auth import AuthType
+from sequoia import error, http, registry, env
+from sequoia.auth import AuthFactory
 from sequoia.http import HttpResponse
 
 DIRECT_MODEL = 'direct'
@@ -29,61 +25,36 @@ class Client(object):
                  request_timeout=None, model_resolution=None, **auth_kwargs):
         logging.debug('Client initialising with registry_url=%s ', registry_url)
         self._registry_url = registry_url
-        self._auth = auth.Auth(**auth_kwargs)
+        self._request_timeout = request_timeout or env.DEFAULT_REQUEST_TIMEOUT_SECONDS
+
         self._proxies = proxies
         self._user_agent = user_agent
-        self._create_client()
-        self._register_adapters(adapters)
-        self._request_timeout = request_timeout or env.DEFAULT_REQUEST_TIMEOUT_SECONDS
         self._model_resolution = model_resolution
+        self._registry = registry.Registry(self._registry_url, self._http_executor_without_auth(backoff_strategy))
+
+        self._auth = AuthFactory.get_auth(token_url=self._get_token_url(), **auth_kwargs)
+        self._auth.register_adapters(adapters)
+        self._auth.create_session(request_timeout=self._request_timeout)
+
         self._http = http.HttpExecutor(self._auth,
                                        proxies=self._proxies,
                                        user_agent=self._user_agent,
-                                       session=self._oauth,
+                                       session=self._auth.session,
                                        request_timeout=self._request_timeout,
                                        backoff_strategy=backoff_strategy
                                        )
-        self._populate_registry()
 
-    def _create_client(self):
-        if self._auth.auth_style is auth.AuthType.CLIENT_GRANT:
-            self._client = BackendApplicationClient(
-                client_id=self._auth.grant_client_id)
-            self._oauth = requests_oauthlib.OAuth2Session(client=self._client)
-        elif self._auth.auth_style is AuthType.NO_AUTH:
-            pass
-        elif self._auth.auth_style is AuthType.BYO_TOKEN:
-            data = {'token_type': 'bearer',
-                    'access_token': self._auth.auth}
-            self._token = OAuth2Token(data)
-            self._oauth = requests_oauthlib.OAuth2Session(token=self._token)
-        else:
-            raise NotImplementedError('Authentication type not supported')
+    def _http_executor_without_auth(self, backoff_strategy):
+        return http.HttpExecutor(None,
+                                 proxies=self._proxies,
+                                 user_agent=self._user_agent,
+                                 request_timeout=self._request_timeout,
+                                 backoff_strategy=backoff_strategy
+                                 )
 
-    def _populate_registry(self):
-        self._registry = registry.Registry(self._registry_url, self._http)
-        if self._auth and self._auth.auth_style:
-            if self._auth.auth_style == AuthType.CLIENT_GRANT:
-                self._token = self._get_token()
-
-    def _get_token(self):
+    def _get_token_url(self):
         identity = self._registry['identity'].location
-        oauth_token_url = identity + '/oauth/token'
-        try:
-            token = self._oauth.fetch_token(token_url=oauth_token_url,
-                                            auth=self._auth.auth, timeout=self._request_timeout)
-        except OAuth2Error as oauth2_error:
-            raise error.AuthorisationError(str(oauth2_error.args[0]), cause=oauth2_error)
-
-        return token
-
-    def _register_adapters(self, adapters):
-        if adapters:
-            for adapter_registration in adapters:
-                if self._auth.auth_style is AuthType.NO_AUTH:
-                    self._oauth = requests.Session()
-                self._oauth.mount(adapter_registration[0],
-                                  adapter_registration[1])
+        return identity + '/oauth/token'
 
     def __getattr__(self, item):
         return self._create_service_proxy(item)
