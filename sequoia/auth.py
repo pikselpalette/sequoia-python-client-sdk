@@ -67,7 +67,7 @@ class Auth:
                 self.session.mount(adapter_registration[0],
                                    adapter_registration[1])
 
-    def refresh_token(self):
+    def update_token(self):
         raise NotImplementedError("Auth type does not support refresh token")
 
 
@@ -85,14 +85,14 @@ class ClientGrantAuth(Auth):
 
     def init_session(self):
         if not self.token:
-            self.refresh_token()
+            self.update_token()
 
     def _session(self, token=None):
         client = BackendApplicationClient(client_id=self.grant_client_id)
         return requests_oauthlib.OAuth2Session(client=client,
                                                token=token)
 
-    def refresh_token(self):
+    def update_token(self):
         try:
             self.session.fetch_token(token_url=self.token_url,
                                      auth=self.auth, timeout=self.request_timeout)
@@ -112,8 +112,8 @@ class NoAuth(Auth):
         self.session = requests.Session() if adapters else None
         super().register_adapters(adapters)
 
-    def refresh_token(self):
-        super().refresh_token()
+    def update_token(self):
+        super().update_token()
 
 
 class BYOTokenAuth(Auth):
@@ -122,8 +122,8 @@ class BYOTokenAuth(Auth):
         self.token = oauth_token(byo_token)
         self.session = requests_oauthlib.OAuth2Session(token=self.token)
 
-    def refresh_token(self):
-        super().refresh_token()
+    def update_token(self):
+        super().update_token()
 
 
 def oauth_token(access_token):

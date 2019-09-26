@@ -118,19 +118,19 @@ class HttpExecutor:
                                 retry_count=retry_count, resource_name=resource_name)
 
         if response.status_code == 401:
-            return self._refresh_token_and_retry_request(response, method, url, data=data, params=params,
-                                                         headers=request_headers, retry_count=retry_count,
-                                                         resource_name=resource_name)
+            return self._update_token_and_retry_request(response, method, url, data=data, params=params,
+                                                        headers=request_headers, retry_count=retry_count,
+                                                        resource_name=resource_name)
 
         if 400 <= response.status_code <= 600:
             self._raise_sequoia_error(response)
 
         return self.return_response(response, resource_name=resource_name)
 
-    def _refresh_token_and_retry_request(self, response, *request_args, **request_kwargs):
+    def _update_token_and_retry_request(self, response, *request_args, **request_kwargs):
         try:
             # This can raise AuthorisationError and should not be retried
-            self.session.auth.refresh_token()
+            self.session.auth.update_token()
             return self.request(*request_args, **request_kwargs)
         except NotImplementedError:
             # Auth type does not provide refresh_token
