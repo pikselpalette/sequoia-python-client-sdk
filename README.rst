@@ -153,6 +153,18 @@ If browse function is not used as an iterator, only first page is retrieved. i.e
         resources_in_page_1 = response.resources
 
 
+With continue
+-------------
+
+Sequoia services allow to paginate using the parameter `continue`, which will return the link to get the following page in the `meta` of the response.
+The `browse` can be call repeatedly while there are pages to be read.
+Optionally, you can set the number of items per page.
+
+    .. code-block:: python
+
+        for response in endpoint.browse('testmock', query_string='continue=true&perPage=2'):
+            resources = response.resources
+
 
 Paginating linked resources
 ===========================
