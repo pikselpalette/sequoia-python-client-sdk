@@ -44,7 +44,7 @@ To create the client it is needed to provide credentials and the url for the ser
 Authentication types
 ====================
 
-When creating the client, authentication types can be specified using the parameter ``auth_type``:
+When creating the client, authentication type can be specified using the parameter ``auth_type``:
 
     .. code-block:: python
 
@@ -58,20 +58,20 @@ There are three authentication types:
 CLIENT_GRANT type
 -----------------
 
-This is the default types. With CLIENT_GRANT mode ``grant_client_id`` and ``grant_client_secret`` parameters are
+This is the default type. With CLIENT_GRANT mode ``grant_client_id`` and ``grant_client_secret`` parameters are
 used to get an access token. The access token is refreshed automatically when expired. Optionally, ``byo_token``
 parameter can be provided when instantiating the client, and will be used until it is expired.
 Then the access token is refreshed automatically.
 
 
-BYO_TOKEN types
----------------
+BYO_TOKEN type
+--------------
 
 With this method ``byo_token`` is required. That access token will be used to authenticate requests. The access token will
 be used along the client life and won't be refreshed.
 
-NO_AUTH types
--------------
+NO_AUTH type
+------------
 
 Mode used when no authentication is required.
 
