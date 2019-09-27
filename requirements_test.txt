@@ -1,8 +1,7 @@
 #
 # Testing requirements
 #
--r requirements_build.txt
-
+-r requirements.txt
 
 jsonpickle==1.*
 numpy==1.16.*

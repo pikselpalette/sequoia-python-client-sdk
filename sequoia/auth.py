@@ -99,9 +99,6 @@ class ClientGrantAuth(Auth):
         except OAuth2Error as oauth2_error:
             raise error.AuthorisationError(str(oauth2_error.args[0]), cause=oauth2_error)
 
-    def register_adapters(self, adapters):
-        super().register_adapters(adapters)
-
 
 class NoAuth(Auth):
     def __init__(self):
@@ -112,18 +109,12 @@ class NoAuth(Auth):
         self.session = requests.Session() if adapters else None
         super().register_adapters(adapters)
 
-    def update_token(self):
-        super().update_token()
-
 
 class BYOTokenAuth(Auth):
     def __init__(self, byo_token):
         super().__init__()
         self.token = oauth_token(byo_token)
         self.session = requests_oauthlib.OAuth2Session(token=self.token)
-
-    def update_token(self):
-        super().update_token()
 
 
 def oauth_token(access_token):
