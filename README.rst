@@ -41,6 +41,41 @@ To create the client it is needed to provide credentials and the url for the ser
                         grant_client_secret="clientSecret")
 
 
+Authentication types
+====================
+
+When creating the client, authentication type can be specified using the parameter ``auth_type``:
+
+    .. code-block:: python
+
+        client = Client("https://registry-sandbox.sequoia.piksel.com/services/testmock",
+                        auth_type=AuthType.CLIENT_GRANT,
+                        grant_client_id="clientId",
+                        grant_client_secret="clientSecret")
+
+There are three authentication types:
+
+CLIENT_GRANT type
+-----------------
+
+This is the default type. With CLIENT_GRANT mode ``grant_client_id`` and ``grant_client_secret`` parameters are
+used to get an access token. The access token is refreshed automatically when expired. Optionally, ``byo_token``
+parameter can be provided when instantiating the client, and will be used until it is expired.
+Then the access token is refreshed automatically.
+
+
+BYO_TOKEN type
+--------------
+
+With this method ``byo_token`` is required. That access token will be used to authenticate requests. The access token will
+be used along the client life and won't be refreshed.
+
+NO_AUTH type
+------------
+
+Mode used when no authentication is required.
+
+
 Creating an endpoint
 ====================
 

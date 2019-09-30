@@ -1,7 +1,6 @@
 #
 # Building requirements
 #
--r requirements.txt
 
 boto3
 colorama

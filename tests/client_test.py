@@ -350,8 +350,8 @@ class TestResourceEndpointProxy(unittest.TestCase):
                           'testmock:reference',
                           'version')
 
-    @patch('requests_oauthlib.OAuth2Session.request')
-    @patch('requests_oauthlib.OAuth2Session.fetch_token')
+    @patch('requests.sessions.Session.request')
+    @patch('sequoia.auth.requests_oauthlib.OAuth2Session.fetch_token')
     def test_client_given_redirect_should_redirect(self, mock_fetch_token, mock_request):
         redirect_response = Response()
         redirect_response.status_code = 301
@@ -416,7 +416,7 @@ class TestBusinessEndpointProxy(unittest.TestCase):
 
         assert_that(response.data['message'], 'FlowExecution not found')
 
-    @patch('requests_oauthlib.OAuth2Session.request')
+    @patch('requests.sessions.Session.request')
     @patch('requests_oauthlib.OAuth2Session.fetch_token')
     def test_client_given_redirect_should_redirect(self, mock_fetch_token, mock_request):
         redirect_response = Response()

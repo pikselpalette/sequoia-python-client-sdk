@@ -35,7 +35,9 @@ History
 
 * Libraries `urllib3` and `requests` upgraded to solve security issues
 
-SNAPSHOT (...)
---------------
+2.1.0 (2019-09-30)
+------------------
 
 * Modifying setup.cfg to allow different version formats (i.e development versions)
+* Paging with `continue` parameter
+* When token is expired, it is updated automatically with CLIENT_GRANT auth type

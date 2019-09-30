@@ -1,11 +1,12 @@
-import unittest
 import sys
+import unittest
 
 import pytest
 import requests
 import requests_mock
 from hamcrest import assert_that, instance_of, is_in, none, equal_to, is_
 from jsonpickle import json
+from oauthlib.oauth2 import OAuth2Error
 
 from sequoia import auth, http, error
 
@@ -17,8 +18,8 @@ else:
     from unittest.mock import patch
 
 
-class HttpExecutorTest(unittest.TestCase):
 
+class HttpExecutorTest(unittest.TestCase):
     def setUp(self):
         self.session_mock = requests.Session()
         self.adapter = requests_mock.Adapter()
@@ -33,7 +34,9 @@ class HttpExecutorTest(unittest.TestCase):
         session_mock.request.return_value.status_code = 200
         session_mock.request.return_value.is_redirect = False
 
-        http_executor = http.HttpExecutor(auth.Auth("client_id", "client_secret"), session=session_mock)
+        http_executor = http.HttpExecutor(auth.AuthFactory.create(grant_client_id="client_id",
+                                                                  grant_client_secret="client_secret"),
+                                          session=session_mock)
         http_executor.request("POST", "mock://some_url",
                               data='some data',
                               headers={'New-Header': 'SomeValue'},
@@ -47,12 +50,13 @@ class HttpExecutorTest(unittest.TestCase):
         return 'some data' in (request.text or '')
 
     def test_request_given_additional_headers_and_data_then_they_are_added_to_the_request(self):
-
         self.adapter.register_uri('POST', 'mock://some_url', text='{"key_1": "value_1"}',
                                   request_headers={'New-Header': 'SomeValue'},
                                   additional_matcher=HttpExecutorTest.match_request_text)
 
-        http_executor = http.HttpExecutor(auth.Auth("client_id", "client_secret"), session=self.session_mock)
+        http_executor = http.HttpExecutor(auth.AuthFactory.create(grant_client_id="client_id",
+                                                                  grant_client_secret="client_secret"),
+                                          session=self.session_mock)
         response = http_executor.request("POST", "mock://some_url",
                                          headers={'New-Header': 'SomeValue'},
                                          data='some data')
@@ -63,7 +67,9 @@ class HttpExecutorTest(unittest.TestCase):
         self.adapter.register_uri('GET', 'mock://some_url',
                                   exc=requests.exceptions.ConnectionError('some error desc'))
 
-        http_executor = http.HttpExecutor(auth.Auth("client_id", "client_secret"), session=self.session_mock)
+        http_executor = http.HttpExecutor(auth.AuthFactory.create(grant_client_id="client_id",
+                                                                  grant_client_secret="client_secret"),
+                                          session=self.session_mock)
 
         with pytest.raises(error.ConnectionError) as sequoia_error:
             http_executor.request("GET", "mock://some_url")
@@ -75,7 +81,9 @@ class HttpExecutorTest(unittest.TestCase):
         self.adapter.register_uri('GET', 'mock://some_url',
                                   exc=requests.exceptions.TooManyRedirects('some error desc'))
 
-        http_executor = http.HttpExecutor(auth.Auth("client_id", "client_secret"), session=self.session_mock)
+        http_executor = http.HttpExecutor(auth.AuthFactory.create(grant_client_id="client_id",
+                                                                  grant_client_secret="client_secret"),
+                                          session=self.session_mock)
 
         with pytest.raises(error.TooManyRedirects) as sequoia_error:
             http_executor.request("GET", "mock://some_url")
@@ -83,11 +91,14 @@ class HttpExecutorTest(unittest.TestCase):
         assert_that('some error desc', is_in(sequoia_error.value.args))
         assert_that(sequoia_error.value.cause, instance_of(requests.exceptions.TooManyRedirects))
 
-    def test_request_given_get_method_and_server_throw_connection_timeout_then_a_connection_error_should_be_raised(self):
+    def test_request_given_get_method_and_server_throw_connection_timeout_then_a_connection_error_should_be_raised(
+        self):
         self.adapter.register_uri('GET', 'mock://some_url',
                                   exc=requests.exceptions.ConnectTimeout('some error desc'))
 
-        http_executor = http.HttpExecutor(auth.Auth("client_id", "client_secret"), session=self.session_mock)
+        http_executor = http.HttpExecutor(auth.AuthFactory.create(grant_client_id="client_id",
+                                                                  grant_client_secret="client_secret"),
+                                          session=self.session_mock)
 
         with pytest.raises(error.ConnectionError) as sequoia_error:
             http_executor.request("GET", "mock://some_url")
@@ -99,7 +110,9 @@ class HttpExecutorTest(unittest.TestCase):
         self.adapter.register_uri('GET', 'mock://some_url',
                                   exc=requests.exceptions.Timeout('some error desc'))
 
-        http_executor = http.HttpExecutor(auth.Auth("client_id", "client_secret"), session=self.session_mock)
+        http_executor = http.HttpExecutor(auth.AuthFactory.create(grant_client_id="client_id",
+                                                                  grant_client_secret="client_secret"),
+                                          session=self.session_mock)
 
         with pytest.raises(error.Timeout) as sequoia_error:
             http_executor.request("GET", "mock://some_url")
@@ -110,7 +123,9 @@ class HttpExecutorTest(unittest.TestCase):
     def test_request_given_get_method_and_server_returns_an_error_code_then_that_error_should_be_populated(self):
         self.adapter.register_uri('GET', 'mock://test.com', text='some json value', status_code=403)
 
-        http_executor = http.HttpExecutor(auth.Auth("client_id", "client_secret"), session=self.session_mock)
+        http_executor = http.HttpExecutor(auth.AuthFactory.create(grant_client_id="client_id",
+                                                                  grant_client_secret="client_secret"),
+                                          session=self.session_mock)
 
         with pytest.raises(error.HttpError) as sequoia_error:
             http_executor.request("GET", "mock://test.com")
@@ -122,7 +137,9 @@ class HttpExecutorTest(unittest.TestCase):
     def test_request_given_post_method_and_server_returns_an_error_code_then_that_error_should_be_populated(self):
         self.adapter.register_uri('POST', 'mock://test.com', text='{"error": "some json value"}', status_code=403)
 
-        http_executor = http.HttpExecutor(auth.Auth("client_id", "client_secret"), session=self.session_mock)
+        http_executor = http.HttpExecutor(auth.AuthFactory.create(grant_client_id="client_id",
+                                                                  grant_client_secret="client_secret"),
+                                          session=self.session_mock)
 
         with pytest.raises(error.HttpError) as sequoia_error:
             http_executor.request("POST", "mock://test.com")
@@ -132,20 +149,20 @@ class HttpExecutorTest(unittest.TestCase):
         assert_that(sequoia_error.value.cause, none())
 
     def test_request_given_server_returns_an_error_then_the_request_should_be_retried(self):
-
         json_response = '{"resp2": "resp2"}'
 
         self.adapter.register_uri('GET', 'mock://test.com', [{'text': 'resp1', 'status_code': 500},
                                                              {'text': json_response, 'status_code': 200}])
 
-        http_executor = http.HttpExecutor(auth.Auth("client_id", "client_secret"), session=self.session_mock)
+        http_executor = http.HttpExecutor(auth.AuthFactory.create(grant_client_id="client_id",
+                                                                  grant_client_secret="client_secret"),
+                                          session=self.session_mock)
 
         response = http_executor.request("GET", "mock://test.com")
 
         assert_that(response.data, equal_to(json.loads(json_response)))
 
     def test_request_given_server_returns_an_error_then_the_request_should_be_retried_10_times_by_default(self):
-
         json_response = '{"resp2": "resp2"}'
 
         self.adapter.register_uri('GET', 'mock://test.com', [{'text': 'resp1', 'status_code': 500},
@@ -160,14 +177,15 @@ class HttpExecutorTest(unittest.TestCase):
                                                              {'text': 'resp1', 'status_code': 500},
                                                              {'text': json_response, 'status_code': 200}])
 
-        http_executor = http.HttpExecutor(auth.Auth("client_id", "client_secret"), session=self.session_mock)
+        http_executor = http.HttpExecutor(auth.AuthFactory.create(grant_client_id="client_id",
+                                                                  grant_client_secret="client_secret"),
+                                          session=self.session_mock)
         with pytest.raises(error.HttpError) as sequoia_error:
             http_executor.request("GET", "mock://test.com")
 
         assert_that(sequoia_error.value.status_code, is_(500))
 
     def test_request_given_server_returns_an_error_then_the_request_should_be_retried_configured_times_by_default(self):
-
         json_response = '{"resp2": "resp2"}'
 
         self.adapter.register_uri('GET', 'mock://test.com', [{'text': 'resp1', 'status_code': 500},
@@ -182,17 +200,73 @@ class HttpExecutorTest(unittest.TestCase):
                                                              {'text': 'resp1', 'status_code': 500},
                                                              {'text': json_response, 'status_code': 200}])
 
-        http_executor = http.HttpExecutor(auth.Auth("client_id", "client_secret"), session=self.session_mock,
+        http_executor = http.HttpExecutor(auth.AuthFactory.create(grant_client_id="client_id",
+                                                                  grant_client_secret="client_secret"),
+                                          session=self.session_mock,
                                           backoff_strategy={'interval': 0, 'max_tries': 11})
         response = http_executor.request("GET", "mock://test.com")
 
         assert_that(response.data, equal_to(json.loads(json_response)))
 
-    def test_request_given_a_resource_name_for_a_request_then_it_should_be_returned_with_the_request_result(self):
+    @patch('requests_oauthlib.OAuth2Session.fetch_token')
+    def test_request_given_server_returns_an_authorisation_error_then_the_request_should_be_retried(self,
+                                                                                                    mock_fetch_token):
+        mock_fetch_token.return_value = "validToken"
 
+        json_response = '{"resp2": "resp2"}'
+
+        self.adapter.register_uri('GET', 'mock://test.com', [{'text': 'resp1', 'status_code': 401},
+                                                             {'text': json_response, 'status_code': 200}])
+
+        http_executor = http.HttpExecutor(auth.AuthFactory.create(grant_client_id="client_id",
+                                                                  grant_client_secret="client_secret",
+                                                                  token_url='mock://token-url.com'),
+                                          session=self.session_mock,
+                                          backoff_strategy={'interval': 0, 'max_tries': 1})
+        response = http_executor.request("GET", "mock://test.com")
+
+        assert_that(response.data, equal_to(json.loads(json_response)))
+
+    @patch('requests_oauthlib.OAuth2Session.fetch_token')
+    def test_request_given_server_returns_an_authorisation_error_fetching_the_token_then_error_is_not_retried(self,
+                                                                                                              mock_fetch_token):
+        mock_fetch_token.side_effect = OAuth2Error()
+
+        json_response = '{"resp2": "resp2"}'
+
+        self.adapter.register_uri('GET', 'mock://test.com', [{'text': 'resp1', 'status_code': 401},
+                                                             {'text': json_response, 'status_code': 200}])
+
+        http_executor = http.HttpExecutor(auth.AuthFactory.create(grant_client_id="client_id",
+                                                                  grant_client_secret="client_secret",
+                                                                  token_url='mock://token-url.com'),
+                                          session=self.session_mock,
+                                          backoff_strategy={'interval': 0, 'max_tries': 1})
+
+        with pytest.raises(error.AuthorisationError):
+            http_executor.request("GET", "mock://test.com")
+
+    def test_request_given_byo_type_and_server_returns_an_authorisation_error_then_error_is_propagated(self):
+        json_response = '{"resp2": "resp2"}'
+
+        self.adapter.register_uri('GET', 'mock://test.com', [{'text': 'resp1', 'status_code': 401},
+                                                             {'text': json_response, 'status_code': 200}])
+
+        http_executor = http.HttpExecutor(auth.AuthFactory.create(auth_type=auth.AuthType.BYO_TOKEN, byo_token='asdf'),
+                                          session=self.session_mock,
+                                          backoff_strategy={'interval': 0, 'max_tries': 1})
+        with pytest.raises(error.HttpError) as e:
+            http_executor.request("GET", "mock://test.com")
+
+        assert_that(e.value.args[0], is_('An unexpected error occurred. HTTP Status code: 401.'
+                                         ' Error message: Expecting value: line 1 column 1 (char 0). '))
+
+    def test_request_given_a_resource_name_for_a_request_then_it_should_be_returned_with_the_request_result(self):
         self.adapter.register_uri('GET', 'mock://test.com', status_code=200)
 
-        http_executor = http.HttpExecutor(auth.Auth("client_id", "client_secret"), session=self.session_mock)
+        http_executor = http.HttpExecutor(auth.AuthFactory.create(grant_client_id="client_id",
+                                                                  grant_client_secret="client_secret"),
+                                          session=self.session_mock)
 
         resource_name_expected = 'resource_name_test'
         response = http_executor.request("GET", "mock://test.com", resource_name=resource_name_expected)

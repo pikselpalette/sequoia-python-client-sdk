@@ -83,7 +83,8 @@ class HttpExecutor:
 
         def fatal_code(e):
             return isinstance(e, error.HttpError) and \
-                   400 <= e.status_code < 500 and e.status_code != 429
+                   400 <= e.status_code < 500 and e.status_code != 429 \
+                   or isinstance(e, error.AuthorisationError)
 
         def backoff_hdlr(details):
             logging.warning('Retry `%s` for args `%s` and kwargs `%s`', details['tries'], details['args'],
@@ -116,10 +117,24 @@ class HttpExecutor:
             return self.request(method, response.headers['location'], data=data, params=params, headers=request_headers,
                                 retry_count=retry_count, resource_name=resource_name)
 
+        if response.status_code == 401:
+            return self._update_token_and_retry_request(response, method, url, data=data, params=params,
+                                                        headers=request_headers, retry_count=retry_count,
+                                                        resource_name=resource_name)
+
         if 400 <= response.status_code <= 600:
             self._raise_sequoia_error(response)
 
         return self.return_response(response, resource_name=resource_name)
+
+    def _update_token_and_retry_request(self, response, *request_args, **request_kwargs):
+        try:
+            # This can raise AuthorisationError and should not be retried
+            self.session.auth.update_token()
+            return self.request(*request_args, **request_kwargs)
+        except NotImplementedError:
+            # Auth type does not provide refresh_token
+            self._raise_sequoia_error(response)
 
     def _raise_sequoia_error(self, response=None, request_error=None):
         if isinstance(request_error, ConnectionError):
