@@ -246,6 +246,29 @@ class HttpExecutorTest(unittest.TestCase):
         with pytest.raises(error.AuthorisationError):
             http_executor.request("GET", "mock://test.com")
 
+    @patch('requests_oauthlib.OAuth2Session.fetch_token')
+    def test_request_given_server_returns_an_authorisation_error_then_fetch_token_does_not_count_as_retry(self,
+                                                                                                          mock_fetch_token):
+        mock_fetch_token.return_value = "validToken"
+
+        json_response = 'Error getting resource'
+
+        self.adapter.register_uri('GET', 'mock://test.com', [{'text': 'resp1', 'status_code': 401},
+                                                             {'text': json_response, 'status_code': 500},
+                                                             {'text': json_response, 'status_code': 200}])
+
+        http_executor = http.HttpExecutor(auth.AuthFactory.create(grant_client_id="client_id",
+                                                                  grant_client_secret="client_secret",
+                                                                  token_url='mock://token-url.com'),
+                                          session=self.session_mock,
+                                          backoff_strategy={'interval': 0, 'max_tries': 1})
+
+        with pytest.raises(error.HttpError) as e:
+            http_executor.request("GET", "mock://test.com")
+
+        assert_that(e.value.args[0], is_('An unexpected error occurred. HTTP Status code: 500. Error message: '
+                                         'Expecting value: line 1 column 1 (char 0). '))
+
     def test_request_given_byo_type_and_server_returns_an_authorisation_error_then_error_is_propagated(self):
         json_response = '{"resp2": "resp2"}'
 

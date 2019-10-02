@@ -131,7 +131,7 @@ class HttpExecutor:
         try:
             # This can raise AuthorisationError and should not be retried
             self.session.auth.update_token()
-            return self.request(*request_args, **request_kwargs)
+            return self._request(*request_args, **request_kwargs)
         except NotImplementedError:
             # Auth type does not provide refresh_token
             self._raise_sequoia_error(response)

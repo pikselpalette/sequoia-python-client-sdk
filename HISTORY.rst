@@ -41,3 +41,7 @@ History
 * Modifying setup.cfg to allow different version formats (i.e development versions)
 * Paging with `continue` parameter
 * When token is expired, it is updated automatically with CLIENT_GRANT auth type
+
+2.1.1 (2019-10-02)
+------------------
+* Token fetching not restarting backoff. Retries continuing its count instead of restarting it when there is a invalid token
