@@ -4,7 +4,7 @@ import unittest
 import pytest
 import requests
 import requests_mock
-from hamcrest import assert_that, instance_of, is_in, none, equal_to, is_
+from hamcrest import assert_that, instance_of, is_in, none, equal_to, is_, has_entry
 from jsonpickle import json
 from oauthlib.oauth2 import OAuth2Error
 
@@ -36,14 +36,23 @@ class HttpExecutorTest(unittest.TestCase):
 
         http_executor = http.HttpExecutor(auth.AuthFactory.create(grant_client_id="client_id",
                                                                   grant_client_secret="client_secret"),
-                                          session=session_mock)
+                                          session=session_mock, correlation_id="my_correlation_id")
+
         http_executor.request("POST", "mock://some_url",
                               data='some data',
                               headers={'New-Header': 'SomeValue'},
                               params={'key1': 'value1'})
 
+        expected_headers = {
+            'User-Agent': http_executor.user_agent,
+            "Content-Type": "application/vnd.piksel+json",
+            "Accept": "application/vnd.piksel+json",
+            "x-correlation-id": "my_correlation_id",
+            "New-Header": 'SomeValue'
+        }
+
         session_mock.request.assert_called_with('POST', 'mock://some_url', allow_redirects=False, data='some data',
-                                                headers=mock.ANY, params={'key1': 'value1'}, timeout=240)
+                                                headers=expected_headers, params={'key1': 'value1'}, timeout=240)
 
     @staticmethod
     def match_request_text(request):

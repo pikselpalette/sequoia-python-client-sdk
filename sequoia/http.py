@@ -48,7 +48,7 @@ class HttpExecutor:
     DEFAULT_BACKOFF_CONF = {'interval': 0, 'max_tries': 10}
 
     def __init__(self, auth, session=None, proxies=None, user_agent=None, get_delay=None, request_timeout=None,
-                 backoff_strategy=None):
+                 backoff_strategy=None, correlation_id=None):
         if user_agent is not None:
             self.user_agent = user_agent + self.user_agent
 
@@ -58,11 +58,15 @@ class HttpExecutor:
         self.session = session or Session()
         self.session.proxies = proxies or {}
         self.session.auth = auth
+        self.correlation_id = correlation_id
         self.common_headers = {
             'User-Agent': self.user_agent,
             "Content-Type": "application/vnd.piksel+json",
             "Accept": "application/vnd.piksel+json"
         }
+        if self.correlation_id is not None:
+            self.common_headers['x-correlation-id'] = correlation_id
+
         self.request_timeout = request_timeout or env.DEFAULT_REQUEST_TIMEOUT_SECONDS
 
     @staticmethod
