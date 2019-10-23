@@ -65,7 +65,7 @@ class HttpExecutor:
             "Accept": "application/vnd.piksel+json"
         }
         if self.correlation_id is not None:
-            self.common_headers['x-correlation-id'] = correlation_id
+            self.common_headers['x-correlation-id'] = self.correlation_id
 
         self.request_timeout = request_timeout or env.DEFAULT_REQUEST_TIMEOUT_SECONDS
 
