@@ -4,7 +4,7 @@ import unittest
 import pytest
 import requests
 import requests_mock
-from hamcrest import assert_that, instance_of, is_in, none, equal_to, is_, has_entry
+from hamcrest import assert_that, instance_of, is_in, none, equal_to, is_
 from jsonpickle import json
 from oauthlib.oauth2 import OAuth2Error
 
