@@ -47,7 +47,7 @@ class HttpExecutorTest(unittest.TestCase):
             'User-Agent': http_executor.user_agent,
             "Content-Type": "application/vnd.piksel+json",
             "Accept": "application/vnd.piksel+json",
-            "x-correlation-id": "my_correlation_id",
+            "X-Correlation-ID": "my_correlation_id",
             "New-Header": 'SomeValue'
         }
 
