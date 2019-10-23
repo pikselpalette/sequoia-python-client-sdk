@@ -46,6 +46,6 @@ History
 ------------------
 * Token fetching not restarting backoff. Retries continuing its count instead of restarting it when there is a invalid token
 
-2.1.2 (XXXX-XX-XX)
+2.2.0 (XXXX-XX-XX)
 ------------------
 * Allowing to provide `correlation_id` value when the client is created
