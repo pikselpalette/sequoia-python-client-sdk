@@ -47,6 +47,7 @@ class HttpExecutor:
 
     DEFAULT_BACKOFF_CONF = {'interval': 0, 'max_tries': 10}
 
+    # pylint: disable-msg=too-many-arguments
     def __init__(self, auth, session=None, proxies=None, user_agent=None, get_delay=None, request_timeout=None,
                  backoff_strategy=None, correlation_id=None):
         if user_agent is not None:

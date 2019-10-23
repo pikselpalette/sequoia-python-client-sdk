@@ -21,6 +21,7 @@ class Client(object):
     """OAuth2 Compliant Client SDK for interacting with Sequoia services.
     """
 
+    # pylint: disable-msg=too-many-arguments
     def __init__(self, registry_url, proxies=None, user_agent=None, backoff_strategy=None, adapters=None,
                  request_timeout=None, model_resolution=None, correlation_id=None, **auth_kwargs):
         logging.debug('Client initialising with registry_url=%s ', registry_url)
