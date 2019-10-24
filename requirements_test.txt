@@ -10,6 +10,7 @@ pyhamcrest==1.9.*
 pytest==3.5.*
 pytest-xdist==1.22.*
 pytest-cov==2.5.*
+pytest-forked==1.0.2
 requests-mock==1.5.*
 testfixtures==5.4.*
 tox==3.0.*

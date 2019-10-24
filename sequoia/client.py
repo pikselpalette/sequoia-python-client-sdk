@@ -21,14 +21,16 @@ class Client(object):
     """OAuth2 Compliant Client SDK for interacting with Sequoia services.
     """
 
+    # pylint: disable-msg=too-many-arguments
     def __init__(self, registry_url, proxies=None, user_agent=None, backoff_strategy=None, adapters=None,
-                 request_timeout=None, model_resolution=None, **auth_kwargs):
+                 request_timeout=None, model_resolution=None, correlation_id=None, **auth_kwargs):
         logging.debug('Client initialising with registry_url=%s ', registry_url)
         self._registry_url = registry_url
         self._request_timeout = request_timeout or env.DEFAULT_REQUEST_TIMEOUT_SECONDS
 
         self._proxies = proxies
         self._user_agent = user_agent
+        self._correlation_id = correlation_id
         self._model_resolution = model_resolution
         self._registry = self._initialize_registry(adapters, backoff_strategy)
 
@@ -43,6 +45,7 @@ class Client(object):
                                        user_agent=self._user_agent,
                                        session=self._auth.session,
                                        request_timeout=self._request_timeout,
+                                       correlation_id=self._correlation_id,
                                        backoff_strategy=backoff_strategy)
 
     def _initialize_registry(self, adapters, backoff_strategy):
@@ -53,6 +56,7 @@ class Client(object):
                                           user_agent=self._user_agent,
                                           session=auth.session,
                                           request_timeout=self._request_timeout,
+                                          correlation_id=self._correlation_id,
                                           backoff_strategy=backoff_strategy)
 
         return registry.Registry(self._registry_url, http_executor)
