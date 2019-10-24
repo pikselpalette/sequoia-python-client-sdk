@@ -63,10 +63,9 @@ class HttpExecutor:
         self.common_headers = {
             'User-Agent': self.user_agent,
             "Content-Type": "application/vnd.piksel+json",
-            "Accept": "application/vnd.piksel+json"
+            "Accept": "application/vnd.piksel+json",
+            "X-Correlation-ID": self.correlation_id
         }
-        if self.correlation_id is not None:
-            self.common_headers['X-Correlation-ID'] = self.correlation_id
 
         self.request_timeout = request_timeout or env.DEFAULT_REQUEST_TIMEOUT_SECONDS
 
