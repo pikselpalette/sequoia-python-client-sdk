@@ -71,17 +71,41 @@ class Auth:
         raise NotImplementedError("Auth type does not support refresh token")
 
 
+class TokenCache:
+    _token_storage = {}
+
+    def get_token(self, grant_client_id, token_url):
+        if grant_client_id in self._token_storage and token_url in self._token_storage[grant_client_id]:
+            return self._token_storage[grant_client_id][token_url]
+        return None
+
+    def add_token(self, grant_client_id, token_url, token):
+        if grant_client_id not in self._token_storage:
+            self._token_storage[grant_client_id] = {}
+        self._token_storage[grant_client_id][token_url] = token
+
+
 class ClientGrantAuth(Auth):
+
     def __init__(self, grant_client_id, grant_client_secret, token_url, byo_token=None, request_timeout=0):
         super().__init__()
         self.grant_client_id = grant_client_id
         self.grant_client_secret = grant_client_secret
         self.auth = HTTPBasicAuth(self.grant_client_id,
                                   self.grant_client_secret)
-        self.token = oauth_token(byo_token) if byo_token else None
+        self.token_cache = TokenCache()
         self.token_url = token_url
+        self.token = self.get_token(byo_token)
         self.request_timeout = request_timeout
         self.session = self._session(self.token)
+
+    def get_token(self, byo_token):
+        if byo_token:
+            self.token_cache.add_token(self.grant_client_id, self.token_url, oauth_token(byo_token))
+            return self.token_cache.get_token(self.grant_client_id, self.token_url)
+        elif self.token_cache.get_token(self.grant_client_id, self.token_url):
+            return self.token_cache.get_token(self.grant_client_id, self.token_url)
+        return None
 
     def init_session(self):
         if not self.token:
@@ -96,6 +120,7 @@ class ClientGrantAuth(Auth):
         try:
             self.session.fetch_token(token_url=self.token_url,
                                      auth=self.auth, timeout=self.request_timeout)
+            self.token_cache.add_token(self.grant_client_id, self.token_url, self.session.token)
         except OAuth2Error as oauth2_error:
             raise error.AuthorisationError(str(oauth2_error.args[0]), cause=oauth2_error)
 
