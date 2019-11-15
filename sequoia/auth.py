@@ -72,28 +72,17 @@ class Auth:
 
 
 class TokenCache:
-    class __OnlyOne:
+    _token_storage = {}
 
-        _token_storage = {}
+    def get_token(self, grant_client_id, token_url):
+        if grant_client_id in self._token_storage and token_url in self._token_storage[grant_client_id]:
+            return self._token_storage[grant_client_id][token_url]
+        return None
 
-        def get_token(self, grant_client_id, token_url):
-            if grant_client_id in self._token_storage and token_url in self._token_storage[grant_client_id]:
-                return self._token_storage[grant_client_id][token_url]
-            return None
-
-        def add_token(self, grant_client_id, token_url, token):
-            if grant_client_id not in self._token_storage:
-                self._token_storage[grant_client_id] = {}
-            self._token_storage[grant_client_id][token_url] = token
-
-    instance = None
-
-    def __init__(self):
-        if not TokenCache.instance:
-            TokenCache.instance = TokenCache.__OnlyOne()
-
-    def __getattr__(self, name):
-        return getattr(self.instance, name)
+    def add_token(self, grant_client_id, token_url, token):
+        if grant_client_id not in self._token_storage:
+            self._token_storage[grant_client_id] = {}
+        self._token_storage[grant_client_id][token_url] = token
 
 
 class ClientGrantAuth(Auth):
