@@ -10,6 +10,7 @@ from requests import Response
 
 from sequoia import criteria, auth
 from sequoia import error
+from sequoia.auth import TokenCache
 from sequoia.client import Client, ResponseBuilder
 from sequoia.criteria import Criteria, Inclusion
 from tests import mocking
@@ -442,6 +443,7 @@ class TestBusinessEndpointProxy(unittest.TestCase):
 class TestClient(unittest.TestCase):
     def setUp(self):
         self.mock = mocking.bootstrap_mock()
+        TokenCache._token_storage = {}
 
     def test_fetch_token_given_there_is_an_error_fetching_the_token_then_client_error_is_raised(self):
         mocking.add_post_mapping_for(self.mock, 'identity', 'error_identity_response')
