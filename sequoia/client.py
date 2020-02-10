@@ -1,6 +1,7 @@
 import json
 import logging
 import re
+import uuid
 from string import Template
 
 # Python 2 and 3: urllib compatibility between both versions
@@ -23,14 +24,15 @@ class Client(object):
 
     # pylint: disable-msg=too-many-arguments
     def __init__(self, registry_url, proxies=None, user_agent=None, backoff_strategy=None, adapters=None,
-                 request_timeout=None, model_resolution=None, correlation_id=None, **auth_kwargs):
+                 request_timeout=None, model_resolution=None, correlation_id=None, user_id=None, application_id=None,
+                 transaction_id=None, **auth_kwargs):
         logging.debug('Client initialising with registry_url=%s ', registry_url)
         self._registry_url = registry_url
         self._request_timeout = request_timeout or env.DEFAULT_REQUEST_TIMEOUT_SECONDS
 
         self._proxies = proxies
         self._user_agent = user_agent
-        self._correlation_id = correlation_id
+        self._correlation_id = correlation_id or Client._build_correlation_id(user_id, application_id, transaction_id)
         self._model_resolution = model_resolution
         self._registry = self._initialize_registry(adapters, backoff_strategy)
 
@@ -47,6 +49,13 @@ class Client(object):
                                        request_timeout=self._request_timeout,
                                        correlation_id=self._correlation_id,
                                        backoff_strategy=backoff_strategy)
+
+    @staticmethod
+    def _build_correlation_id(user_id=None, application_id=None, transaction_id=None):
+        if user_id is not None and application_id is not None:
+            _transaction_id = transaction_id or str(uuid.uuid4())
+            return "/".join([user_id, application_id, _transaction_id])
+        return None
 
     def _initialize_registry(self, adapters, backoff_strategy):
         auth = AuthFactory.create(auth_type=AuthType.NO_AUTH)
