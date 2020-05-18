@@ -11,6 +11,10 @@ class AuthorisationError(ClientError):
     """
 
 
+class TokenExpiredError(ClientError):
+    pass
+
+
 class RequestError(ClientError):
     pass
 
