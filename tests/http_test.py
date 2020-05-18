@@ -252,8 +252,7 @@ class HttpExecutorTest(unittest.TestCase):
         assert_that(mock_session.request.call_count, is_(3))
         mock_session.request.assert_has_calls(call_list)
 
-        mock_session.auth.update_token.assert_called_once()
-
+        assert_that(mock_session.auth.update_token.call_count, is_(1))
 
     def test_request_given_server_returns_an_authorisation_error_fetching_the_token_then_error_is_not_retried(self):
 
