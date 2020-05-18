@@ -152,7 +152,6 @@ class OAuth2SessionTokenManagementWrapper(requests_oauthlib.OAuth2Session):
 
     def request(self, *args, **kwargs):
         try:
-            super().request(*args, **kwargs)
+            return super().request(*args, **kwargs)
         except TokenExpiredError as e:
             raise error.TokenExpiredError('Request could not be performed. Token is expired', cause=e)
-

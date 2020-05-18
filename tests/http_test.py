@@ -6,17 +6,17 @@ import requests
 import requests_mock
 from hamcrest import assert_that, instance_of, is_in, none, equal_to, is_
 from jsonpickle import json
-from oauthlib.oauth2 import OAuth2Error
+from oauthlib.oauth2 import OAuth2Error, TokenExpiredError
 
 from sequoia import auth, http, error
+from sequoia.error import HttpError
 
 if sys.version_info[0] == 2:
     import mock
     from mock import patch
 else:
     from unittest import mock
-    from unittest.mock import patch
-
+    from unittest.mock import patch, Mock, call
 
 
 class HttpExecutorTest(unittest.TestCase):
@@ -217,66 +217,89 @@ class HttpExecutorTest(unittest.TestCase):
 
         assert_that(response.data, equal_to(json.loads(json_response)))
 
-    @patch('requests_oauthlib.OAuth2Session.fetch_token')
-    def test_request_given_server_returns_an_authorisation_error_then_the_request_should_be_retried(self,
-                                                                                                    mock_fetch_token):
-        mock_fetch_token.return_value = "validToken"
-
+    def test_request_given_server_returns_an_token_expired_error_then_the_request_should_be_retried(self):
         json_response = '{"resp2": "resp2"}'
 
-        self.adapter.register_uri('GET', 'mock://test.com', [{'text': 'resp1', 'status_code': 401},
-                                                             {'text': json_response, 'status_code': 200}])
+        mock_response_500 = Mock()
+        mock_response_500.is_redirect = False
+        mock_response_500.status_code = 500
+        mock_response_500.json.return_value = {}
+        mock_response_500.return_value.text = json_response
 
-        http_executor = http.HttpExecutor(auth.AuthFactory.create(grant_client_id="client_id",
-                                                                  grant_client_secret="client_secret",
-                                                                  token_url='mock://token-url.com'),
-                                          session=self.session_mock,
-                                          backoff_strategy={'interval': 0, 'max_tries': 1})
+        mock_response_200 = Mock()
+        mock_response_200.is_redirect = False
+        mock_response_200.status_code = 200
+        mock_response_200.return_value.text = json_response
+        mock_response_200.json.return_value = {"resp2": "resp2"}
+
+        mock_auth = Mock()
+        mock_session = Mock()
+        mock_session.request.side_effect = [error.TokenExpiredError('Token Expired'),
+                                            mock_response_500,
+                                            mock_response_200]
+
+        http_executor = http.HttpExecutor(mock_auth,
+                                          session=mock_session,
+                                          backoff_strategy={'interval': 0, 'max_tries': 2})
         response = http_executor.request("GET", "mock://test.com")
 
         assert_that(response.data, equal_to(json.loads(json_response)))
 
-    @patch('requests_oauthlib.OAuth2Session.fetch_token')
-    def test_request_given_server_returns_an_authorisation_error_fetching_the_token_then_error_is_not_retried(self,
-                                                                                                              mock_fetch_token):
-        mock_fetch_token.side_effect = OAuth2Error()
+        call_list = [call('GET', 'mock://test.com', allow_redirects=False, data=None, headers={'User-Agent': mock.ANY, 'Content-Type': 'application/vnd.piksel+json', 'Accept': 'application/vnd.piksel+json', 'X-Correlation-ID': None}, params=None, timeout=240),
+                     call('GET', 'mock://test.com', allow_redirects=False, data=None, headers={'User-Agent': mock.ANY, 'Content-Type': 'application/vnd.piksel+json', 'Accept': 'application/vnd.piksel+json', 'X-Correlation-ID': None}, params=None, timeout=240),
+                     call('GET', 'mock://test.com', allow_redirects=False, data=None, headers={'User-Agent': mock.ANY, 'Content-Type': 'application/vnd.piksel+json', 'Accept': 'application/vnd.piksel+json', 'X-Correlation-ID': None}, params=None, timeout=240)]
 
-        json_response = '{"resp2": "resp2"}'
+        assert_that(mock_session.request.call_count, is_(3))
+        mock_session.request.assert_has_calls(call_list)
 
-        self.adapter.register_uri('GET', 'mock://test.com', [{'text': 'resp1', 'status_code': 401},
-                                                             {'text': json_response, 'status_code': 200}])
+        mock_session.auth.update_token.assert_called_once()
 
-        http_executor = http.HttpExecutor(auth.AuthFactory.create(grant_client_id="client_id",
-                                                                  grant_client_secret="client_secret",
-                                                                  token_url='mock://token-url.com'),
-                                          session=self.session_mock,
-                                          backoff_strategy={'interval': 0, 'max_tries': 1})
+
+    def test_request_given_server_returns_an_authorisation_error_fetching_the_token_then_error_is_not_retried(self):
+
+        mock_auth = Mock()
+        mock_session = Mock()
+        mock_session.request.side_effect = error.AuthorisationError('Auth error')
+
+        http_executor = http.HttpExecutor(mock_auth,
+                                          session=mock_session,
+                                          backoff_strategy={'interval': 0, 'max_tries': 3})
 
         with pytest.raises(error.AuthorisationError):
             http_executor.request("GET", "mock://test.com")
 
-    @patch('requests_oauthlib.OAuth2Session.fetch_token')
-    def test_request_given_server_returns_an_authorisation_error_then_fetch_token_does_not_count_as_retry(self,
-                                                                                                          mock_fetch_token):
-        mock_fetch_token.return_value = "validToken"
+        mock_session.request.assert_called_once_with('GET', 'mock://test.com', allow_redirects=False, data=None,
+                                                     headers={
+                                                         'User-Agent': mock.ANY,
+                                                         'Content-Type': 'application/vnd.piksel+json',
+                                                         'Accept': 'application/vnd.piksel+json',
+                                                         'X-Correlation-ID': None}, params=None, timeout=240)
+
+    def test_request_given_server_returns_an_authorisation_error_then_fetch_token_does_not_count_as_retry(self):
 
         json_response = 'Error getting resource'
 
-        self.adapter.register_uri('GET', 'mock://test.com', [{'text': 'resp1', 'status_code': 401},
-                                                             {'text': json_response, 'status_code': 500},
-                                                             {'text': json_response, 'status_code': 200}])
+        mock_auth = Mock()
+        mock_session = Mock()
+        mock_session.request.side_effect = [error.AuthorisationError('Auth error'),
+                                            {'text': json_response, 'status_code': 500},
+                                            {'text': json_response, 'status_code': 200}]
 
-        http_executor = http.HttpExecutor(auth.AuthFactory.create(grant_client_id="client_id",
-                                                                  grant_client_secret="client_secret",
-                                                                  token_url='mock://token-url.com'),
-                                          session=self.session_mock,
+        http_executor = http.HttpExecutor(mock_auth,
+                                          session=mock_session,
                                           backoff_strategy={'interval': 0, 'max_tries': 1})
 
-        with pytest.raises(error.HttpError) as e:
+        with pytest.raises(error.AuthorisationError) as e:
             http_executor.request("GET", "mock://test.com")
 
-        assert_that(e.value.args[0], is_('An unexpected error occurred. HTTP Status code: 500. Error message: '
-                                         'Expecting value: line 1 column 1 (char 0). '))
+        assert_that(e.value.args[0], is_('Auth error'))
+
+        mock_session.request.assert_called_once_with('GET', 'mock://test.com', allow_redirects=False, data=None,
+                                                     headers={
+                                                         'User-Agent': mock.ANY,
+                                                         'Content-Type': 'application/vnd.piksel+json',
+                                                         'Accept': 'application/vnd.piksel+json',
+                                                         'X-Correlation-ID': None}, params=None, timeout=240)
 
     def test_request_given_byo_type_and_server_returns_an_authorisation_error_then_error_is_propagated(self):
         json_response = '{"resp2": "resp2"}'
