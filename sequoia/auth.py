@@ -150,7 +150,7 @@ def oauth_token(access_token):
 
 class OAuth2SessionTokenManagementWrapper(requests_oauthlib.OAuth2Session):
 
-    def request(self, *args, **kwargs):
+    def request(self, *args, **kwargs):  # pylint: disable=arguments-differ
         try:
             return super().request(*args, **kwargs)
         except TokenExpiredError as e:
