@@ -1,7 +1,11 @@
 import unittest
+from unittest.mock import Mock, patch
 
+import pytest
 from hamcrest import assert_that, is_
+from oauthlib.oauth2 import TokenExpiredError
 
+from sequoia import error
 from sequoia.auth import TokenCache, ClientGrantAuth
 
 
@@ -24,20 +28,39 @@ class TestClientGrantAuth(unittest.TestCase):
         auth = ClientGrantAuth('user', 'pass', 'http://identity')
         assert_that(auth.token, is_({'token_type': 'bearer', 'access_token': '567'}))
 
-    def test_given_token_is_not_provided_and_it_is_not_in_cache_then_token_is_fetched_and_added_to_cache(self):
-        class MockSession:
-            def __init__(self):
-                self.token = {'token_type': 'bearer', 'access_token': '789'}
+    @patch('sequoia.auth.HTTPBasicAuth')
+    @patch('sequoia.auth.OAuth2SessionTokenManagementWrapper')
+    def test_given_token_is_not_provided_and_it_is_not_in_cache_then_token_is_fetched_and_added_to_cache(self,
+                                                                                                         mock_session_wrapper,
+                                                                                                         mock_basic_auth):
+        mock_basic_auth.return_value = 'MyBasicAuth'
 
-            def fetch_token(self, *args, **kwargs):
-                pass
+        mock_session_wrapper.return_value.token = {'token_type': 'bearer', 'access_token': '789'}
+        mock_session_wrapper.fetch_token.return_value = None
 
         auth = ClientGrantAuth('user', 'pass', 'http://identity')
-        auth.session = MockSession()
         auth.init_session()
 
         assert_that(TokenCache._token_storage,
                     is_({'user': {'http://identity': {'token_type': 'bearer', 'access_token': '789'}}}))
+
+        mock_session_wrapper.return_value.fetch_token.assert_called_once_with(auth='MyBasicAuth', timeout=0,
+                                                                              token_url='http://identity')
+
+    @patch('sequoia.auth.HTTPBasicAuth')
+    @patch('requests_oauthlib.OAuth2Session.request')
+    def test_given_request_return_oauth_token_expired_error_then_except_sequoia_token_expired_error_is_raised(self,
+                                                                                                              mock_oauth_request,
+                                                                                                              mock_basic_auth):
+
+        mock_basic_auth.return_value = 'MyBasicAuth'
+
+        mock_oauth_request.side_effect = TokenExpiredError('Token expired')
+
+        auth = ClientGrantAuth('user', 'pass', 'http://identity')
+
+        with pytest.raises(error.TokenExpiredError):
+            auth.session.request('GET', 'http://mydata')
 
 
 class TestTokenCache(unittest.TestCase):

@@ -3,7 +3,7 @@ import logging
 
 import requests
 import requests_oauthlib
-from oauthlib.oauth2 import BackendApplicationClient, OAuth2Token, OAuth2Error
+from oauthlib.oauth2 import BackendApplicationClient, OAuth2Token, OAuth2Error, TokenExpiredError
 from requests.auth import HTTPBasicAuth
 
 from sequoia import error
@@ -113,8 +113,8 @@ class ClientGrantAuth(Auth):
 
     def _session(self, token=None):
         client = BackendApplicationClient(client_id=self.grant_client_id)
-        return requests_oauthlib.OAuth2Session(client=client,
-                                               token=token)
+        return OAuth2SessionTokenManagementWrapper(client=client,
+                                                   token=token)
 
     def update_token(self):
         try:
@@ -139,10 +139,19 @@ class BYOTokenAuth(Auth):
     def __init__(self, byo_token):
         super().__init__()
         self.token = oauth_token(byo_token)
-        self.session = requests_oauthlib.OAuth2Session(token=self.token)
+        self.session = OAuth2SessionTokenManagementWrapper(token=self.token)
 
 
 def oauth_token(access_token):
     data = {'token_type': 'bearer',
             'access_token': access_token}
     return OAuth2Token(data)
+
+
+class OAuth2SessionTokenManagementWrapper(requests_oauthlib.OAuth2Session):
+
+    def request(self, *args, **kwargs):  # pylint: disable=arguments-differ
+        try:
+            return super().request(*args, **kwargs)
+        except TokenExpiredError as e:
+            raise error.TokenExpiredError('Request could not be performed. Token is expired', cause=e)
