@@ -273,15 +273,15 @@ class PageBrowser(object):
     """
 
     def __init__(self, endpoint=None, resource_name=None, criteria=None, query_string=None, params=None,
-                 prefetch_pages=1):
-        self._prefetch_queue = []
+                 prefetch_pages=1, prefetch_queue=None, next_url=None):
+        self._prefetch_queue = prefetch_queue or []
         self._resource_name = resource_name
         self._endpoint = endpoint
         self.params = params
         self._criteria = criteria
         self.response_builder = ResponseBuilder(descriptor=endpoint.descriptor, criteria=self._criteria)
         self.query_string = query_string
-        self.next_url = self._build_url()
+        self.next_url = next_url or self._build_url()
         if prefetch_pages > 0:
             self._prefetch(prefetch_pages)
 
@@ -322,10 +322,14 @@ class PageBrowser(object):
         return self._endpoint.service.location + self._continue_param(response)
 
     def linked(self, resource):
-        pb = PageBrowser(endpoint=self._endpoint, resource_name=self._resource_name,
-                         criteria=self._criteria, query_string=self.query_string,
-                         params=self.params)
+        pb = self._create_page_browser_from_current_state()
         return LinkedResourcesPageBrowser(self._endpoint, pb, resource, self.params.get('owner'))
+
+    def _create_page_browser_from_current_state(self):
+        return PageBrowser(endpoint=self._endpoint, resource_name=self._resource_name,
+                           criteria=self._criteria, query_string=self.query_string,
+                           params=self.params, prefetch_pages=0, prefetch_queue=self._prefetch_queue.copy(),
+                           next_url=self.next_url)
 
     def __getattr__(self, name):
         if self._prefetch_queue:

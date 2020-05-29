@@ -246,6 +246,8 @@ class TestResourceEndpointProxy(unittest.TestCase):
         assert_that(len(asset_linked_pages[1]), is_(157))
         assert_that(len(asset_linked_pages[2]), is_(46))
 
+        assert_that(self.mock.call_count, is_(5))
+
     def test_browse_assets_with_paging_returns_mocked_assets(self):
         mocking.add_get_mapping_for_url(self.mock,
                                         'data/assets\?withContentRef=theContentRef&perPage=2&owner=testmock',
