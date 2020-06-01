@@ -26,6 +26,7 @@ logging.basicConfig(level=logging.DEBUG)
 class TestResourceEndpointProxy(unittest.TestCase):
 
     def setUp(self):
+        TokenCache._token_storage = {}
         self.mock = mocking.bootstrap_mock()
         self.client = Client('http://mock-registry/services/testmock',
                              grant_client_id='piksel-workflow',
@@ -182,6 +183,17 @@ class TestResourceEndpointProxy(unittest.TestCase):
         assert_that(len(offers_linked_pages[0]), is_(100))
         assert_that(len(offers_linked_pages[1]), is_(1))
 
+        expected_requests = [{'path': '/services/testmock', 'query': ''},
+                             {'path': '/oauth/token', 'query': ''},
+                             {'path': '/data/contents', 'query': 'include=assets,offers&owner=testmock'},
+                             {'path': '/data/assets',
+                              'query': 'fields=ref%2cname%2ccontentref%2ctype%2cmediatype%2curl%2cfileformat%2ctitle%2cfilesize%2ctags&count=true&withcontentref=test%3acontentstochecktesting1&page=2&perpage=100&owner=testmock'},
+                             {'path': '/data/offers',
+                              'query': 'fields=ref%2cname%2ctitle%2ccontentrefs&count=true&withcontentrefs=test%3acontentstochecktesting1&page=2&perpage=100&owner=testmock'}]
+
+        performed_requests = [{'path': r.path, 'query': r.query} for r in self.mock.request_history]
+        assert_that(performed_requests, is_(expected_requests))
+
     def test_browse_linked_resources_without_inclusions_then_returns_mocked_assets(self):
         mocking.add_get_mapping_for_url(self.mock,
                                         'data/contents\?owner=testmock',
@@ -218,18 +230,6 @@ class TestResourceEndpointProxy(unittest.TestCase):
                                         'data/contents\?include=assets&owner=testmock&page=3&perPage=100',
                                         'pagination_main_third_page')
 
-        mocking.add_get_mapping_for_url(self.mock,
-                                        '/data/assets\?fields=ref%2Cname%2CcontentRef%2Ctype%2Curl%2CfileFormat%2Ctitle%2CfileSize%2Ctags&count=true&withContentRef=testmock%3A0968d155-77ec-450c-ae68-47f8936e2121%7C%7Ctestmock%3A1f62e6bb-b995-4b50-be1e-9825dfecb275%7C%7Ctestmock%3A4569ad10-3912-42a1-b769-83456e69ae50%7C%7Ctestmock%3A5cc87697-bab8-4776-89a4-a788dc7acdda%7C%7Ctestmock%3A73601df6-9b99-4008-b6b1-4ccc80b93cfe%7C%7Ctestmock%3A92e7f35c-5b9b-41e1-ae4f-bbda1d89f0e1%7C%7Ctestmock%3AY3JpZDovL2JiYy5jby51ay8yODk0MDA0MjI%7C%7Ctestmock%3AY3JpZDovL2JiYy5jby51ay8yODk0MDA0MjM%7C%7Ctestmock%3Aba01f7f2-17c8-4775-8934-ceb2f3a0f810%7C%7Ctestmock%3Ad5b61cb8-955a-4f34-ad60-a1b22a240077&page=2&perPage=100',
-                                        'pagination_second_page')
-
-        mocking.add_get_mapping_for_url(self.mock,
-                                        'data/assets\?count=true&fields=ref%2Cname%2CcontentRef%2Ctype%2Curl%2CfileFormat%2Ctitle%2CfileSize%2Ctags&owner=testmock&page=3&perPage=100&withContentRef=testmock%3A0968d155-77ec-450c-ae68-47f8936e2121%7C%7Ctestmock%3A1f62e6bb-b995-4b50-be1e-9825dfecb275%7C%7Ctestmock%3A4569ad10-3912-42a1-b769-83456e69ae50%7C%7Ctestmock%3A5cc87697-bab8-4776-89a4-a788dc7acdda%7C%7Ctestmock%3A73601df6-9b99-4008-b6b1-4ccc80b93cfe%7C%7Ctestmock%3A92e7f35c-5b9b-41e1-ae4f-bbda1d89f0e1%7C%7Ctestmock%3AY3JpZDovL2JiYy5jby51ay8yODk0MDA0MjI%7C%7Ctestmock%3AY3JpZDovL2JiYy5jby51ay8yODk0MDA0MjM%7C%7Ctestmock%3Aba01f7f2-17c8-4775-8934-ceb2f3a0f810%7C%7Ctestmock%3Ad5b61cb8-955a-4f34-ad60-a1b22a240077',
-                                        'pagination_third_page')
-
-        mocking.add_get_mapping_for_url(self.mock,
-                                        'data/assets\?fields=ref%2Cname%2CcontentRef%2Ctype%2Curl%2CfileFormat%2Ctitle%2CfileSize%2Ctags&withContentRef=testmock%3A0968d155-77ec-450c-ae68-47f8936e2121%7C%7Ctestmock%3A1f62e6bb-b995-4b50-be1e-9825dfecb275%7C%7Ctestmock%3A4569ad10-3912-42a1-b769-83456e69ae50%7C%7Ctestmock%3A5cc87697-bab8-4776-89a4-a788dc7acdda%7C%7Ctestmock%3A73601df6-9b99-4008-b6b1-4ccc80b93cfe%7C%7Ctestmock%3A92e7f35c-5b9b-41e1-ae4f-bbda1d89f0e1%7C%7Ctestmock%3AY3JpZDovL2JiYy5jby51ay8yODk0MDA0MjI%7C%7Ctestmock%3AY3JpZDovL2JiYy5jby51ay8yODk0MDA0MjM%7C%7Ctestmock%3Aba01f7f2-17c8-4775-8934-ceb2f3a0f810%7C%7Ctestmock%3Ad5b61cb8-955a-4f34-ad60-a1b22a240077&page=3&perPage=100',
-                                        'pagination_third_page')
-
         under_test = self.client.metadata.contents
 
         contents_response = under_test.browse('testmock', query_string='include=assets')
@@ -246,7 +246,52 @@ class TestResourceEndpointProxy(unittest.TestCase):
         assert_that(len(asset_linked_pages[1]), is_(157))
         assert_that(len(asset_linked_pages[2]), is_(46))
 
-        assert_that(self.mock.call_count, is_(5))
+        expected_requests = [{'path': '/services/testmock', 'query': ''},
+                             {'path': '/oauth/token', 'query': ''},
+                             {'path': '/data/contents', 'query': 'include=assets&owner=testmock'},
+                             {'path': '/data/contents', 'query': 'include=assets&owner=testmock&page=2&perpage=100'},
+                             {'path': '/data/contents', 'query': 'include=assets&owner=testmock&page=3&perpage=100'}]
+
+        performed_requests = [{'path': r.path, 'query': r.query} for r in self.mock.request_history]
+        assert_that(performed_requests, is_(expected_requests))
+
+    def test_browse_linked_resources_with_prefetch_and_more_than_one_page_goes_throw_several_pages(self):
+        mocking.add_get_mapping_for_url(self.mock,
+                                        'data/contents\?include=assets&owner=testmock',
+                                        'pagination_main_page')
+
+        mocking.add_get_mapping_for_url(self.mock,
+                                        'data/contents\?include=assets&owner=testmock&page=2&perPage=100',
+                                        'pagination_main_second_page')
+
+        mocking.add_get_mapping_for_url(self.mock,
+                                        'data/contents\?include=assets&owner=testmock&page=3&perPage=100',
+                                        'pagination_main_third_page')
+
+        under_test = self.client.metadata.contents
+
+        contents_response = under_test.browse('testmock', query_string='include=assets', prefetch_pages=3)
+
+        asset_linked = contents_response.linked('assets')
+
+        assert_that(contents_response.resources, has_length(100))
+        assert_that(contents_response.resources[0]['name'], is_('0968d155-77ec-450c-ae68-47f8936e2121'))
+        assert_that(len(asset_linked.resources), is_(100))
+        assert_that(asset_linked.resources[50]['name'], is_('437366a3-a2c5-4633-803c-72dfcb4366f4'))
+
+        asset_linked_pages = [page for page in contents_response.linked('assets')]
+        assert_that(len(asset_linked_pages[0]), is_(100))
+        assert_that(len(asset_linked_pages[1]), is_(157))
+        assert_that(len(asset_linked_pages[2]), is_(46))
+
+        expected_requests = [{'path': '/services/testmock', 'query': ''},
+                             {'path': '/oauth/token', 'query': ''},
+                             {'path': '/data/contents', 'query': 'include=assets&owner=testmock'},
+                             {'path': '/data/contents', 'query': 'include=assets&owner=testmock&page=2&perpage=100'},
+                             {'path': '/data/contents', 'query': 'include=assets&owner=testmock&page=3&perpage=100'}]
+
+        performed_requests = [{'path': r.path, 'query': r.query} for r in self.mock.request_history]
+        assert_that(performed_requests, is_(expected_requests))
 
     def test_browse_assets_with_paging_returns_mocked_assets(self):
         mocking.add_get_mapping_for_url(self.mock,

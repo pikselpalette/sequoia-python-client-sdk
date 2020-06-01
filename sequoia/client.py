@@ -273,15 +273,16 @@ class PageBrowser(object):
     """
 
     def __init__(self, endpoint=None, resource_name=None, criteria=None, query_string=None, params=None,
-                 prefetch_pages=1, prefetch_queue=None, next_url=None):
-        self._prefetch_queue = prefetch_queue or []
+                 prefetch_pages=1, iterator_state=None):
+        self._response_cache = iterator_state['response_cache'] if iterator_state else []
+        self._response_cache_index = 0
         self._resource_name = resource_name
         self._endpoint = endpoint
         self.params = params
         self._criteria = criteria
         self.response_builder = ResponseBuilder(descriptor=endpoint.descriptor, criteria=self._criteria)
         self.query_string = query_string
-        self.next_url = next_url or self._build_url()
+        self.next_url = iterator_state['next_url'] if iterator_state else self._build_url()
         if prefetch_pages > 0:
             self._prefetch(prefetch_pages)
 
@@ -290,7 +291,7 @@ class PageBrowser(object):
         while i:
             self.next_url, response = self._fetch(self.next_url)
             if response:
-                self._prefetch_queue.append(response)
+                self._response_cache.append(response)
 
             if not self.next_url:
                 break
@@ -328,23 +329,29 @@ class PageBrowser(object):
     def _create_page_browser_from_current_state(self):
         return PageBrowser(endpoint=self._endpoint, resource_name=self._resource_name,
                            criteria=self._criteria, query_string=self.query_string,
-                           params=self.params, prefetch_pages=0, prefetch_queue=self._prefetch_queue.copy(),
-                           next_url=self.next_url)
+                           params=self.params, prefetch_pages=0, iterator_state=self._iterator_state())
+
+    def _iterator_state(self):
+        return {'response_cache': self._response_cache,
+                'next_url': self.next_url}
 
     def __getattr__(self, name):
-        if self._prefetch_queue:
-            return getattr(self._prefetch_queue[0], name)
+        if self._response_cache and self._response_cache_index < len(self._response_cache):
+            return getattr(self._response_cache[self._response_cache_index], name)
         return None
 
     def __iter__(self):
         return self
 
     def __next__(self):
-        if self._prefetch_queue:
-            return self._prefetch_queue.pop(0)
+        if self._response_cache_index < len(self._response_cache):
+            self._response_cache_index += 1
+            return self._response_cache[self._response_cache_index - 1]
 
         if self.next_url:
             self.next_url, response = self._fetch(self.next_url)
+            self._response_cache_index += 1
+            self._response_cache.append(response)
             return response
 
         raise StopIteration()
