@@ -210,9 +210,7 @@ class LinkedResourcesPageBrowser(object):
         self._endpoint = endpoint
         self._owner = owner
         self._main_page_browser = main_page_browser
-        self._main_page_linked_data_sent = False
         self._resource = resource
-        self._current_page_browser = None
 
     @property
     def resources(self):
@@ -222,28 +220,18 @@ class LinkedResourcesPageBrowser(object):
         return None
 
     def __iter__(self):
-        main_page_browser_iter = iter(self._main_page_browser)
-        next_items = None
-        while not self._main_page_linked_data_sent or self._current_page_browser or next_items:
-            if not self._main_page_linked_data_sent:
-                next_items = self._next_fields_in_linked_resources()
-                self._main_page_linked_data_sent = True
-                http_response = next(main_page_browser_iter)
-                if http_response.full_json['linked'][self._resource]:
-                    yield http_response.full_json['linked'][self._resource]
-
-            if self._current_page_browser:
-                yield next(self._current_page_browser).resources
+        for main_page in self._main_page_browser:
+            next_items = self._next_fields_in_linked_resources()
+            if main_page.full_json['linked'][self._resource]:
+                yield main_page.full_json['linked'][self._resource]
 
             if next_items:
                 for next_item in next_items:
                     next_items_page_browser = PageBrowser(endpoint=self._endpoint, resource_name=self._resource,
                                                           query_string=urlparse(next_item).query,
                                                           params={'owner': self._owner})
-                    for page in next_items_page_browser:
-                        yield page.resources
-
-            self._main_page_linked_data_sent = False
+                    for next_item_page in next_items_page_browser:
+                        yield next_item_page.resources
 
     def return_next_items_linked_to_main_page(self, next_items):
         for next_item in next_items:
