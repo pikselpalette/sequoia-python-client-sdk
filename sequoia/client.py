@@ -233,14 +233,6 @@ class LinkedResourcesPageBrowser(object):
                     for next_item_page in next_items_page_browser:
                         yield next_item_page.resources
 
-    def return_next_items_linked_to_main_page(self, next_items):
-        for next_item in next_items:
-            next_items_page_browser = PageBrowser(endpoint=self._endpoint, resource_name=self._resource,
-                                                  query_string=urlparse(next_item).query,
-                                                  params={'owner': self._owner})
-            for page in next_items_page_browser:
-                yield page.resources
-
     def _next_fields_in_linked_resources(self):
         return [linked_item['next'] for linked_item in self._linked_links() if self._next_in_linked_item(linked_item)]
 
