@@ -305,10 +305,6 @@ class PageBrowser(object):
     def linked(self, resource):
         return LinkedResourcesPageBrowser(self._endpoint, self, resource, self.params.get('owner'))
 
-    def _iterator_state(self):
-        return {'response_cache': self._response_cache,
-                'next_url': self.next_url}
-
     def __getattr__(self, name):
         if self._response_cache:
             return getattr(self._response_cache[0], name)
