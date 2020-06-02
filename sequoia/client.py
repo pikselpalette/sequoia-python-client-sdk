@@ -210,10 +210,7 @@ class LinkedResourcesPageBrowser(object):
         self._endpoint = endpoint
         self._owner = owner
         self._main_page_browser = main_page_browser
-        self._main_page_linked_data_sent = False
         self._resource = resource
-        self._current_page_browser = None
-        self._next_items = None
 
     @property
     def resources(self):
@@ -223,34 +220,18 @@ class LinkedResourcesPageBrowser(object):
         return None
 
     def __iter__(self):
-        return self
+        for main_page in self._main_page_browser:
+            next_items = self._next_fields_in_linked_resources()
+            if main_page.full_json['linked'][self._resource]:
+                yield main_page.full_json['linked'][self._resource]
 
-    def __next__(self):
-        if not self._main_page_linked_data_sent:
-            self._next_items = self._next_fields_in_linked_resources()
-            self._main_page_linked_data_sent = True
-            http_response = self._main_page_browser.__next__()
-            if http_response.full_json['linked'][self._resource]:
-                return http_response.full_json['linked'][self._resource]
-
-        if self._current_page_browser:
-            try:
-                return self._current_page_browser.__next__().resources
-            except StopIteration:
-                pass
-
-        if self._next_items:
-            next_item = self._next_items.pop(0)
-            self._current_page_browser = PageBrowser(endpoint=self._endpoint, resource_name=self._resource,
-                                                     query_string=urlparse(next_item).query,
-                                                     params={'owner': self._owner})
-            return self._current_page_browser.__next__().resources
-
-        self._main_page_linked_data_sent = False
-        return self.__next__()
-
-    def next(self):
-        return self.__next__()
+            if next_items:
+                for next_item in next_items:
+                    next_items_page_browser = PageBrowser(endpoint=self._endpoint, resource_name=self._resource,
+                                                          query_string=urlparse(next_item).query,
+                                                          params={'owner': self._owner})
+                    for next_item_page in next_items_page_browser:
+                        yield next_item_page.resources
 
     def _next_fields_in_linked_resources(self):
         return [linked_item['next'] for linked_item in self._linked_links() if self._next_in_linked_item(linked_item)]
@@ -274,7 +255,7 @@ class PageBrowser(object):
 
     def __init__(self, endpoint=None, resource_name=None, criteria=None, query_string=None, params=None,
                  prefetch_pages=1):
-        self._prefetch_queue = []
+        self._response_cache = []
         self._resource_name = resource_name
         self._endpoint = endpoint
         self.params = params
@@ -290,7 +271,7 @@ class PageBrowser(object):
         while i:
             self.next_url, response = self._fetch(self.next_url)
             if response:
-                self._prefetch_queue.append(response)
+                self._response_cache.append(response)
 
             if not self.next_url:
                 break
@@ -300,12 +281,15 @@ class PageBrowser(object):
         self._remove_owner_if_needed(self.params, next_url)
         response = self._endpoint.http.get(next_url, self.params, resource_name=self._resource_name)
         response_wrapper = self._get_response(self._endpoint, response)
-        if self._next_page(response):
-            return '%s%s' % (self._endpoint.service.location, self._next_page(response)), response_wrapper
-        elif self._continue_param(response):
-            return self._build_url_from_continue_param(response), response_wrapper
 
-        return None, response_wrapper
+        return self._get_next_url(response), response_wrapper
+
+    def _get_next_url(self, response):
+        if self._next_page(response):
+            return '%s%s' % (self._endpoint.service.location, self._next_page(response))
+        elif self._continue_param(response):
+            return self._build_url_from_continue_param(response)
+        return None
 
     def _get_response(self, endpoint, response):
         return HttpResponse(response.raw, resource_name=endpoint.resource,
@@ -322,31 +306,21 @@ class PageBrowser(object):
         return self._endpoint.service.location + self._continue_param(response)
 
     def linked(self, resource):
-        pb = PageBrowser(endpoint=self._endpoint, resource_name=self._resource_name,
-                         criteria=self._criteria, query_string=self.query_string,
-                         params=self.params)
-        return LinkedResourcesPageBrowser(self._endpoint, pb, resource, self.params.get('owner'))
+        return LinkedResourcesPageBrowser(self._endpoint, self, resource, self.params.get('owner'))
 
     def __getattr__(self, name):
-        if self._prefetch_queue:
-            return getattr(self._prefetch_queue[0], name)
+        if self._response_cache:
+            return getattr(self._response_cache[0], name)
         return None
 
     def __iter__(self):
-        return self
+        for cache_item in self._response_cache:
+            yield cache_item
 
-    def __next__(self):
-        if self._prefetch_queue:
-            return self._prefetch_queue.pop(0)
-
-        if self.next_url:
+        while self.next_url:
             self.next_url, response = self._fetch(self.next_url)
-            return response
-
-        raise StopIteration()
-
-    def next(self):
-        return self.__next__()
+            self._response_cache.append(response)
+            yield response
 
     def _next_page(self, response):
         return response.full_json['meta'].get('next', None)
