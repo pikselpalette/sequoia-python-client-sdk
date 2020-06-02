@@ -314,8 +314,8 @@ class PageBrowser(object):
         cache_index = 0
         while cache_index < len(self._response_cache) or self.next_url:
             if cache_index < len(self._response_cache):
+                yield self._response_cache[cache_index]
                 cache_index += 1
-                yield self._response_cache[cache_index - 1]
 
             if self.next_url:
                 self.next_url, response = self._fetch(self.next_url)
