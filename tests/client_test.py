@@ -256,6 +256,42 @@ class TestResourceEndpointProxy(unittest.TestCase):
         performed_requests = [{'path': r.path, 'query': r.query} for r in self.mock.request_history]
         assert_that(performed_requests, is_(expected_requests))
 
+    def test_cache_modified_while_other_iterator_is_browsing(self):
+        mocking.add_get_mapping_for_url(self.mock,
+                                        'data/contents\?include=assets&owner=testmock',
+                                        'pagination_main_page')
+
+        mocking.add_get_mapping_for_url(self.mock,
+                                        'data/contents\?include=assets&owner=testmock&page=2&perPage=100',
+                                        'pagination_main_second_page')
+
+        mocking.add_get_mapping_for_url(self.mock,
+                                        'data/contents\?include=assets&owner=testmock&page=3&perPage=100',
+                                        'pagination_main_third_page')
+
+        under_test = self.client.metadata.contents
+
+        contents_response = under_test.browse('testmock', query_string='include=assets')
+
+        response_count = 0
+        for response in contents_response:
+            response_count += len(response.resources)
+            inner_response_count = 0
+            for inner_response in contents_response:
+                inner_response_count += len(inner_response.resources)
+            assert_that(inner_response_count, is_(228))
+
+        assert_that(response_count, is_(228))
+
+        expected_requests = [{'path': '/services/testmock', 'query': ''},
+                             {'path': '/oauth/token', 'query': ''},
+                             {'path': '/data/contents', 'query': 'include=assets&owner=testmock'},
+                             {'path': '/data/contents', 'query': 'include=assets&owner=testmock&page=2&perpage=100'},
+                             {'path': '/data/contents', 'query': 'include=assets&owner=testmock&page=3&perpage=100'}]
+
+        performed_requests = [{'path': r.path, 'query': r.query} for r in self.mock.request_history]
+        assert_that(performed_requests, is_(expected_requests))
+
     def test_browse_linked_resources_with_prefetch_and_more_than_one_page_goes_throw_several_pages(self):
         mocking.add_get_mapping_for_url(self.mock,
                                         'data/contents\?include=assets&owner=testmock',
