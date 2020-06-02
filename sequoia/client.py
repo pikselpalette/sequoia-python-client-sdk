@@ -281,12 +281,15 @@ class PageBrowser(object):
         self._remove_owner_if_needed(self.params, next_url)
         response = self._endpoint.http.get(next_url, self.params, resource_name=self._resource_name)
         response_wrapper = self._get_response(self._endpoint, response)
-        if self._next_page(response):
-            return '%s%s' % (self._endpoint.service.location, self._next_page(response)), response_wrapper
-        elif self._continue_param(response):
-            return self._build_url_from_continue_param(response), response_wrapper
 
-        return None, response_wrapper
+        return self._get_next_url(response), response_wrapper
+
+    def _get_next_url(self, response):
+        if self._next_page(response):
+            return '%s%s' % (self._endpoint.service.location, self._next_page(response))
+        elif self._continue_param(response):
+            return self._build_url_from_continue_param(response)
+        return None
 
     def _get_response(self, endpoint, response):
         return HttpResponse(response.raw, resource_name=endpoint.resource,
@@ -311,17 +314,13 @@ class PageBrowser(object):
         return None
 
     def __iter__(self):
-        cache_index = 0
-        while cache_index < len(self._response_cache) or self.next_url:
-            if cache_index < len(self._response_cache):
-                yield self._response_cache[cache_index]
-                cache_index += 1
+        for cache_item in self._response_cache:
+            yield cache_item
 
-            if self.next_url:
-                self.next_url, response = self._fetch(self.next_url)
-                cache_index += 1
-                self._response_cache.append(response)
-                yield response
+        while self.next_url:
+            self.next_url, response = self._fetch(self.next_url)
+            self._response_cache.append(response)
+            yield response
 
     def _next_page(self, response):
         return response.full_json['meta'].get('next', None)

@@ -120,7 +120,6 @@ class TestResourceEndpointProxy(unittest.TestCase):
         under_test_browse = under_test.browse('testmock', query_string='continue=true&perPage=2')
 
         response_list = [response for response in under_test_browse]
-        response_list_2 = [response for response in under_test_browse]
 
         assert_that(response_list, has_length(3))
         assert_that(response_list[0].resources, has_length(2))
