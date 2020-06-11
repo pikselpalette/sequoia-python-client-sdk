@@ -351,6 +351,40 @@ class TestResourceEndpointProxy(unittest.TestCase):
         assert_that(response_list[1].resources[0]['name'], is_('3bf33965-41fe-4f94-8aa9-63b6b8a379da'))
         assert_that(response_list[1].resources[1]['name'], is_('44c6170a-2c03-42ce-bfa3-101fec955188'))
 
+    def test_browse_assets_with_paging_and_inclusions_returns_mocked_assets(self):
+        mocking.add_get_mapping_for_url(self.mock,
+                                        'data/assets\?withContentRef=theContentRef&perPage=2&include=content&owner=testmock',
+                                        'valid_metadata_assets_response_with_include_page_1')
+        mocking.add_get_mapping_for_url(self.mock,
+                                        'data/assets\?owner=testmock&withContentRef=testmock&page=2&perPage=2&include=content',
+                                        'valid_metadata_assets_response_with_include_page_2')
+        under_test = self.client.metadata.assets
+
+        inclusion_contents = criteria.Criteria().add(inclusion=criteria.Inclusion.resource('content'))
+
+        response_list = [response
+                         for response in under_test.browse('testmock',
+                                                           query_string='withContentRef=theContentRef&perPage=2',
+                                                           criteria=inclusion_contents)]
+
+        assert_that(response_list, has_length(2))
+        assert_that(response_list[0].resources, has_length(2))
+        assert_that(response_list[1].resources, has_length(2))
+        assert_that(response_list[0].resources[0]['name'], is_('016b9e5f-c184-48ea-a5e2-6e6bc2d62791'))
+        assert_that(response_list[0].resources[1]['name'], is_('192e78ad-25d1-47f8-b539-19053a2b4a6f'))
+        assert_that(response_list[1].resources[0]['name'], is_('3bf33965-41fe-4f94-8aa9-63b6b8a379da'))
+        assert_that(response_list[1].resources[1]['name'], is_('44c6170a-2c03-42ce-bfa3-101fec955188'))
+
+        expected_requests = \
+            [{'path': '/services/testmock', 'query': ''},
+             {'path': '/oauth/token', 'query': ''},
+             {'path': '/data/assets', 'query': 'withcontentref=thecontentref&perpage=2&include=content&owner=testmock'},
+             {'path': '/data/assets', 'query': 'owner=testmock&withcontentref=testmock&page=2&perpage=2&include=content'}]
+
+        performed_requests = [{'path': r.path, 'query': r.query} for r in self.mock.request_history]
+        assert_that(performed_requests, is_(expected_requests))
+
+
     def test_browse_assets_with_iteration_and_one_page_returns_mocked_assets(self):
         mocking.add_get_mapping_for_url(self.mock,
                                         'data/assets\?withContentRef=theContentRef&perPage=2&owner=testmock',

@@ -21,6 +21,30 @@ pytestmark = pytest.mark.integration_test
 
 
 class TestEndpointProxy(TestGeneric):
+
+    def test_paging_main_content_with_includes(self):
+        client = Client(self.config.sequoia.registry,
+                        grant_client_id=self.config.sequoia.username,
+                        grant_client_secret=self.config.sequoia.password)
+
+        offers_endpoint = client.metadata.offers
+
+        inclusion_contents = criteria.Criteria().add(inclusion=criteria.Inclusion.resource('scopeContents'))
+
+        offers_page_browser = offers_endpoint.browse(self.config.sequoia.owner, criteria=inclusion_contents,
+                                                     query_string='withAvailabilityStartAt=2019-03-01T15:23:14.131Z/&withAvailabilityEndAt=/2020-04-01T15:00:00.131Z')
+
+        offers = []
+        for page in offers_page_browser:
+            offers = offers + page.resources
+
+        scope_contents = []
+        for scope_contents_partial in offers_page_browser.linked('scopeContents'):
+            scope_contents = scope_contents + scope_contents_partial
+
+        assert_that(len(offers), is_(6544))
+        assert_that(len(scope_contents), is_(2003))
+
     def test_can_post_and_retrieve_json_payload(self):
         random_name = 'aSampleProfile-' + str(uuid.uuid4())
         profile = profile_template % random_name
