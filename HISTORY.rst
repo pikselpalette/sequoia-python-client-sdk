@@ -51,3 +51,4 @@ History
 * Allowing to provide `correlation_id` value when the client is created
 * Caching tokens by `grant_client_id` and `token_url` to avoid calling identity in case credentials are cached
 * PageBrowser keeping a response cache to avoid duplicated requests
+* Bug fixed when paging main content. Query params should to be added to next url

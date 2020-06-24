@@ -1,0 +1,41 @@
+{
+  "meta": {
+    "page": 1,
+    "perPage": 2,
+    "first": "/data/assets?owner=testmock&withContentRef=testmock&page=1&perPage=2&include=content",
+    "next": "/data/assets?owner=testmock&withContentRef=testmock&page=2&perPage=2&include=content"
+  },
+  "assets": [
+    {
+      "ref": "testmock:016b9e5f-c184-48ea-a5e2-6e6bc2d62791",
+      "owner": "testmock",
+      "name": "016b9e5f-c184-48ea-a5e2-6e6bc2d62791",
+      "title": "016b9e5f-c184-48ea-a5e2-6e6bc2d62791",
+      "tags": [],
+      "createdAt": "2017-09-12T08:01:36.317Z",
+      "createdBy": "root:system-piksel-ingest-manager",
+      "updatedAt": "2017-09-12T08:01:36.317Z",
+      "updatedBy": "root:system-piksel-ingest-manager",
+      "version": "b6ceb1d0222abb7c9754d8664954ca606628af85",
+      "type": "video",
+      "fullMediaType": "application/octet-stream",
+      "contentRef": "testmock:sampleContent",
+      "active": true
+    },
+    {
+      "ref": "testmock:192e78ad-25d1-47f8-b539-19053a2b4a6f",
+      "owner": "testmock",
+      "name": "192e78ad-25d1-47f8-b539-19053a2b4a6f",
+      "title": "192e78ad-25d1-47f8-b539-19053a2b4a6f",
+      "createdAt": "2017-09-12T08:01:36.317Z",
+      "createdBy": "root:system-piksel-ingest-manager",
+      "updatedAt": "2017-09-12T08:01:36.317Z",
+      "updatedBy": "root:system-piksel-ingest-manager",
+      "version": "8aef9579a2afb1497cb7918b508a7ffe656aa7c8",
+      "type": "application",
+      "fullMediaType": "application/octet-stream",
+      "contentRef": "testmock:sampleContent",
+      "active": true
+    }
+  ]
+}

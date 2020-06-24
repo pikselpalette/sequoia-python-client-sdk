@@ -262,14 +262,15 @@ class PageBrowser(object):
         self._criteria = criteria
         self.response_builder = ResponseBuilder(descriptor=endpoint.descriptor, criteria=self._criteria)
         self.query_string = query_string
-        self.next_url = self._build_url()
+        self.url = self._build_url()
+        self.next_url = None
         if prefetch_pages > 0:
             self._prefetch(prefetch_pages)
 
     def _prefetch(self, pages):
         i = pages
         while i:
-            self.next_url, response = self._fetch(self.next_url)
+            self.next_url, response = self._fetch()
             if response:
                 self._response_cache.append(response)
 
@@ -277,12 +278,17 @@ class PageBrowser(object):
                 break
             i -= 1
 
-    def _fetch(self, next_url):
-        self._remove_owner_if_needed(self.params, next_url)
-        response = self._endpoint.http.get(next_url, self.params, resource_name=self._resource_name)
+    def _fetch(self):
+        url = self.next_url or self.url
+        params = self._get_params_for_request()
+        self._remove_owner_if_needed(self.params, url)
+        response = self._endpoint.http.get(url, params=params, resource_name=self._resource_name)
         response_wrapper = self._get_response(self._endpoint, response)
 
         return self._get_next_url(response), response_wrapper
+
+    def _get_params_for_request(self):
+        return None if self.next_url else self.params
 
     def _get_next_url(self, response):
         if self._next_page(response):
@@ -318,7 +324,7 @@ class PageBrowser(object):
             yield cache_item
 
         while self.next_url:
-            self.next_url, response = self._fetch(self.next_url)
+            self.next_url, response = self._fetch()
             self._response_cache.append(response)
             yield response
 
