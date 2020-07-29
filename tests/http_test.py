@@ -36,7 +36,8 @@ class HttpExecutorTest(unittest.TestCase):
 
         http_executor = http.HttpExecutor(auth.AuthFactory.create(grant_client_id="client_id",
                                                                   grant_client_secret="client_secret"),
-                                          session=session_mock, correlation_id="my_correlation_id")
+                                          session=session_mock, correlation_id="my_correlation_id",
+                                          content_type="application/json")
 
         http_executor.request("POST", "mock://some_url",
                               data='some data',
@@ -45,8 +46,8 @@ class HttpExecutorTest(unittest.TestCase):
 
         expected_headers = {
             'User-Agent': http_executor.user_agent,
-            "Content-Type": "application/vnd.piksel+json",
-            "Accept": "application/vnd.piksel+json",
+            "Content-Type": "application/json",
+            "Accept": "application/json",
             "X-Correlation-ID": "my_correlation_id",
             "New-Header": 'SomeValue'
         }

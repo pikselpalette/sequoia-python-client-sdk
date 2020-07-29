@@ -41,6 +41,22 @@ To create the client it is needed to provide credentials and the url for the ser
                         grant_client_secret="clientSecret")
 
 
+Creating a SequoiaClient connecting to the MAG Proxy
+==========================================
+The MAG Proxy uses mutual SSL authentication. To create a client, auth_type of AuthType.MUTUAL must be specified
+and the paths to local client certificate, client key and a server certificate files must be provided in the client_cert,
+client_key and server_cert arguments respectively. The content_type, which sets "Content-Type" and "Accept" header of
+the http requests to the MAG proxy, must be set to "application/json".
+
+    .. code-block:: python
+
+        client = Client("https://registry-sandbox.sequoia.piksel.com/services/testmock",
+                        auth_type=AuthType.MUTUAL,
+                        client_cert="/certs/client_cert.pem",
+                        client_key="/certs/client_key.pem",
+                        server_cert="/certs/server_cert.pem",
+                        content_type="application/json")
+
 Authentication types
 ====================
 
@@ -53,7 +69,7 @@ When creating the client, authentication type can be specified using the paramet
                         grant_client_id="clientId",
                         grant_client_secret="clientSecret")
 
-There are three authentication types:
+There are four authentication types:
 
 CLIENT_GRANT type
 -----------------
@@ -70,10 +86,26 @@ BYO_TOKEN type
 With this method ``byo_token`` is required. That access token will be used to authenticate requests. The access token will
 be used along the client life and won't be refreshed.
 
+
 NO_AUTH type
 ------------
 
 Mode used when no authentication is required.
+
+
+MUTUAL type
+------------
+
+Mode used when mutual TLS authentication is required. Paths to local client certificate, client key and a server
+certificate files must be provided in the client_cert, client_key and server_cert arguments respectively.
+    .. code-block:: python
+
+        client = Client("https://registry-sandbox.sequoia.piksel.com/services/testmock",
+                        auth_type=AuthType.MUTUAL,
+                        client_cert="/certs/client_cert.pem",
+                        client_key="/certs/client_key.pem",
+                        server_cert="/certs/server_cert.pem",
+                        ...
 
 
 Creating an endpoint
