@@ -6,7 +6,7 @@
 astroid==1.*
 jsonpickle==1.*
 numpy==1.16.*
-prospector==1.16.*
+prospector==1.1.7
 pyhamcrest==1.9.*
 pytest==3.5.*
 pytest-xdist==1.22.*
