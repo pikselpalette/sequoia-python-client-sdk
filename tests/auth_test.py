@@ -2,11 +2,11 @@ import unittest
 from unittest.mock import Mock, patch
 
 import pytest
-from hamcrest import assert_that, is_
+from hamcrest import assert_that, is_, equal_to
 from oauthlib.oauth2 import TokenExpiredError
 
 from sequoia import error
-from sequoia.auth import TokenCache, ClientGrantAuth
+from sequoia.auth import TokenCache, ClientGrantAuth, AuthFactory, AuthType
 
 
 class TestClientGrantAuth(unittest.TestCase):
@@ -85,3 +85,24 @@ class TestTokenCache(unittest.TestCase):
         assert_that(TokenCache().get_token('user-3', 'url1'), is_(None))
 
         TokenCache._token_storage = {}
+
+
+class TestMutualAuth(unittest.TestCase):
+
+    def test_should_raise_value_error_when_client_cert_not_provided(self):
+        self.assertRaises(ValueError, AuthFactory.create, auth_type=AuthType.MUTUAL, client_key='/certs/client_key.pem',
+                          server_cert='/certs/server_cert.pem')
+
+    def test_should_raise_value_error_when_client_key_not_provided(self):
+        self.assertRaises(ValueError, AuthFactory.create, auth_type=AuthType.MUTUAL,
+                          client_cert='/certs/client_cert.pem', server_cert='/certs/server_cert.pem')
+
+    def test_should_raise_value_error_when_server_cert_not_provided(self):
+        self.assertRaises(ValueError, AuthFactory.create, auth_type=AuthType.MUTUAL,
+                          client_cert='/certs/client_cert.pem', client_key='/certs/client_key.pem')
+
+    def test_should_create_auth_with_certificates_on_session(self):
+        auth = AuthFactory.create(auth_type=AuthType.MUTUAL, client_cert='/certs/client_cert.pem',
+                                  client_key='/certs/client_key.pem', server_cert='/certs/server_cert.pem')
+        assert_that(auth.session.cert, equal_to(('/certs/client_cert.pem', '/certs/client_key.pem')))
+        assert_that(auth.session.verify, equal_to('/certs/server_cert.pem'))

@@ -16,17 +16,21 @@ class AuthType(enum.Enum):
     CLIENT_GRANT = 1
     NO_AUTH = 2
     BYO_TOKEN = 3
+    MUTUAL = 4
 
 
 class AuthFactory:
     @staticmethod
+    # pylint: disable-msg=too-many-arguments
     def create(grant_client_id=None,
                grant_client_secret=None,
                auth_type=AuthType.CLIENT_GRANT,
                byo_token=None,
                token_url=None,
-               request_timeout=0):
-
+               request_timeout=0,
+               client_cert=None,
+               client_key=None,
+               server_cert=None):
         if auth_type == AuthType.CLIENT_GRANT and grant_client_id is not None and grant_client_secret is not None:
             logging.debug('Client credential grant scheme used')
             return ClientGrantAuth(grant_client_id, grant_client_secret, token_url, byo_token=byo_token,
@@ -39,6 +43,10 @@ class AuthFactory:
         elif auth_type == AuthType.BYO_TOKEN:
             logging.debug('BYO token scheme used')
             return BYOTokenAuth(byo_token)
+
+        elif auth_type == AuthType.MUTUAL:
+            logging.debug('Mutual auth used')
+            return MutualAuth(client_cert, client_key, server_cert)
 
         else:
             raise ValueError('No valid authentication sources found')
@@ -140,6 +148,19 @@ class BYOTokenAuth(Auth):
         super().__init__()
         self.token = oauth_token(byo_token)
         self.session = OAuth2SessionTokenManagementWrapper(token=self.token)
+
+
+class MutualAuth(Auth):
+    def __init__(self, client_cert, client_key, server_cert):
+        if client_cert is None or client_key is None or server_cert is None:
+            raise ValueError('client_cert, client_key, server_cert must be provided when using AuthType.MUTUAL')
+        super().__init__()
+        self.auth = None
+        self.session = requests.Session()
+        self.session.cert =  (client_cert, client_key)
+        self.session.verify =  server_cert
+    def register_adapters(self, adapters):
+        super().register_adapters(adapters)
 
 
 def oauth_token(access_token):

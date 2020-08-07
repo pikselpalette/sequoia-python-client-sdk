@@ -29,10 +29,9 @@ Usage
 
 Creating a SequoiaClient
 ========================
-The Sequoia RESTful services have an OAuth token-based authorisation model, meaning that the Client SDK must first
-acquire a time-limited access token before making further requests.
 
-To create the client it is needed to provide credentials and the url for the service ``registry``:
+To create the client it is necessary to provide the url for the service ``registry`` and named arguments specifying the
+credentials for the auth_type being used. If no auth_type is specified, then the default CLIENT_GRANT is used:
 
     .. code-block:: python
 
@@ -53,7 +52,15 @@ When creating the client, authentication type can be specified using the paramet
                         grant_client_id="clientId",
                         grant_client_secret="clientSecret")
 
-There are three authentication types:
+
+The Sequoia RESTful services have an OAuth token-based authorisation model, meaning that the Client SDK must first
+acquire a time-limited access token before making further requests. CLIENT_GRANT or BYO_TOKEN types should be used.
+
+It is also possible to connect to the client via a proxy using two-way TLS authentication. In this case, MUTUAL
+auth_type should be used.
+
+
+There are four authentication types:
 
 CLIENT_GRANT type
 -----------------
@@ -63,6 +70,13 @@ used to get an access token. The access token is refreshed automatically when ex
 parameter can be provided when instantiating the client, and will be used until it is expired.
 Then the access token is refreshed automatically.
 
+    .. code-block:: python
+
+        client = Client("https://registry-sandbox.sequoia.piksel.com/services/testmock",
+                        auth_type=AuthType.CLIENT_GRANT,
+                        grant_client_id="clientId",
+                        grant_client_secret="clientSecret")
+
 
 BYO_TOKEN type
 --------------
@@ -70,10 +84,44 @@ BYO_TOKEN type
 With this method ``byo_token`` is required. That access token will be used to authenticate requests. The access token will
 be used along the client life and won't be refreshed.
 
+
 NO_AUTH type
 ------------
 
 Mode used when no authentication is required.
+
+
+MUTUAL type
+------------
+
+Mode used when mutual TLS authentication is required. Paths to local client certificate, client key and a server
+certificate files must be provided in the client_cert, client_key and server_cert arguments respectively.
+
+    .. code-block:: python
+
+        client = Client("https://registry-sandbox.sequoia.piksel.com/services/testmock",
+                        auth_type=AuthType.MUTUAL,
+                        client_cert="/certs/client_cert.pem",
+                        client_key="/certs/client_key.pem",
+                        server_cert="/certs/server_cert.pem",
+                        ...
+
+
+Content Type
+====================
+
+By default the client sets "Content-Type" and "Accept' header values of http requests to  "application/vnd.piksel+json".
+A different content type for these headers can be specified in the content_type parameter when creating a client.
+
+ .. code-block:: python
+
+        client = Client("https://registry-sandbox.sequoia.piksel.com/services/testmock",
+                        auth_type=AuthType.MUTUAL,
+                        client_cert="/certs/client_cert.pem",
+                        client_key="/certs/client_key.pem",
+                        server_cert="/certs/server_cert.pem",
+                        content_type="application/json"
+                        )
 
 
 Creating an endpoint

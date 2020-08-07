@@ -10,7 +10,7 @@ from requests import Response
 
 from sequoia import criteria, auth
 from sequoia import error
-from sequoia.auth import TokenCache
+from sequoia.auth import TokenCache, AuthType
 from sequoia.client import Client, ResponseBuilder
 from sequoia.criteria import Criteria, Inclusion
 from tests import mocking
@@ -549,11 +549,12 @@ class TestBusinessEndpointProxy(unittest.TestCase):
         assert_that(calls[0][0][1], 'http://mock-registry/services/testmock')
         assert_that(calls[1][0][1], 'https://mock-registry/services/testmock')
 
-
 class TestClient(unittest.TestCase):
     def setUp(self):
         self.mock = mocking.bootstrap_mock()
         TokenCache._token_storage = {}
+        self.anAuth = auth.AuthFactory.create(grant_client_id="client_id",
+                                grant_client_secret="client_secret")
 
     def test_fetch_token_given_there_is_an_error_fetching_the_token_then_client_error_is_raised(self):
         mocking.add_post_mapping_for(self.mock, 'identity', 'error_identity_response')
@@ -660,6 +661,32 @@ class TestClient(unittest.TestCase):
                         transaction_id='another_transaction_id')
 
         assert_that(client._correlation_id, equal_to('user_id/application_id/1234567890'))
+
+    @patch("sequoia.http.HttpExecutor")
+    def test_create_client_should_create_session_with_certs_when_auth_type_is_mutual(self, mock_http_executor):
+        mock_http_executor.return_value = mock_http_executor
+        client_cert = '/cert_path/client_cert.pm'
+        client_key = '/cert_path/client_key.pm'
+        server_cert = '/cert_path/server_cert.pm'
+
+        client = Client('http://mock-registry/services/testmock',
+                        auth_type=AuthType.MUTUAL,
+                        client_cert=client_cert,
+                        client_key=client_key,
+                        server_cert=server_cert,
+                        content_type="application/json")
+
+        mock_http_executor.assert_called_with(
+            client._auth,
+            backoff_strategy=None,
+            content_type='application/json',
+            correlation_id=None,
+            proxies=None,
+            request_timeout=240,
+            session = client._auth.session,
+            user_agent=None)
+        assert_that(client._auth.session.cert, equal_to((client_cert, client_key)))
+        assert_that(client._auth.session.verify, equal_to(server_cert))
 
 
 class TestResponseBuilder(unittest.TestCase):
