@@ -1,1 +1,1 @@
-from sequoia.criteria._criteria import * # noqa
+from sequoia.criteria._criteria import *

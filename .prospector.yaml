@@ -3,7 +3,7 @@ output-format: grouped
 strictness: medium
 test-warnings: false
 doc-warnings: false
-autodetect: true
+autodetect: false
 member-warnings: false
 
 ignore-paths:
