@@ -3,11 +3,12 @@
 #
 -r requirements.txt
 
-astroid==1.*
+astroid==2.2.5
 jsonpickle==1.*
 numpy==1.16.*
 prospector==1.1.7
 pyhamcrest==1.9.*
+pylint-django==2.0.15
 pytest==3.5.*
 pytest-xdist==1.22.*
 pytest-cov==2.5.*

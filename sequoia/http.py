@@ -143,13 +143,12 @@ class HttpExecutor:
     def _raise_sequoia_error(self, response=None, request_error=None):
         if isinstance(request_error, ConnectionError):
             raise error.ConnectionError(str(request_error.args[0]), cause=request_error)
-        elif isinstance(request_error, Timeout):
+        if isinstance(request_error, Timeout):
             raise error.Timeout(str(request_error.args[0]), cause=request_error)
-        elif isinstance(request_error, TooManyRedirects):
+        if isinstance(request_error, TooManyRedirects):
             raise error.TooManyRedirects(str(request_error.args[0]), cause=request_error)
-        else:
-            # error with status code
-            raise self.create_http_error(response)
+        # error with status code
+        raise self.create_http_error(response)
 
     def get(self, url, params=None, resource_name=None):
         return self.request('GET', url, params=params, resource_name=resource_name)

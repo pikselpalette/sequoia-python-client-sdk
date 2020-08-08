@@ -79,9 +79,8 @@ class Client(object):
     def _get_token_url(self, auth_type):
         if auth_type == AuthType.MUTUAL:
             return None
-        else:
-            identity = self._registry['identity'].location
-            return identity + '/oauth/token'
+        identity = self._registry['identity'].location
+        return identity + '/oauth/token'
 
     def __getattr__(self, item):
         return self._create_service_proxy(item)
@@ -181,8 +180,7 @@ class ResourceEndpointProxy(object):
         except error.HttpError as e:
             if self._is_not_matching_version_exception(e):
                 raise error.NotMatchingVersion('Document cannot be updated. Version does not match.', cause=e)
-            else:
-                raise e
+            raise e
 
     @staticmethod
     def _create_owner_param(owner):
@@ -302,7 +300,7 @@ class PageBrowser(object):
     def _get_next_url(self, response):
         if self._next_page(response):
             return '%s%s' % (self._endpoint.service.location, self._next_page(response))
-        elif self._continue_param(response):
+        if self._continue_param(response):
             return self._build_url_from_continue_param(response)
         return None
 

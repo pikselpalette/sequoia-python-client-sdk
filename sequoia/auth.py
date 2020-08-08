@@ -36,20 +36,19 @@ class AuthFactory:
             return ClientGrantAuth(grant_client_id, grant_client_secret, token_url, byo_token=byo_token,
                                    request_timeout=request_timeout)
 
-        elif auth_type == AuthType.NO_AUTH:
+        if auth_type == AuthType.NO_AUTH:
             logging.debug('No auth schema used')
             return NoAuth()
 
-        elif auth_type == AuthType.BYO_TOKEN:
+        if auth_type == AuthType.BYO_TOKEN:
             logging.debug('BYO token scheme used')
             return BYOTokenAuth(byo_token)
 
-        elif auth_type == AuthType.MUTUAL:
+        if auth_type == AuthType.MUTUAL:
             logging.debug('Mutual auth used')
             return MutualAuth(client_cert, client_key, server_cert)
 
-        else:
-            raise ValueError('No valid authentication sources found')
+        raise ValueError('No valid authentication sources found')
 
 
 class Auth:
@@ -111,7 +110,7 @@ class ClientGrantAuth(Auth):
         if byo_token:
             self.token_cache.add_token(self.grant_client_id, self.token_url, oauth_token(byo_token))
             return self.token_cache.get_token(self.grant_client_id, self.token_url)
-        elif self.token_cache.get_token(self.grant_client_id, self.token_url):
+        if self.token_cache.get_token(self.grant_client_id, self.token_url):
             return self.token_cache.get_token(self.grant_client_id, self.token_url)
         return None
 
@@ -159,8 +158,6 @@ class MutualAuth(Auth):
         self.session = requests.Session()
         self.session.cert =  (client_cert, client_key)
         self.session.verify =  server_cert
-    def register_adapters(self, adapters):
-        super().register_adapters(adapters)
 
 
 def oauth_token(access_token):
