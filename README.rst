@@ -111,8 +111,7 @@ Content Type
 ====================
 
 By default the client sets "Content-Type" and "Accept' header values of http requests to  "application/vnd.piksel+json".
-A different content type for these headers can be specified in the content_type parameter when creating a client
-(content_type=None will set None to those headers).
+A different content type for these headers can be specified in the content_type parameter when creating a client.
 
  .. code-block:: python
 

@@ -49,7 +49,7 @@ class HttpExecutor:
 
     # pylint: disable-msg=too-many-arguments
     def __init__(self, auth, session=None, proxies=None, user_agent=None, get_delay=None, request_timeout=None,
-                 backoff_strategy=None, correlation_id=None, **kwargs):
+                 backoff_strategy=None, correlation_id=None, content_type=None):
         if user_agent is not None:
             self.user_agent = user_agent + self.user_agent
 
@@ -63,8 +63,8 @@ class HttpExecutor:
 
         self.common_headers = {
             'User-Agent': self.user_agent,
-            "Content-Type": kwargs.get('content_type', 'application/vnd.piksel+json'),
-            "Accept": kwargs.get('content_type', 'application/vnd.piksel+json'),
+            "Content-Type": content_type or 'application/vnd.piksel+json',
+            "Accept": content_type or 'application/vnd.piksel+json',
             "X-Correlation-ID": self.correlation_id
         }
 
