@@ -327,3 +327,18 @@ class HttpExecutorTest(unittest.TestCase):
         response = http_executor.request("GET", "mock://test.com", resource_name=resource_name_expected)
 
         assert_that(response.resource_name, equal_to(resource_name_expected))
+
+    def test_given_none_content_type_property_then_header_should_contain_none_content_type(self):
+        http_executor = http.HttpExecutor(None, content_type=None)
+        assert_that(http_executor.common_headers['Content-Type'], is_(None))
+        assert_that(http_executor.common_headers['Accept'], is_(None))
+
+    def test_given_a_content_type_property_then_header_should_contain_that_content_type(self):
+        http_executor = http.HttpExecutor(None, content_type='abc')
+        assert_that(http_executor.common_headers['Content-Type'], is_('abc'))
+        assert_that(http_executor.common_headers['Accept'], is_('abc'))
+
+    def test_given_no_content_type_property_then_header_should_contain_default_content_type(self):
+        http_executor = http.HttpExecutor(None)
+        assert_that(http_executor.common_headers['Content-Type'], is_('application/vnd.piksel+json'))
+        assert_that(http_executor.common_headers['Accept'], is_('application/vnd.piksel+json'))
