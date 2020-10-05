@@ -128,11 +128,31 @@ class ServiceProxy(object):
         return BusinessEndpointProxy(self._http, self._service, path_template=path_template)
 
 
-class ResourceEndpointProxy(object):
+class GenericEndpointProxy(object):
+
+    def __init__(self):
+        self.http = None
+
+    def _add_correlation_id(self):
+        self.http.common_headers['X-Correlation-ID'] = self.http.correlation_id \
+            if self.http.correlation_id else \
+            ResourceEndpointProxy._build_correlation_id(
+                self.http.user_id,
+                self.http.application_id)
+
+    @staticmethod
+    def _build_correlation_id(user_id=None, application_id=None):
+        if user_id is not None and application_id is not None:
+            return "/".join((user_id, application_id, str(uuid.uuid4())))
+        return None
+
+
+class ResourceEndpointProxy(GenericEndpointProxy):
     """Proxy endpoint providing read/store/browse operations over Sequoia API endpoint.
     """
 
     def __init__(self, http, service, resource, descriptor=None):
+        super().__init__()
         self.http = http
         self.service = service
         self.resource = resource
@@ -158,19 +178,6 @@ class ResourceEndpointProxy(object):
 
         return PageBrowser(endpoint=self, resource_name=self.resource, criteria=criteria,
                            query_string=query_string, params=params, prefetch_pages=prefetch_pages)
-
-    def _add_correlation_id(self):
-        self.http.common_headers['X-Correlation-ID'] = self.http.correlation_id \
-            if self.http.correlation_id else \
-            ResourceEndpointProxy._build_correlation_id(
-                self.http.user_id,
-                self.http.application_id)
-
-    @staticmethod
-    def _build_correlation_id(user_id=None, application_id=None):
-        if user_id is not None and application_id is not None:
-            return "/".join((user_id, application_id, str(uuid.uuid4())))
-        return None
 
     def _create_fields_params(self, fields):
         if fields:
@@ -370,28 +377,16 @@ class PageBrowser(object):
         return 'owner' in parse_qs(result.query)
 
 
-class BusinessEndpointProxy(object):
+class BusinessEndpointProxy(GenericEndpointProxy):
     """Proxy endpoint providing read/store/browse operations over Sequoia API Business Endpoints with NOAUTH.
     """
 
     def __init__(self, http, service, path_template):
+        super().__init__()
         self.http = http
         self.service = service
         self.url = service.location
         self.path_template = path_template
-
-    def _add_correlation_id(self):
-        self.http.common_headers['X-Correlation-ID'] = self.http.correlation_id \
-            if self.http.correlation_id else \
-            ResourceEndpointProxy._build_correlation_id(
-                self.http.user_id,
-                self.http.application_id)
-
-    @staticmethod
-    def _build_correlation_id(user_id=None, application_id=None):
-        if user_id is not None and application_id is not None:
-            return "/".join((user_id, application_id, str(uuid.uuid4())))
-        return None
 
     def store(self, service, owner, content, ref, params=None):
         self._add_correlation_id()
