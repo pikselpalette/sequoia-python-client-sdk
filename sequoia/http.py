@@ -49,7 +49,7 @@ class HttpExecutor:
 
     # pylint: disable-msg=too-many-arguments
     def __init__(self, auth, session=None, proxies=None, user_agent=None, get_delay=None, request_timeout=None,
-                 backoff_strategy=None, correlation_id=None, content_type=None):
+                 backoff_strategy=None, correlation_id=None, user_id=None, application_id=None, content_type=None):
         if user_agent is not None:
             self.user_agent = user_agent + self.user_agent
 
@@ -59,6 +59,9 @@ class HttpExecutor:
         self.session = session or Session()
         self.session.proxies = proxies or {}
         self.session.auth = auth
+
+        self.user_id = user_id
+        self.application_id = application_id
         self.correlation_id = correlation_id
 
         self.common_headers = {
