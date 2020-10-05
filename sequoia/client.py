@@ -380,7 +380,22 @@ class BusinessEndpointProxy(object):
         self.url = service.location
         self.path_template = path_template
 
+    def _add_correlation_id(self):
+        self.http.common_headers['X-Correlation-ID'] = self.http.correlation_id \
+            if self.http.correlation_id else \
+            ResourceEndpointProxy._build_correlation_id(
+                self.http.user_id,
+                self.http.application_id)
+
+    @staticmethod
+    def _build_correlation_id(user_id=None, application_id=None):
+        if user_id is not None and application_id is not None:
+            return "/".join((user_id, application_id, str(uuid.uuid4())))
+        return None
+
     def store(self, service, owner, content, ref, params=None):
+        self._add_correlation_id()
+
         url_template = Template(self.path_template)
         params_formatted = None
         if params:
@@ -391,6 +406,8 @@ class BusinessEndpointProxy(object):
         return HttpResponse(response.raw, resource_name=None, model_builder=None)
 
     def browse(self, service, **kwargs):
+        self._add_correlation_id()
+
         url_template = Template(self.path_template)
         url = self.url + url_template.safe_substitute(service=service, **kwargs)
         return self.http.get(url, resource_name=None)

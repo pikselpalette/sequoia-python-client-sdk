@@ -687,6 +687,27 @@ class TestBusinessEndpointProxy(unittest.TestCase):
         assert_that(response.data['message'], 'Validation Succeded')
         assert_that(response.resources, none())
 
+    def test_store_with_generated_correlation_id(self):
+        mocking.add_post_mapping_for(self.mock, 'validation', 'validation_response_succeded')
+        mock_rule = 'rule_mocked'
+        mock_content = mocked_content_for_validation
+
+        client_without_auth = Client('http://mock-registry/services/testmock',
+                                     adapters=[('http://', self.mock)],
+                                     user_id='my_user_id',
+                                     application_id='my_application_id',
+                                     auth_type=auth.AuthType.NO_AUTH)
+
+        under_test = client_without_auth.validation
+
+        response = under_test.business('/$service/$owner/$ref$params').store(service='v', owner='test',
+                                                                             content=mock_content,
+                                                                             ref=mock_rule,
+                                                                             params={'validation': 'full'})
+
+        response_corr_id = self.mock.last_request._request.headers['X-Correlation-ID']
+        assert_that(response_corr_id.startswith('my_user_id/my_application_id/'))
+
     def test_browse_flow_progress_execution_returns_mocked_response_succesful_validation(self):
         mocking.add_get_mapping_for(self.mock, 'workflow', 'valid_workflow_flow_execution_progress_response_not_found')
         ref_mocked = 'flow-execution-that-not-exists'
@@ -696,6 +717,23 @@ class TestBusinessEndpointProxy(unittest.TestCase):
                                                                        owner='testmock', ref=ref_mocked)
 
         assert_that(response.data['message'], 'FlowExecution not found')
+
+    def test_browse_flow_progress_execution_with_generated_correlation_id(self):
+        mocking.add_get_mapping_for(self.mock, 'workflow', 'valid_workflow_flow_execution_progress_response_not_found')
+        ref_mocked = 'flow-execution-that-not-exists'
+        client_with_auth = Client('http://mock-registry/services/testmock',
+                                  grant_client_id='piksel-workflow',
+                                  grant_client_secret='blablabla',
+                                  user_id='my_user_id',
+                                  application_id='my_application_id',
+                                  adapters=[('http://', self.mock)])
+        under_test = client_with_auth.workflow
+
+        response = under_test.business('/$service/$owner:$ref').browse(service='flow-execution-progress',
+                                                                       owner='testmock', ref=ref_mocked)
+
+        response_corr_id = self.mock.last_request._request.headers['X-Correlation-ID']
+        assert_that(response_corr_id.startswith('my_user_id/my_application_id/'))
 
     @patch('requests.sessions.Session.request')
     @patch('requests_oauthlib.OAuth2Session.fetch_token')
