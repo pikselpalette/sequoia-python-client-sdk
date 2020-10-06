@@ -295,6 +295,68 @@ Here an exponential strategy will be used, with a base of 2 and factor 1.
 
 For more info about backoff strategies https://github.com/litl/backoff
 
+Correlation ID
+==============
+Every request to Sequoia RESTful services is added with a unique correlation id in the headers.
+
+ .. code-block:: python
+
+        -- request headers --
+            ...
+            x-correlation-id: f0fca55f3da85..6336cb20fda36
+            ...
+
+The SDK allows to set a correlation id at the client to be added to all the subsequent requests.
+
+ .. code-block:: python
+
+        client = Client("https://registry-sandbox.sequoia.piksel.com/services/testmock",
+                        ...
+                        correlation_id="custom_correlation_id_1234",
+                        ...
+                        )
+
+        endpoint.browse(owner, criteria)
+
+         -- request headers --
+            ...
+            x-correlation-id: custom_correlation_id_1234
+            ...
+
+It also allows to provide both an user and an application ids so each operation request will be set with
+an unique generated correlation id having these values as prefix.
+This correlation id will be shared by all related requests derived by that operation: browse, store, etc
+(e.g. the subsequents paging requests in a browse operation).
+
+Both parameters `user_id` and `application_id` has to be provided, providing just one
+you won't have a prefix in the correlation id.
+
+ .. code-block:: python
+
+        client = Client("https://registry-sandbox.sequoia.piksel.com/services/testmock",
+                        ...
+                        user_id="user123",
+                        application_id="app101",
+                        ...
+                        )
+
+        endpoint.browse(owner, criteria)
+
+         -- request headers --
+            ...
+            x-correlation-id: user123/app101/cbd05bd7-3099-4dcb-aeff-806ccec3292a
+            ...
+
+        endpoint.browse(owner, criteria)
+
+         -- request headers --
+            ...
+            x-correlation-id: user123/app101/9becd6c7-8ef0-44c4-a240-6c02c583957f
+            ...
+
+The parameter `correlation_id` has precedence over `user_id` and `application_id`.
+
+
 ***********
 Development
 ***********

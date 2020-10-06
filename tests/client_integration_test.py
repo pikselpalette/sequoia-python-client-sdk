@@ -49,10 +49,13 @@ class TestEndpointProxy(TestGeneric):
         random_name = 'aSampleProfile-' + str(uuid.uuid4())
         profile = profile_template % random_name
 
-        client = Client('https://registry-sandbox.sequoia.piksel.com/services/testmock',
+        client = Client('https://registry.sandbox.eu-west-1.palettedev.aws.pikselpalette.com/services/testmock',
+                        user_id='     the_user_id',
+                        application_id='the_application_id ',
+                        correlation_id='                ',
                         grant_client_id=self.config.sequoia.username,
                         grant_client_secret=self.config.sequoia.password)
-        profile_endpoint = client.workflow.profiles
+        profile_endpoint = client.flow.profiles
         store_result = profile_endpoint.store('testmock', profile)
         read_result = profile_endpoint.read('testmock', store_result.resources[0]['ref'])
         delete_result = profile_endpoint.delete("testmock", store_result.resources[0]['ref'])

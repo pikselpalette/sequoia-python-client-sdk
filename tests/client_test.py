@@ -33,6 +33,133 @@ class TestResourceEndpointProxy(unittest.TestCase):
                              grant_client_secret='blablabla',
                              adapters=[('http://', self.mock)])
 
+    def test_browse_with_provided_correlation_id_returns_it_in_response_headers(self):
+        mocking.add_get_mapping_for_url(self.mock,
+                                        'data/assets\?withContentRef=theContentRef&owner=testmock',
+                                        'valid_metadata_assets_response')
+        mocking.add_get_mapping_for_url(self.mock,
+                                        'descriptor',
+                                        'workflow_descriptor_raw')
+        client = Client('http://mock-registry/services/testmock',
+                             grant_client_id='piksel-workflow',
+                             grant_client_secret='blablabla',
+                             adapters=[('http://', self.mock)], model_resolution='all',
+                             correlation_id='my_correlation_id')
+        under_test = client.metadata.assets
+
+        response = under_test.browse('testmock', query_string='withContentRef=theContentRef')
+
+        assert_that(self.mock.last_request._request.headers['X-Correlation-ID'] == 'my_correlation_id')
+
+    def test_browse_with_user_id_and_application_id_returns_them_in_response_correlation_id(self):
+        mocking.add_get_mapping_for_url(self.mock,
+                                        'data/assets\?withContentRef=theContentRef&owner=testmock',
+                                        'valid_metadata_assets_response')
+        mocking.add_get_mapping_for_url(self.mock,
+                                        'descriptor',
+                                        'workflow_descriptor_raw')
+        client = Client('http://mock-registry/services/testmock',
+                             grant_client_id='piksel-workflow',
+                             grant_client_secret='blablabla',
+                             adapters=[('http://', self.mock)], model_resolution='all',
+                             user_id='my_user_id',
+                             application_id='my_application_id')
+        under_test = client.metadata.assets
+
+        response = under_test.browse('testmock', query_string='withContentRef=theContentRef')
+
+        assert_that(self.mock.last_request._request.headers['X-Correlation-ID'].startswith('my_user_id/my_application_id/'))
+
+    def test_operation_should_prioritize_correlation_id_over_arguments_to_build_it(self):
+        mocking.add_get_mapping_for_url(self.mock,
+                                        'data/assets\?withContentRef=theContentRef&owner=testmock',
+                                        'valid_metadata_assets_response')
+        mocking.add_get_mapping_for_url(self.mock,
+                                        'descriptor',
+                                        'workflow_descriptor_raw')
+        client = Client('http://mock-registry/services/testmock',
+                             grant_client_id='piksel-workflow',
+                             grant_client_secret='blablabla',
+                             adapters=[('http://', self.mock)], model_resolution='all',
+                             correlation_id='my_correlation_id',
+                             user_id='my_user_id',
+                             application_id='my_application_id')
+
+        under_test = client.metadata.assets
+
+        response = under_test.browse('testmock', query_string='withContentRef=theContentRef')
+
+        assert_that(self.mock.last_request._request.headers['X-Correlation-ID'] == 'my_correlation_id')
+
+
+    def test_two_requests_have_different_correlation_id_in_response(self):
+        mocking.add_get_mapping_for_url(self.mock,
+                                        'data/assets\?withContentRef=theContentRef&owner=testmock',
+                                        'valid_metadata_assets_response')
+        mocking.add_get_mapping_for_url(self.mock,
+                                        'descriptor',
+                                        'workflow_descriptor_raw')
+
+        client = Client('http://mock-registry/services/testmock',
+                             grant_client_id='piksel-workflow',
+                             grant_client_secret='blablabla',
+                             adapters=[('http://', self.mock)], model_resolution='all',
+                             user_id='my_user_id',
+                             application_id='my_application_id')
+        under_test = client.metadata.assets
+
+        response1 = under_test.browse('testmock', query_string='withContentRef=theContentRef')
+        response1_corr_id = self.mock.last_request._request.headers['X-Correlation-ID']
+
+        response2 = under_test.browse('testmock', query_string='withContentRef=theContentRef')
+        response2_corr_id = self.mock.last_request._request.headers['X-Correlation-ID']
+
+        assert_that(response1_corr_id.startswith('my_user_id/my_application_id/'))
+        assert_that(response2_corr_id.startswith('my_user_id/my_application_id/'))
+        assert_that(response1_corr_id != response2_corr_id)
+
+    def test_browse_with_several_pages_should_share_correlation_id_throughout_pages(self):
+        mocking.add_get_mapping_for_url(self.mock,
+                                        'data/contents\?include=assets&owner=testmock',
+                                        'pagination_main_page')
+
+        mocking.add_get_mapping_for_url(self.mock,
+                                        'data/contents\?include=assets&owner=testmock&page=2&perPage=100',
+                                        'pagination_main_second_page')
+
+        mocking.add_get_mapping_for_url(self.mock,
+                                        'data/contents\?include=assets&owner=testmock&page=3&perPage=100',
+                                        'pagination_main_third_page')
+
+        client = Client('http://mock-registry/services/testmock',
+                             grant_client_id='piksel-workflow',
+                             grant_client_secret='blablabla',
+                             adapters=[('http://', self.mock)],
+                             user_id='my_user_id',
+                             application_id='my_application_id')
+
+        under_test = client.metadata.contents
+
+        contents_response = under_test.browse('testmock', query_string='include=assets')
+        asset_linked_pages = [page for page in contents_response.linked('assets')]
+
+        contents_response = under_test.browse('testmock', query_string='include=assets')
+        asset_linked_pages = [page for page in contents_response.linked('assets')]
+
+        response1_corr_id = self.mock.last_request._request.headers['X-Correlation-ID']
+
+        resp1_req1_corr_id = self.mock.request_history[3]._request.headers['X-Correlation-ID']
+        resp1_req2_corr_id = self.mock.request_history[4]._request.headers['X-Correlation-ID']
+        resp1_req3_corr_id = self.mock.request_history[5]._request.headers['X-Correlation-ID']
+
+        resp2_req1_corr_id = self.mock.request_history[6]._request.headers['X-Correlation-ID']
+        resp2_req2_corr_id = self.mock.request_history[7]._request.headers['X-Correlation-ID']
+        resp2_req3_corr_id = self.mock.request_history[8]._request.headers['X-Correlation-ID']
+
+        assert_that(resp1_req1_corr_id, equal_to(resp1_req2_corr_id), equal_to(resp1_req3_corr_id))
+        assert_that(resp2_req1_corr_id, equal_to(resp2_req2_corr_id), equal_to(resp2_req3_corr_id))
+        assert_that(resp1_req1_corr_id != resp2_req1_corr_id)
+
     def test_returns_mocked_profile(self):
         mocking.add_get_mapping_for(self.mock, 'workflow', 'valid_workflow_profile_response')
         mocking.add_get_mapping_for(self.mock, 'descriptor', 'valid_workflow_profile_response')
@@ -54,6 +181,24 @@ class TestResourceEndpointProxy(unittest.TestCase):
 
         assert_that(response.status, 200)
         assert_that(response.resources, empty())
+
+    def test_delete_with_generated_correlation_id(self):
+        mocking.add_delete_mapping_for(self.mock, "workflow")
+
+        client = Client('http://mock-registry/services/testmock',
+                             grant_client_id='piksel-workflow',
+                             grant_client_secret='blablabla',
+                             adapters=[('http://', self.mock)], model_resolution='all',
+                             user_id='my_user_id',
+                             application_id='my_application_id')
+
+        under_test = client.workflow.profiles
+
+        response = under_test.delete("testmock", "testmock:profile-1")
+
+        response_corr_id = self.mock.last_request._request.headers['X-Correlation-ID']
+
+        assert_that(response_corr_id.startswith('my_user_id/my_application_id/'))
 
     def test_delete_collection_resources(self):
         mocking.add_delete_mapping_for(self.mock, "workflow")
@@ -469,6 +614,29 @@ class TestResourceEndpointProxy(unittest.TestCase):
                           'testmock:reference',
                           'version')
 
+
+    def test_update_with_generated_correlation_id(self):
+        mocking.add_put_mapping_for(self.mock, 'metadata', 'valid_metadata_assets_response')
+
+        client = Client('http://mock-registry/services/testmock',
+                        grant_client_id='piksel-workflow',
+                        grant_client_secret='blablabla',
+                        adapters=[('http://', self.mock)], model_resolution='all',
+                        user_id='my_user_id',
+                        application_id='my_application_id')
+
+        under_test = client.metadata.assets
+        under_test.update('testmock',
+                          '[{"name":"reference", "owner":"testmock", "ref":"testmock:reference"}]',
+                          'testmock:reference',
+                          'version')
+
+        response_corr_id = self.mock.last_request._request.headers['X-Correlation-ID']
+
+        assert_that(response_corr_id.startswith('my_user_id/my_application_id/'))
+
+
+
     @patch('requests.sessions.Session.request')
     @patch('sequoia.auth.requests_oauthlib.OAuth2Session.fetch_token')
     def test_client_given_redirect_should_redirect(self, mock_fetch_token, mock_request):
@@ -517,6 +685,27 @@ class TestBusinessEndpointProxy(unittest.TestCase):
         assert_that(response.data['message'], 'Validation Succeded')
         assert_that(response.resources, none())
 
+    def test_store_with_generated_correlation_id(self):
+        mocking.add_post_mapping_for(self.mock, 'validation', 'validation_response_succeded')
+        mock_rule = 'rule_mocked'
+        mock_content = mocked_content_for_validation
+
+        client_without_auth = Client('http://mock-registry/services/testmock',
+                                     adapters=[('http://', self.mock)],
+                                     user_id='my_user_id',
+                                     application_id='my_application_id',
+                                     auth_type=auth.AuthType.NO_AUTH)
+
+        under_test = client_without_auth.validation
+
+        response = under_test.business('/$service/$owner/$ref$params').store(service='v', owner='test',
+                                                                             content=mock_content,
+                                                                             ref=mock_rule,
+                                                                             params={'validation': 'full'})
+
+        response_corr_id = self.mock.last_request._request.headers['X-Correlation-ID']
+        assert_that(response_corr_id.startswith('my_user_id/my_application_id/'))
+
     def test_browse_flow_progress_execution_returns_mocked_response_succesful_validation(self):
         mocking.add_get_mapping_for(self.mock, 'workflow', 'valid_workflow_flow_execution_progress_response_not_found')
         ref_mocked = 'flow-execution-that-not-exists'
@@ -526,6 +715,23 @@ class TestBusinessEndpointProxy(unittest.TestCase):
                                                                        owner='testmock', ref=ref_mocked)
 
         assert_that(response.data['message'], 'FlowExecution not found')
+
+    def test_browse_flow_progress_execution_with_generated_correlation_id(self):
+        mocking.add_get_mapping_for(self.mock, 'workflow', 'valid_workflow_flow_execution_progress_response_not_found')
+        ref_mocked = 'flow-execution-that-not-exists'
+        client_with_auth = Client('http://mock-registry/services/testmock',
+                                  grant_client_id='piksel-workflow',
+                                  grant_client_secret='blablabla',
+                                  user_id='my_user_id',
+                                  application_id='my_application_id',
+                                  adapters=[('http://', self.mock)])
+        under_test = client_with_auth.workflow
+
+        response = under_test.business('/$service/$owner:$ref').browse(service='flow-execution-progress',
+                                                                       owner='testmock', ref=ref_mocked)
+
+        response_corr_id = self.mock.last_request._request.headers['X-Correlation-ID']
+        assert_that(response_corr_id.startswith('my_user_id/my_application_id/'))
 
     @patch('requests.sessions.Session.request')
     @patch('requests_oauthlib.OAuth2Session.fetch_token')
@@ -548,6 +754,7 @@ class TestBusinessEndpointProxy(unittest.TestCase):
         calls = mock_request.call_args_list
         assert_that(calls[0][0][1], 'http://mock-registry/services/testmock')
         assert_that(calls[1][0][1], 'https://mock-registry/services/testmock')
+
 
 class TestClient(unittest.TestCase):
     def setUp(self):
@@ -612,57 +819,6 @@ class TestClient(unittest.TestCase):
         assert_that(client._correlation_id, equal_to('user_id/application_id/1234567890'))
 
     @patch("sequoia.http.HttpExecutor")
-    @patch("sequoia.registry.Registry")
-    @patch("sequoia.auth.OAuth2SessionTokenManagementWrapper")
-    def test_create_client_generate_correlation_id(self, mock_oauth2_wrapper, mock_registry, mock_http_executor):
-        mock_http_executor.return_value = mock_http_executor
-        client = Client('http://mock-registry/services/testmock',
-                        grant_client_id='piksel-workflow',
-                        grant_client_secret='blablabla',
-                        adapters=[('http://', self.mock)],
-                        user_id='user_id',
-                        application_id='application_id',
-                        transaction_id='1234567890')
-
-        assert_that(client._correlation_id, equal_to('user_id/application_id/1234567890'))
-
-    @patch('uuid.uuid4')
-    @patch("sequoia.http.HttpExecutor")
-    @patch("sequoia.registry.Registry")
-    @patch("sequoia.auth.OAuth2SessionTokenManagementWrapper")
-    def test_create_client_generate_correlation_id_with_autogenerated_transaction_id(self, mock_oauth2_wrapper,
-                                                                                     mock_registry, mock_http_executor,
-                                                                                     mock_uuid):
-        mock_http_executor.return_value = mock_http_executor
-        mock_uuid.return_value = '0987654321'
-        client = Client('http://mock-registry/services/testmock',
-                        grant_client_id='piksel-workflow',
-                        grant_client_secret='blablabla',
-                        adapters=[('http://', self.mock)],
-                        user_id='user_id',
-                        application_id='application_id')
-
-        assert_that(client._correlation_id, equal_to('user_id/application_id/0987654321'))
-
-    @patch("sequoia.http.HttpExecutor")
-    @patch("sequoia.registry.Registry")
-    @patch("sequoia.auth.OAuth2SessionTokenManagementWrapper")
-    def test_create_client_should_prioritizise_correlation_id_over_arguments_to_build_it(self, mock_oauth2_wrapper,
-                                                                                         mock_registry,
-                                                                                         mock_http_executor):
-        mock_http_executor.return_value = mock_http_executor
-        client = Client('http://mock-registry/services/testmock',
-                        grant_client_id='piksel-workflow',
-                        grant_client_secret='blablabla',
-                        adapters=[('http://', self.mock)],
-                        correlation_id="user_id/application_id/1234567890",
-                        user_id='another_user_id',
-                        application_id='another_application_id',
-                        transaction_id='another_transaction_id')
-
-        assert_that(client._correlation_id, equal_to('user_id/application_id/1234567890'))
-
-    @patch("sequoia.http.HttpExecutor")
     def test_create_client_should_create_session_with_certs_when_auth_type_is_mutual(self, mock_http_executor):
         mock_http_executor.return_value = mock_http_executor
         client_cert = '/cert_path/client_cert.pm'
@@ -683,8 +839,11 @@ class TestClient(unittest.TestCase):
             correlation_id=None,
             proxies=None,
             request_timeout=240,
-            session = client._auth.session,
-            user_agent=None)
+            session=client._auth.session,
+            user_agent=None,
+            user_id=None,
+            application_id=None
+        )
         assert_that(client._auth.session.cert, equal_to((client_cert, client_key)))
         assert_that(client._auth.session.verify, equal_to(server_cert))
 

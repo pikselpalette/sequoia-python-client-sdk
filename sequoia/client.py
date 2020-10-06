@@ -28,14 +28,18 @@ class Client(object):
     # pylint: disable-msg=too-many-arguments
     def __init__(self, registry_url, proxies=None, user_agent=None, backoff_strategy=None, adapters=None,
                  request_timeout=None, model_resolution=None, correlation_id=None, user_id=None, application_id=None,
-                 transaction_id=None, content_type=None, **auth_kwargs):
+                 content_type=None, **auth_kwargs):
         logging.debug('Client initialising with registry_url=%s ', registry_url)
         self._registry_url = registry_url
         self._request_timeout = request_timeout or env.DEFAULT_REQUEST_TIMEOUT_SECONDS
 
         self._proxies = proxies
         self._user_agent = user_agent
-        self._correlation_id = correlation_id or Client._build_correlation_id(user_id, application_id, transaction_id)
+
+        self._correlation_id = correlation_id.strip() if correlation_id else None
+        self.user_id = user_id.strip() if user_id else None
+        self.application_id = application_id.strip() if application_id else None
+
         self._model_resolution = model_resolution
         self._registry = self._initialize_registry(adapters, backoff_strategy, content_type, **auth_kwargs)
 
@@ -50,15 +54,10 @@ class Client(object):
                                        session=self._auth.session,
                                        request_timeout=self._request_timeout,
                                        correlation_id=self._correlation_id,
+                                       user_id=self.user_id,
+                                       application_id=self.application_id,
                                        backoff_strategy=backoff_strategy,
                                        content_type=content_type)
-
-    @staticmethod
-    def _build_correlation_id(user_id=None, application_id=None, transaction_id=None):
-        if user_id is not None and application_id is not None:
-            _transaction_id = transaction_id or str(uuid.uuid4())
-            return "/".join([user_id, application_id, _transaction_id])
-        return None
 
     def _initialize_registry(self, adapters, backoff_strategy, content_type, **auth_kwargs):
         auth = AuthFactory.create(**auth_kwargs) if auth_kwargs.get("auth_type",
@@ -71,6 +70,8 @@ class Client(object):
                                           session=auth.session,
                                           request_timeout=self._request_timeout,
                                           correlation_id=self._correlation_id,
+                                          user_id=self.user_id,
+                                          application_id=self.application_id,
                                           backoff_strategy=backoff_strategy,
                                           content_type=content_type)
 
@@ -127,11 +128,31 @@ class ServiceProxy(object):
         return BusinessEndpointProxy(self._http, self._service, path_template=path_template)
 
 
-class ResourceEndpointProxy(object):
+class GenericEndpointProxy(object):
+
+    def __init__(self):
+        self.http = None
+
+    def _add_correlation_id(self):
+        self.http.common_headers['X-Correlation-ID'] = self.http.correlation_id \
+            if self.http.correlation_id else \
+            ResourceEndpointProxy._build_correlation_id(
+                self.http.user_id,
+                self.http.application_id)
+
+    @staticmethod
+    def _build_correlation_id(user_id=None, application_id=None):
+        if user_id is not None and application_id is not None:
+            return "/".join((user_id, application_id, str(uuid.uuid4())))
+        return None
+
+
+class ResourceEndpointProxy(GenericEndpointProxy):
     """Proxy endpoint providing read/store/browse operations over Sequoia API endpoint.
     """
 
     def __init__(self, http, service, resource, descriptor=None):
+        super().__init__()
         self.http = http
         self.service = service
         self.resource = resource
@@ -140,12 +161,17 @@ class ResourceEndpointProxy(object):
         self.descriptor = descriptor
 
     def read(self, owner, ref):
+        self._add_correlation_id()
         return self.http.get(self.url + '/' + ref, self._create_owner_param(owner), resource_name=self.resource)
 
     def store(self, owner, json_object):
+        self._add_correlation_id()
         return self.http.post(self.url + '/', json_object, self._create_owner_param(owner), resource_name=self.resource)
 
     def browse(self, owner, criteria=None, fields=None, query_string=None, prefetch_pages=1):
+
+        self._add_correlation_id()
+
         params = criteria.get_criteria_params() if criteria else {}
         params.update(self._create_owner_param(owner))
         params.update(self._create_fields_params(fields))
@@ -159,6 +185,7 @@ class ResourceEndpointProxy(object):
         return {}
 
     def delete(self, owner, ref):
+        self._add_correlation_id()
         if isinstance(ref, list):
             refs = ",".join(ref)
         else:
@@ -169,6 +196,7 @@ class ResourceEndpointProxy(object):
 
     def update(self, owner, json_string, ref, version):
         # Fixme Version header is no longer supported by resourceful API
+        self._add_correlation_id()
         json_object = json.loads(json_string)
         ResourceEndpointProxy.validate_reference_to_update_with_json_reference(json_object[0], ref)
         params = dict()
@@ -349,17 +377,20 @@ class PageBrowser(object):
         return 'owner' in parse_qs(result.query)
 
 
-class BusinessEndpointProxy(object):
+class BusinessEndpointProxy(GenericEndpointProxy):
     """Proxy endpoint providing read/store/browse operations over Sequoia API Business Endpoints with NOAUTH.
     """
 
     def __init__(self, http, service, path_template):
+        super().__init__()
         self.http = http
         self.service = service
         self.url = service.location
         self.path_template = path_template
 
     def store(self, service, owner, content, ref, params=None):
+        self._add_correlation_id()
+
         url_template = Template(self.path_template)
         params_formatted = None
         if params:
@@ -370,6 +401,8 @@ class BusinessEndpointProxy(object):
         return HttpResponse(response.raw, resource_name=None, model_builder=None)
 
     def browse(self, service, **kwargs):
+        self._add_correlation_id()
+
         url_template = Template(self.path_template)
         url = self.url + url_template.safe_substitute(service=service, **kwargs)
         return self.http.get(url, resource_name=None)
