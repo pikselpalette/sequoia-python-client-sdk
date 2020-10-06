@@ -53,3 +53,9 @@ History
 * PageBrowser keeping a response cache to avoid duplicated requests
 * Bug fixed when paging main content. Query params should to be added to next url
 * New `AuthType.MUTUAL`
+
+3.0.0 (2020-10-06)
+------------------
+* Removing `transaction_id` value when the client is created
+* Allowing to provide `user_id` and `application_id` values as correlation id prefix
+
