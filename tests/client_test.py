@@ -31,8 +31,6 @@ class TestResourceEndpointProxy(unittest.TestCase):
         self.client = Client('http://mock-registry/services/testmock',
                              grant_client_id='piksel-workflow',
                              grant_client_secret='blablabla',
-                             user_id='my_user_id',
-                             application_id='my_application_id',
                              adapters=[('http://', self.mock)])
 
     def test_browse_with_provided_correlation_id_returns_it_in_response_headers(self):
