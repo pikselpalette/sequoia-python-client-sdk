@@ -36,9 +36,9 @@ class Client(object):
         self._proxies = proxies
         self._user_agent = user_agent
 
-        self._correlation_id = correlation_id
-        self.user_id = user_id
-        self.application_id = application_id
+        self._correlation_id = correlation_id.strip()
+        self.user_id = user_id.strip()
+        self.application_id = application_id.strip()
 
         self._model_resolution = model_resolution
         self._registry = self._initialize_registry(adapters, backoff_strategy, content_type, **auth_kwargs)

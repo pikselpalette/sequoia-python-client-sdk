@@ -323,9 +323,13 @@ The SDK allows to set a correlation id at the client to be added to all the subs
             x-correlation-id: custom_correlation_id_1234
             ...
 
-It also allows to provide both an user and an application ids so each operation requests will be set with
-an unique generated correlation id, that will be shared by all related requests derived by that operation
+It also allows to provide both an user and an application ids so each operation request will be set with
+an unique generated correlation id having these values as prefix.
+This correlation id will be shared by all related requests derived by that operation: browse, store, etc
 (e.g. the subsequents paging requests in a browse operation).
+
+Both parameters `user_id` and `application_id` has to be provided, providing just one
+you won't have a prefix in the correlation id.
 
  .. code-block:: python
 
@@ -349,6 +353,9 @@ an unique generated correlation id, that will be shared by all related requests 
             ...
             x-correlation-id: user123/app101/9becd6c7-8ef0-44c4-a240-6c02c583957f
             ...
+
+The parameter `correlation_id` has precedence over `user_id` and `application_id`.
+
 
 ***********
 Development
