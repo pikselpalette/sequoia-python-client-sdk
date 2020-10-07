@@ -11,7 +11,7 @@ from requests import Response
 from sequoia import criteria, auth
 from sequoia import error
 from sequoia.auth import TokenCache, AuthType
-from sequoia.client import Client, ResponseBuilder
+from sequoia.client import Client, ResponseBuilder, LinkedResourcesPageBrowser
 from sequoia.criteria import Criteria, Inclusion
 from tests import mocking
 
@@ -85,7 +85,6 @@ class TestResourceEndpointProxy(unittest.TestCase):
         response = under_test.browse('testmock', query_string='withContentRef=theContentRef')
 
         assert_that(self.mock.last_request._request.headers['X-Correlation-ID'] == 'my_correlation_id')
-
 
     def test_two_requests_have_different_correlation_id_in_response(self):
         mocking.add_get_mapping_for_url(self.mock,
@@ -202,7 +201,7 @@ class TestResourceEndpointProxy(unittest.TestCase):
         assert_that(response.status, 200)
         assert_that(response.resources, empty())
 
-    def test_delete_collection_resources_with_only_one_resource_in_the_colection(self):
+    def test_delete_collection_resources_with_only_one_resource_in_the_collection(self):
         mocking.add_delete_mapping_for(self.mock, "workflow")
         under_test = self.client.workflow.profiles
         response = under_test.delete("testmock", ['testmock:profile-1'])
@@ -270,6 +269,31 @@ class TestResourceEndpointProxy(unittest.TestCase):
         assert_that(response_list[1].resources[0]['name'], is_('001436b2-93b7-43c5-89a3-b95ceb50aa73_primary'))
         assert_that(response_list[1].resources[1]['name'], is_('001436b2-93b7-43c5-89a3-b95ceb50aa73_textless'))
         assert_that(response_list[2].resources[0]['name'], is_('0065ab4e-caf9-4096-8b3b-df4a8f3f19dd_aligned_primary'))
+
+    def test_pagination_over_linked_resources(self):
+        mocking.add_get_mapping_for_url(self.mock,
+                                        'data/contents\?withRef=testmock:cc0a675a-3b8a-4c87-9293-16e87e9ae599&include=assets&continue=true&owner=testmock',
+                                        'pagination_over_linked_1')
+        mocking.add_get_mapping_for_url(self.mock,
+                                        '/data/assets\?fields=ref%2Cname%2CcontentRef%2Ctype%2Curl%2CfileFormat%2Ctitle%2CfileSize%2Ctags&continue=eyJndCI6eyJmaWVsZCI6InJlZiIsInZhbHVlIjoidGVzdG1vY2s6ZDMyNWM4YWUtM2I1NS00YjhjLWI4MDYtZjFjNGEwNmYyYmU0IiwiY3Vyc29yIjp0cnVlfX0%3D&withContentRef=testmock%3Acc0a675a-3b8a-4c87-9293-16e87e9ae599&perPage=100',
+                                        'pagination_over_linked_2')
+
+        under_test = self.client.metadata.contents
+
+        under_test_browse = under_test.browse('testmock', query_string='withRef=testmock:cc0a675a-3b8a-4c87-9293-16e87e9ae599&include=assets&continue=true')
+
+        response_list = [response for response in under_test_browse]
+
+        assert_that(response_list, has_length(1))
+        assert_that(response_list[0].resources, has_length(1))
+        assert_that(response_list[0].resources[0]['name'], is_('cc0a675a-3b8a-4c87-9293-16e87e9ae599'))
+        assert_that(response_list[0].data['linked']['assets'], has_length(500))
+
+        assets_linked = under_test_browse.linked('assets')
+        assert_that(len(assets_linked.resources), is_(500))
+        asset_pages = [page for page in assets_linked]
+        assert_that(len(asset_pages[0]), is_(500))
+        assert_that(len(asset_pages[1]), is_(94))
 
     def test_browse_assets_with_model_query_string_returns_mocked_assets(self):
         mocking.add_get_mapping_for_url(self.mock,
@@ -653,6 +677,113 @@ class TestResourceEndpointProxy(unittest.TestCase):
         calls = mock_request.call_args_list
         assert_that(calls[0][0][1], 'http://mock-registry/services/testmock')
         assert_that(calls[1][0][1], 'https://mock-registry/services/testmock')
+
+
+class TestLinkedResourcesPageBrowser(unittest.TestCase):
+
+    def test_get_unique_continue_link(self):
+        meta = [
+            {
+                "perPage": 100,
+                "continue": "/data/assets?param=url1",
+                "request": "/data/assets?param=url2"
+            },
+            {
+                "perPage": 100,
+                "continue": "/data/assets?param=url3",
+                "request": "/data/assets?param=url1"
+            },
+            {
+                "perPage": 100,
+                "continue": "/data/assets?param=url4",
+                "request": "/data/assets?param=url3"
+            },
+            {
+                "perPage": 100,
+                "continue": "/data/assets?param=url5",
+                "request": "/data/assets?param=url4"
+            },
+            {
+                "perPage": 100,
+                "continue": "/data/assets?param=url6",
+                "request": "/data/assets?param=url5"
+            }
+        ]
+        linked_resource_page_browser = LinkedResourcesPageBrowser(endpoint='', main_page_browser='',
+                                                                  resource='', owner='')
+        continue_link = linked_resource_page_browser._get_unique_continue_links(meta)
+        assert_that(continue_link, equal_to({'/data/assets?param=url6'}))
+
+    def test_get_unique_continue_links(self):
+        meta = [
+            {
+                "perPage": 100,
+                "continue": "/data/assets?url1",
+                "request": "/data/assets?param=url2"
+            },
+            {
+                "perPage": 100,
+                "continue": "/data/assets?url2",
+                "request": "/data/assets?url1"
+            },
+            {
+                "perPage": 100,
+                "continue": "/data/assets?url3",
+                "request": "/data/assets?url2"
+            },
+            {
+                "perPage": 100,
+                "continue": "/data/assets?url4",
+                "request": "/data/assets?url3"
+            },
+            {
+                "perPage": 100,
+                "continue": "/data/assets?url5",
+                "request": "/data/assets?url4"
+            },
+            {
+                "perPage": 100,
+                "continue": "/data/assets?url6",
+                "request": "/data/assets?url7"
+            }
+        ]
+        linked_resource_page_browser = LinkedResourcesPageBrowser(endpoint='', main_page_browser='',
+                                                                  resource='', owner='')
+        continue_link = linked_resource_page_browser._get_unique_continue_links(meta)
+        assert_that(continue_link, equal_to({'/data/assets?url5', '/data/assets?url6'}))
+
+    def test_get_unique_continue_link_when_non_unique(self):
+        meta = [
+            {
+                "perPage": 100,
+                "continue": "/data/assets?param=url1",
+                "request": "/data/assets?param=url2"
+            },
+            {
+                "perPage": 100,
+                "continue": "/data/assets?param=url3",
+                "request": "/data/assets?param=url1"
+            },
+            {
+                "perPage": 100,
+                "continue": "/data/assets?param=url4",
+                "request": "/data/assets?param=url3"
+            },
+            {
+                "perPage": 100,
+                "continue": "/data/assets?param=url5",
+                "request": "/data/assets?param=url4"
+            },
+            {
+                "perPage": 100,
+                "continue": "/data/assets?param=url2",
+                "request": "/data/assets?param=url5"
+            }
+        ]
+        linked_resource_page_browser = LinkedResourcesPageBrowser(endpoint='', main_page_browser='',
+                                                                  resource='', owner='')
+        continue_link = linked_resource_page_browser._get_unique_continue_links(meta)
+        assert_that(continue_link, equal_to(set()))
 
 
 class TestBusinessEndpointProxy(unittest.TestCase):

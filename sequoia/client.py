@@ -247,7 +247,7 @@ class LinkedResourcesPageBrowser(object):
 
     def __iter__(self):
         for main_page in self._main_page_browser:
-            next_items = self._next_fields_in_linked_resources()
+            next_items = self._next_urls_in_linked_resources()
             if main_page.full_json['linked'][self._resource]:
                 yield main_page.full_json['linked'][self._resource]
 
@@ -259,11 +259,8 @@ class LinkedResourcesPageBrowser(object):
                     for next_item_page in next_items_page_browser:
                         yield next_item_page.resources
 
-    def _next_fields_in_linked_resources(self):
-        return [linked_item['next'] for linked_item in self._linked_links() if self._next_in_linked_item(linked_item)]
-
-    def _next_in_linked_item(self, linked_item):
-        return 'next' in linked_item and 'page' in linked_item and linked_item['page'] == 5
+    def _next_urls_in_linked_resources(self):
+        return self._get_unique_continue_links(self._linked_links())
 
     def _linked_links(self):
         if self._main_page_browser.full_json and all([
@@ -272,8 +269,26 @@ class LinkedResourcesPageBrowser(object):
             return self._main_page_browser.full_json['meta']['linked'][self._resource]
         return []
 
+    def _get_unique_continue_links(self, meta_section):
+        """
+        Given the meta section of a resource from a Sequoia service response with a number of `continue` and `request`
+        links this function returns the `continue` link which is unique, this is, that doesn't appear in any of the
+        `request` links.
+        It's a way to identify the link to the next page.
+
+        :param meta_section: list of dicts with fields `request` and `continue`.
+        :return: the link to the next page.
+        """
+
+        request_links = {link['request'] for link in meta_section if 'request' in link}
+        continue_links = {link['continue'] for link in meta_section if 'continue' in link}
+        unique_continue_link = continue_links.difference(request_links)
+        return unique_continue_link
+        # return unique_continue_link.pop() if len(unique_continue_link) else None
+
 
 class PageBrowser(object):
+    # TODO JOC Review this class
     """
     Sequoia resource service pagination browser. This browser will fetch the content of `prefetch_pages` first pages
     and then will do lazy pagination load of rest of pages till finding a page with no next link.
