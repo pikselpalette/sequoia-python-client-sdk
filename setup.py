@@ -8,9 +8,6 @@ from setuptools import setup
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
-if sys.version_info[0] == 2:
-    from codecs import open
-
 
 def parse_requirements(requirements_file):
     with open(requirements_file) as f:

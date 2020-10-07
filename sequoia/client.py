@@ -3,22 +3,13 @@ import logging
 import re
 import uuid
 from string import Template
-
-# Python 2 and 3: urllib compatibility between both versions
-try:
-    from urllib.parse import urlencode, urlparse, parse_qs
-except ImportError:
-    from urllib import urlencode
-    from urlparse import urlparse, parse_qs
+from urllib.parse import urlencode, urlparse, parse_qs
 
 from sequoia import error, http, registry, env
 from sequoia.auth import AuthFactory, AuthType
 from sequoia.http import HttpResponse
 
 DIRECT_MODEL = 'direct'
-
-
-
 
 
 class Client(object):

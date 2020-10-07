@@ -1,22 +1,14 @@
-import sys
 import unittest
+from unittest import mock
+from unittest.mock import patch, Mock, call
 
 import pytest
 import requests
 import requests_mock
 from hamcrest import assert_that, instance_of, is_in, none, equal_to, is_
 from jsonpickle import json
-from oauthlib.oauth2 import OAuth2Error, TokenExpiredError
 
 from sequoia import auth, http, error
-from sequoia.error import HttpError
-
-if sys.version_info[0] == 2:
-    import mock
-    from mock import patch
-else:
-    from unittest import mock
-    from unittest.mock import patch, Mock, call
 
 
 class HttpExecutorTest(unittest.TestCase):

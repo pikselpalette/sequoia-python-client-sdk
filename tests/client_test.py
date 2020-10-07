@@ -1,7 +1,7 @@
 import copy
 import logging
-import sys
 import unittest
+from unittest.mock import patch
 
 import pytest
 from hamcrest import assert_that, empty, has_length, instance_of, equal_to, none, is_
@@ -14,11 +14,6 @@ from sequoia.auth import TokenCache, AuthType
 from sequoia.client import Client, ResponseBuilder
 from sequoia.criteria import Criteria, Inclusion
 from tests import mocking
-
-if sys.version_info[0] == 2:
-    from mock import patch
-else:
-    from unittest.mock import patch
 
 logging.basicConfig(level=logging.DEBUG)
 
