@@ -59,3 +59,6 @@ History
 * Removing `transaction_id` value when the client is created
 * Allowing to provide `user_id` and `application_id` values as correlation id prefix
 
+4.0.0 (2020-10-xx)
+------------------
+* Python 3.7 supported

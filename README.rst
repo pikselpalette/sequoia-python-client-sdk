@@ -407,6 +407,15 @@ While using the option ``test`` will set up a virtual environment for the suppor
 
     make test-all
 
+
+If you are using `pyenv` and found issues running this command because tox isn't able to create the virtualenvs, just add the python versions you have installed to the file `.python-version` like this:
+
+.. code-block:: bash
+
+    echo "3.5.9" >> .python-version
+    echo "3.6.9" >> .python-version
+    echo "3.7.7" >> .python-version
+
 Lint
 ----
 
