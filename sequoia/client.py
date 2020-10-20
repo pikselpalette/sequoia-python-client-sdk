@@ -162,7 +162,6 @@ class ResourceEndpointProxy(GenericEndpointProxy):
     def browse(self, owner, criteria=None, fields=None, query_string=None, prefetch_pages=1):
 
         self._add_correlation_id()
-
         params = criteria.get_criteria_params() if criteria else {}
         params.update(self._create_owner_param(owner))
         params.update(self._create_fields_params(fields))
@@ -288,7 +287,6 @@ class LinkedResourcesPageBrowser(object):
 
 
 class PageBrowser(object):
-    # TODO JOC Review this class
     """
     Sequoia resource service pagination browser. This browser will fetch the content of `prefetch_pages` first pages
     and then will do lazy pagination load of rest of pages till finding a page with no next link.
