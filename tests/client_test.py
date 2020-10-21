@@ -617,99 +617,99 @@ class TestLinkedResourcesPageBrowser(unittest.TestCase):
         meta = [
             {
                 "perPage": 100,
-                "continue": "/data/assets?param=url1",
-                "request": "/data/assets?param=url2"
+                "continue": "/data/assets?param=url1&continue=url1&param2=url1",
+                "request": "/data/assets?param=url2&continue=url2&param2=url2"
             },
             {
                 "perPage": 100,
-                "continue": "/data/assets?param=url3",
-                "request": "/data/assets?param=url1"
+                "continue": "/data/assets?param=url3&continue=url3&param2=url3",
+                "request": "/data/assets?param=url1&continue=url1&param2=url1"
             },
             {
                 "perPage": 100,
-                "continue": "/data/assets?param=url4",
-                "request": "/data/assets?param=url3"
+                "continue": "/data/assets?param=url4&continue=url4&param2=url4",
+                "request": "/data/assets?param=url3&continue=url3&param2=url3"
             },
             {
                 "perPage": 100,
-                "continue": "/data/assets?param=url5",
-                "request": "/data/assets?param=url4"
+                "continue": "/data/assets?param=url5&continue=url5&param2=url5",
+                "request": "/data/assets?param=url4&continue=url4&param2=url4"
             },
             {
                 "perPage": 100,
-                "continue": "/data/assets?param=url6",
-                "request": "/data/assets?param=url5"
+                "continue": "/data/assets?continue=url6&param=url6&param2=url6",
+                "request": "/data/assets?param=url5&continue=url5&param2=url5"
             }
         ]
         linked_resource_page_browser = LinkedResourcesPageBrowser(endpoint='', main_page_browser='',
                                                                   resource='', owner='')
         continue_link = linked_resource_page_browser._get_unique_continue_links(meta)
-        assert_that(continue_link, equal_to({'/data/assets?param=url6'}))
+        assert_that(continue_link, equal_to({'/data/assets?continue=url6&param=url6&param2=url6'}))
 
     def test_get_unique_continue_links(self):
         meta = [
             {
                 "perPage": 100,
-                "continue": "/data/assets?url1",
+                "continue": "/data/assets?param1=url1&continue=url1",
                 "request": "/data/assets?param=url2"
             },
             {
                 "perPage": 100,
-                "continue": "/data/assets?url2",
-                "request": "/data/assets?url1"
+                "continue": "/data/assets?param1=url2&continue=url2",
+                "request": "/data/assets?param1=url1&continue=url1"
             },
             {
                 "perPage": 100,
-                "continue": "/data/assets?url3",
-                "request": "/data/assets?url2"
+                "continue": "/data/assets?param1=url3&continue=url3",
+                "request": "/data/assets?param1=url2&continue=url2"
             },
             {
                 "perPage": 100,
-                "continue": "/data/assets?url4",
-                "request": "/data/assets?url3"
+                "continue": "/data/assets?param1=url4&continue=url4",
+                "request": "/data/assets?param1=url3&continue=url3"
             },
             {
                 "perPage": 100,
-                "continue": "/data/assets?url5",
-                "request": "/data/assets?url4"
+                "continue": "/data/assets?param1=url5&continue=url5",
+                "request": "/data/assets?param1=url4&continue=url4"
             },
             {
                 "perPage": 100,
-                "continue": "/data/assets?url6",
-                "request": "/data/assets?url7"
+                "continue": "/data/assets?param1=url6&continue=url6",
+                "request": "/data/assets?param1=url7&continue=url7"
             }
         ]
         linked_resource_page_browser = LinkedResourcesPageBrowser(endpoint='', main_page_browser='',
                                                                   resource='', owner='')
         continue_link = linked_resource_page_browser._get_unique_continue_links(meta)
-        assert_that(continue_link, equal_to({'/data/assets?url5', '/data/assets?url6'}))
+        assert_that(continue_link, equal_to({'/data/assets?param1=url5&continue=url5', '/data/assets?param1=url6&continue=url6'}))
 
     def test_get_unique_continue_link_when_non_unique(self):
         meta = [
             {
                 "perPage": 100,
-                "continue": "/data/assets?param=url1",
-                "request": "/data/assets?param=url2"
+                "continue": "/data/assets?param=url1&continue=url1",
+                "request": "/data/assets?param=url2&continue=url2"
             },
             {
                 "perPage": 100,
-                "continue": "/data/assets?param=url3",
-                "request": "/data/assets?param=url1"
+                "continue": "/data/assets?param=url3&continue=url3",
+                "request": "/data/assets?param=url1&continue=url1"
             },
             {
                 "perPage": 100,
-                "continue": "/data/assets?param=url4",
-                "request": "/data/assets?param=url3"
+                "continue": "/data/assets?param=url4&continue=url4",
+                "request": "/data/assets?param=url3&continue=url3"
             },
             {
                 "perPage": 100,
-                "continue": "/data/assets?param=url5",
-                "request": "/data/assets?param=url4"
+                "continue": "/data/assets?param=url5&continue=url5",
+                "request": "/data/assets?param=url4&continue=url4"
             },
             {
                 "perPage": 100,
-                "continue": "/data/assets?param=url2",
-                "request": "/data/assets?param=url5"
+                "continue": "/data/assets?param=url2&continue=url2",
+                "request": "/data/assets?param=url5&continue=url5"
             }
         ]
         linked_resource_page_browser = LinkedResourcesPageBrowser(endpoint='', main_page_browser='',

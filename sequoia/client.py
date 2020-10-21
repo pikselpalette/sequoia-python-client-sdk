@@ -3,7 +3,7 @@ import logging
 import re
 import uuid
 from string import Template
-from urllib.parse import urlencode, urlparse, parse_qs
+from urllib.parse import urlencode, urlparse, parse_qs, quote
 
 from sequoia import error, http, registry, env
 from sequoia.auth import AuthFactory, AuthType
@@ -279,11 +279,25 @@ class LinkedResourcesPageBrowser(object):
         :return: the link to the next page.
         """
 
-        request_links = {link['request'] for link in meta_section if 'request' in link}
-        continue_links = {link['continue'] for link in meta_section if 'continue' in link}
-        unique_continue_link = continue_links.difference(request_links)
+        continue_params = self._get_unique_continue_param(meta_section)
+        unique_continue_link = self._get_continue_links_matching_continue_param(meta_section, continue_params)
         return unique_continue_link
-        # return unique_continue_link.pop() if len(unique_continue_link) else None
+
+    def _get_continue_param(self, link):
+        return parse_qs(urlparse(link).query).get('continue', [None])[0]
+
+    def _get_unique_continue_param(self, meta_section):
+        request_links = set(self._get_continue_param(link['request']) for link in meta_section if 'request' in link)
+        continue_links = set(self._get_continue_param(link['continue']) for link in meta_section if 'continue' in link)
+        unique_continue_param = continue_links.difference(request_links)
+        return unique_continue_param
+
+    def _get_continue_links_matching_continue_param(self, meta_section, continue_params):
+        if not continue_params:
+            return set()
+
+        return {link['continue'] for continue_param in continue_params
+                for link in meta_section if 'continue' in link and quote(continue_param) in link['continue']}
 
 
 class PageBrowser(object):
