@@ -412,7 +412,6 @@ If you are using `pyenv` and found issues running this command because tox isn't
 
 .. code-block:: bash
 
-    echo "3.5.9" >> .python-version
     echo "3.6.9" >> .python-version
     echo "3.7.7" >> .python-version
     echo "3.8.3" >> .python-version
