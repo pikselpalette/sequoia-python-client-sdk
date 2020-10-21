@@ -7,28 +7,16 @@
         "linked": {
             "assets": [
                 {
-                    "totalCount": 16,
                     "perPage": 100,
-                    "page": 1,
-                    "first": "/data/assets?fields=ref%2Cname%2CcontentRef%2Ctype%2Curl%2CfileFormat%2Ctitle%2CfileSize%2Ctags&count=true&withContentRef=testmock%3Atestzpcfmrej%7C%7Ctestmock%3Atestzpdwmcrx_1%7C%7Ctestmock%3Atestzpdwmcrx_2%7C%7Ctestmock%3Atestzqbivwlk%7C%7Ctestmock%3Atestzsfkehbv%7C%7Ctestmock%3Atestztjinbcy_1%7C%7Ctestmock%3Atestztjinbcy_2%7C%7Ctestmock%3Atestzxvjqimk&page=1&perPage=100",
-                    "last": "/data/assets?fields=ref%2Cname%2CcontentRef%2Ctype%2Curl%2CfileFormat%2Ctitle%2CfileSize%2Ctags&count=true&withContentRef=testmock%3Atestzpcfmrej%7C%7Ctestmock%3Atestzpdwmcrx_1%7C%7Ctestmock%3Atestzpdwmcrx_2%7C%7Ctestmock%3Atestzqbivwlk%7C%7Ctestmock%3Atestzsfkehbv%7C%7Ctestmock%3Atestztjinbcy_1%7C%7Ctestmock%3Atestztjinbcy_2%7C%7Ctestmock%3Atestzxvjqimk&page=1&perPage=100",
-                    "request": "/data/assets?fields=ref%2Cname%2CcontentRef%2Ctype%2Curl%2CfileFormat%2Ctitle%2CfileSize%2Ctags&count=true&withContentRef=testmock%3Atestzpcfmrej%7C%7Ctestmock%3Atestzpdwmcrx_1%7C%7Ctestmock%3Atestzpdwmcrx_2%7C%7Ctestmock%3Atestzqbivwlk%7C%7Ctestmock%3Atestzsfkehbv%7C%7Ctestmock%3Atestztjinbcy_1%7C%7Ctestmock%3Atestztjinbcy_2%7C%7Ctestmock%3Atestzxvjqimk"
+                    "request": "/data/assets?fields=ref%2Cname%2CcontentRef%2Ctype%2Curl%2CfileFormat%2Ctitle%2CfileSize%2Ctags&withContentRef=testmock%3Atestzpcfmrej%7C%7Ctestmock%3Atestzpdwmcrx_1%7C%7Ctestmock%3Atestzpdwmcrx_2%7C%7Ctestmock%3Atestzqbivwlk%7C%7Ctestmock%3Atestzsfkehbv%7C%7Ctestmock%3Atestztjinbcy_1%7C%7Ctestmock%3Atestztjinbcy_2%7C%7Ctestmock%3Atestzxvjqimk"
                 },
                 {
-                    "totalCount": 16,
                     "perPage": 100,
-                    "page": 1,
-                    "first": "/data/assets?fields=ref%2Cname%2CcontentRef%2Ctype%2Curl%2CfileFormat%2Ctitle%2CfileSize%2Ctags&count=true&withContentRef=testmock%3Atestyicgoqhd_1%7C%7Ctestmock%3Atestyicgoqhd_2%7C%7Ctestmock%3Atestyipbjkxq_1%7C%7Ctestmock%3Atestyipbjkxq_2%7C%7Ctestmock%3Atestyipbjkxq_3%7C%7Ctestmock%3Atestyndilzoe%7C%7Ctestmock%3Atestzfwvlyro_1%7C%7Ctestmock%3Atestzfwvlyro_2%7C%7Ctestmock%3Atestzofbqcgj_1%7C%7Ctestmock%3Atestzofbqcgj_2&page=1&perPage=100",
-                    "last": "/data/assets?fields=ref%2Cname%2CcontentRef%2Ctype%2Curl%2CfileFormat%2Ctitle%2CfileSize%2Ctags&count=true&withContentRef=testmock%3Atestyicgoqhd_1%7C%7Ctestmock%3Atestyicgoqhd_2%7C%7Ctestmock%3Atestyipbjkxq_1%7C%7Ctestmock%3Atestyipbjkxq_2%7C%7Ctestmock%3Atestyipbjkxq_3%7C%7Ctestmock%3Atestyndilzoe%7C%7Ctestmock%3Atestzfwvlyro_1%7C%7Ctestmock%3Atestzfwvlyro_2%7C%7Ctestmock%3Atestzofbqcgj_1%7C%7Ctestmock%3Atestzofbqcgj_2&page=1&perPage=100",
-                    "request": "/data/assets?fields=ref%2Cname%2CcontentRef%2Ctype%2Curl%2CfileFormat%2Ctitle%2CfileSize%2Ctags&count=true&withContentRef=testmock%3Atestyicgoqhd_1%7C%7Ctestmock%3Atestyicgoqhd_2%7C%7Ctestmock%3Atestyipbjkxq_1%7C%7Ctestmock%3Atestyipbjkxq_2%7C%7Ctestmock%3Atestyipbjkxq_3%7C%7Ctestmock%3Atestyndilzoe%7C%7Ctestmock%3Atestzfwvlyro_1%7C%7Ctestmock%3Atestzfwvlyro_2%7C%7Ctestmock%3Atestzofbqcgj_1%7C%7Ctestmock%3Atestzofbqcgj_2"
+                    "request": "/data/assets?fields=ref%2Cname%2CcontentRef%2Ctype%2Curl%2CfileFormat%2Ctitle%2CfileSize%2Ctags&withContentRef=testmock%3Atestyicgoqhd_1%7C%7Ctestmock%3Atestyicgoqhd_2%7C%7Ctestmock%3Atestyipbjkxq_1%7C%7Ctestmock%3Atestyipbjkxq_2%7C%7Ctestmock%3Atestyipbjkxq_3%7C%7Ctestmock%3Atestyndilzoe%7C%7Ctestmock%3Atestzfwvlyro_1%7C%7Ctestmock%3Atestzfwvlyro_2%7C%7Ctestmock%3Atestzofbqcgj_1%7C%7Ctestmock%3Atestzofbqcgj_2"
                 },
                 {
-                    "totalCount": 14,
                     "perPage": 100,
-                    "page": 1,
-                    "first": "/data/assets?fields=ref%2Cname%2CcontentRef%2Ctype%2Curl%2CfileFormat%2Ctitle%2CfileSize%2Ctags&count=true&withContentRef=testmock%3Atestxtuhgmps%7C%7Ctestmock%3Atestxudgialb%7C%7Ctestmock%3Atestxyihbfrl_1%7C%7Ctestmock%3Atestxyihbfrl_2%7C%7Ctestmock%3Atestxzhpcbfs_1%7C%7Ctestmock%3Atestxzhpcbfs_2%7C%7Ctestmock%3Atestxzhpcbfs_3%7C%7Ctestmock%3Atestycedfoqj%7C%7Ctestmock%3Atestycpvhetm%7C%7Ctestmock%3Atestygvexnlp&page=1&perPage=100",
-                    "last": "/data/assets?fields=ref%2Cname%2CcontentRef%2Ctype%2Curl%2CfileFormat%2Ctitle%2CfileSize%2Ctags&count=true&withContentRef=testmock%3Atestxtuhgmps%7C%7Ctestmock%3Atestxudgialb%7C%7Ctestmock%3Atestxyihbfrl_1%7C%7Ctestmock%3Atestxyihbfrl_2%7C%7Ctestmock%3Atestxzhpcbfs_1%7C%7Ctestmock%3Atestxzhpcbfs_2%7C%7Ctestmock%3Atestxzhpcbfs_3%7C%7Ctestmock%3Atestycedfoqj%7C%7Ctestmock%3Atestycpvhetm%7C%7Ctestmock%3Atestygvexnlp&page=1&perPage=100",
-                    "request": "/data/assets?fields=ref%2Cname%2CcontentRef%2Ctype%2Curl%2CfileFormat%2Ctitle%2CfileSize%2Ctags&count=true&withContentRef=testmock%3Atestxtuhgmps%7C%7Ctestmock%3Atestxudgialb%7C%7Ctestmock%3Atestxyihbfrl_1%7C%7Ctestmock%3Atestxyihbfrl_2%7C%7Ctestmock%3Atestxzhpcbfs_1%7C%7Ctestmock%3Atestxzhpcbfs_2%7C%7Ctestmock%3Atestxzhpcbfs_3%7C%7Ctestmock%3Atestycedfoqj%7C%7Ctestmock%3Atestycpvhetm%7C%7Ctestmock%3Atestygvexnlp"
+                    "request": "/data/assets?fields=ref%2Cname%2CcontentRef%2Ctype%2Curl%2CfileFormat%2Ctitle%2CfileSize%2Ctags&withContentRef=testmock%3Atestxtuhgmps%7C%7Ctestmock%3Atestxudgialb%7C%7Ctestmock%3Atestxyihbfrl_1%7C%7Ctestmock%3Atestxyihbfrl_2%7C%7Ctestmock%3Atestxzhpcbfs_1%7C%7Ctestmock%3Atestxzhpcbfs_2%7C%7Ctestmock%3Atestxzhpcbfs_3%7C%7Ctestmock%3Atestycedfoqj%7C%7Ctestmock%3Atestycpvhetm%7C%7Ctestmock%3Atestygvexnlp"
                 }
             ]
         }

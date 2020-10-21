@@ -1,7 +1,7 @@
 import copy
 import logging
-import sys
 import unittest
+from unittest.mock import patch
 
 import pytest
 from hamcrest import assert_that, empty, has_length, instance_of, equal_to, none, is_
@@ -11,14 +11,9 @@ from requests import Response
 from sequoia import criteria, auth
 from sequoia import error
 from sequoia.auth import TokenCache, AuthType
-from sequoia.client import Client, ResponseBuilder
+from sequoia.client import Client, ResponseBuilder, LinkedResourcesPageBrowser
 from sequoia.criteria import Criteria, Inclusion
 from tests import mocking
-
-if sys.version_info[0] == 2:
-    from mock import patch
-else:
-    from unittest.mock import patch
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -90,7 +85,6 @@ class TestResourceEndpointProxy(unittest.TestCase):
         response = under_test.browse('testmock', query_string='withContentRef=theContentRef')
 
         assert_that(self.mock.last_request._request.headers['X-Correlation-ID'] == 'my_correlation_id')
-
 
     def test_two_requests_have_different_correlation_id_in_response(self):
         mocking.add_get_mapping_for_url(self.mock,
@@ -207,7 +201,7 @@ class TestResourceEndpointProxy(unittest.TestCase):
         assert_that(response.status, 200)
         assert_that(response.resources, empty())
 
-    def test_delete_collection_resources_with_only_one_resource_in_the_colection(self):
+    def test_delete_collection_resources_with_only_one_resource_in_the_collection(self):
         mocking.add_delete_mapping_for(self.mock, "workflow")
         under_test = self.client.workflow.profiles
         response = under_test.delete("testmock", ['testmock:profile-1'])
@@ -276,6 +270,31 @@ class TestResourceEndpointProxy(unittest.TestCase):
         assert_that(response_list[1].resources[1]['name'], is_('001436b2-93b7-43c5-89a3-b95ceb50aa73_textless'))
         assert_that(response_list[2].resources[0]['name'], is_('0065ab4e-caf9-4096-8b3b-df4a8f3f19dd_aligned_primary'))
 
+    def test_pagination_over_linked_resources(self):
+        mocking.add_get_mapping_for_url(self.mock,
+                                        'data/contents\?withRef=testmock:cc0a675a-3b8a-4c87-9293-16e87e9ae599&include=assets&continue=true&owner=testmock',
+                                        'pagination_over_linked_1')
+        mocking.add_get_mapping_for_url(self.mock,
+                                        '/data/assets\?fields=ref%2Cname%2CcontentRef%2Ctype%2Curl%2CfileFormat%2Ctitle%2CfileSize%2Ctags&continue=eyJndCI6eyJmaWVsZCI6InJlZiIsInZhbHVlIjoidGVzdG1vY2s6ZDMyNWM4YWUtM2I1NS00YjhjLWI4MDYtZjFjNGEwNmYyYmU0IiwiY3Vyc29yIjp0cnVlfX0%3D&withContentRef=testmock%3Acc0a675a-3b8a-4c87-9293-16e87e9ae599&perPage=100',
+                                        'pagination_over_linked_2')
+
+        under_test = self.client.metadata.contents
+
+        under_test_browse = under_test.browse('testmock', query_string='withRef=testmock:cc0a675a-3b8a-4c87-9293-16e87e9ae599&include=assets&continue=true')
+
+        response_list = [response for response in under_test_browse]
+
+        assert_that(response_list, has_length(1))
+        assert_that(response_list[0].resources, has_length(1))
+        assert_that(response_list[0].resources[0]['name'], is_('cc0a675a-3b8a-4c87-9293-16e87e9ae599'))
+        assert_that(response_list[0].data['linked']['assets'], has_length(500))
+
+        assets_linked = under_test_browse.linked('assets')
+        assert_that(len(assets_linked.resources), is_(500))
+        asset_pages = [page for page in assets_linked]
+        assert_that(len(asset_pages[0]), is_(500))
+        assert_that(len(asset_pages[1]), is_(94))
+
     def test_browse_assets_with_model_query_string_returns_mocked_assets(self):
         mocking.add_get_mapping_for_url(self.mock,
                                         'data/assets\?withContentRef=theContentRef&owner=testmock',
@@ -294,74 +313,6 @@ class TestResourceEndpointProxy(unittest.TestCase):
         assert_that(response.resources, has_length(4))
         assert_that(response.resources[0]['name'], '016b9e5f-c184-48ea-a5e2-6e6bc2d62791')
         assert_that(response.model[0]['name'], '016b9e5f-c184-48ea-a5e2-6e6bc2d62791')
-
-    def test_browse_linked_resources_with_returns_mocked_assets(self):
-        mocking.add_get_mapping_for_url(self.mock,
-                                        'data/contents\?include=assets,offers&owner=testmock',
-                                        'content_with_more_than_1page_linked_assets')
-        mocking.add_get_mapping_for_url(self.mock,
-                                        'data/assets\?fields=ref%2Cname%2CcontentRef%2Ctype%2CmediaType%2Curl%2CfileFormat%2Ctitle%2CfileSize%2Ctags&count=true&withContentRef=test%3AcontentsToChecktesting1&page=2&perPage=100',
-                                        'linked_assets_second_page')
-        mocking.add_get_mapping_for_url(self.mock,
-                                        'data/offers\?fields=ref%2Cname%2Ctitle%2CcontentRefs&count=true&withContentRefs=test%3AcontentsToChecktesting1&page=2&perPage=100',
-                                        'linked_offers_second_page')
-
-        under_test = self.client.metadata.contents
-
-        contents_response = under_test.browse('testmock', query_string='include=assets,offers')
-
-        asset_linked = contents_response.linked('assets')
-        offers_linked = contents_response.linked('offers')
-
-        assert_that(contents_response.resources, has_length(1))
-        assert_that(contents_response.resources[0]['name'], is_('contentsToChecktesting1'))
-
-        assert_that(len(asset_linked.resources), is_(100))
-        assert_that(asset_linked.resources[50]['name'], is_('assetsToTest1testing53'))
-        assert_that(len(offers_linked.resources), is_(100))
-        assert_that(offers_linked.resources[50]['name'], is_('offersToTest1testing53'))
-
-        asset_linked_pages = [page for page in contents_response.linked('assets')]
-        assert_that(len(asset_linked_pages[0]), is_(100))
-        assert_that(len(asset_linked_pages[1]), is_(1))
-
-        offers_linked_pages = [page for page in contents_response.linked('offers')]
-        assert_that(len(offers_linked_pages[0]), is_(100))
-        assert_that(len(offers_linked_pages[1]), is_(1))
-
-        expected_requests = [{'path': '/services/testmock', 'query': ''},
-                             {'path': '/oauth/token', 'query': ''},
-                             {'path': '/data/contents', 'query': 'include=assets,offers&owner=testmock'},
-                             {'path': '/data/assets',
-                              'query': 'fields=ref%2cname%2ccontentref%2ctype%2cmediatype%2curl%2cfileformat%2ctitle%2cfilesize%2ctags&count=true&withcontentref=test%3acontentstochecktesting1&page=2&perpage=100&owner=testmock'},
-                             {'path': '/data/offers',
-                              'query': 'fields=ref%2cname%2ctitle%2ccontentrefs&count=true&withcontentrefs=test%3acontentstochecktesting1&page=2&perpage=100&owner=testmock'}]
-
-        performed_requests = [{'path': r.path, 'query': r.query} for r in self.mock.request_history]
-        assert_that(performed_requests, is_(expected_requests))
-
-    def test_browse_linked_resources_without_inclusions_then_returns_mocked_assets(self):
-        mocking.add_get_mapping_for_url(self.mock,
-                                        'data/contents\?owner=testmock',
-                                        'content_with_more_than_1page_linked_assets_and_next_without_inclusions')
-        mocking.add_get_mapping_for_url(self.mock,
-                                        'data/assets\?fields=ref%2Cname%2CcontentRef%2Ctype%2CmediaType%2Curl%2CfileFormat%2Ctitle%2CfileSize%2Ctags&count=true&withContentRef=test%3AcontentsToChecktesting1&page=2&perPage=100',
-                                        'linked_assets_second_page')
-
-        under_test = self.client.metadata.contents
-
-        contents_response = under_test.browse('testmock')
-
-        # asset_linked = contents_response.linked('assets')
-
-        # assert_that(contents_response.resources, has_length(2))
-        #
-        # assert_that(len(asset_linked.data()), is_(106))
-        # assert_that(asset_linked.data()[50]['name'], is_('671afede-7a2e-47c9-8541-b854c68e604a'))
-
-        # asset_linked_pages = [page for page in contents_response.linked('assets')]
-        # # assert_that(len(asset_linked_pages[0]), is_(100))
-        # # assert_that(len(asset_linked_pages[1]), is_(1))
 
     def test_browse_linked_resources_with_more_than_one_page_goes_throw_several_pages(self):
         mocking.add_get_mapping_for_url(self.mock,
@@ -658,6 +609,113 @@ class TestResourceEndpointProxy(unittest.TestCase):
         calls = mock_request.call_args_list
         assert_that(calls[0][0][1], 'http://mock-registry/services/testmock')
         assert_that(calls[1][0][1], 'https://mock-registry/services/testmock')
+
+
+class TestLinkedResourcesPageBrowser(unittest.TestCase):
+
+    def test_get_unique_continue_link(self):
+        meta = [
+            {
+                "perPage": 100,
+                "continue": "/data/assets?param=url1&continue=url1&param2=url1",
+                "request": "/data/assets?param=url2&continue=url2&param2=url2"
+            },
+            {
+                "perPage": 100,
+                "continue": "/data/assets?param=url3&continue=url3&param2=url3",
+                "request": "/data/assets?param=url1&continue=url1&param2=url1"
+            },
+            {
+                "perPage": 100,
+                "continue": "/data/assets?param=url4&continue=url4&param2=url4",
+                "request": "/data/assets?param=url3&continue=url3&param2=url3"
+            },
+            {
+                "perPage": 100,
+                "continue": "/data/assets?param=url5&continue=url5&param2=url5",
+                "request": "/data/assets?param=url4&continue=url4&param2=url4"
+            },
+            {
+                "perPage": 100,
+                "continue": "/data/assets?continue=url6&param=url6&param2=url6",
+                "request": "/data/assets?param=url5&continue=url5&param2=url5"
+            }
+        ]
+        linked_resource_page_browser = LinkedResourcesPageBrowser(endpoint='', main_page_browser='',
+                                                                  resource='', owner='')
+        continue_link = linked_resource_page_browser._get_unique_continue_links(meta)
+        assert_that(continue_link, equal_to({'/data/assets?continue=url6&param=url6&param2=url6'}))
+
+    def test_get_unique_continue_links(self):
+        meta = [
+            {
+                "perPage": 100,
+                "continue": "/data/assets?param1=url1&continue=url1",
+                "request": "/data/assets?param=url2"
+            },
+            {
+                "perPage": 100,
+                "continue": "/data/assets?param1=url2&continue=url2",
+                "request": "/data/assets?param1=url1&continue=url1"
+            },
+            {
+                "perPage": 100,
+                "continue": "/data/assets?param1=url3&continue=url3",
+                "request": "/data/assets?param1=url2&continue=url2"
+            },
+            {
+                "perPage": 100,
+                "continue": "/data/assets?param1=url4&continue=url4",
+                "request": "/data/assets?param1=url3&continue=url3"
+            },
+            {
+                "perPage": 100,
+                "continue": "/data/assets?param1=url5&continue=url5",
+                "request": "/data/assets?param1=url4&continue=url4"
+            },
+            {
+                "perPage": 100,
+                "continue": "/data/assets?param1=url6&continue=url6",
+                "request": "/data/assets?param1=url7&continue=url7"
+            }
+        ]
+        linked_resource_page_browser = LinkedResourcesPageBrowser(endpoint='', main_page_browser='',
+                                                                  resource='', owner='')
+        continue_link = linked_resource_page_browser._get_unique_continue_links(meta)
+        assert_that(continue_link, equal_to({'/data/assets?param1=url5&continue=url5', '/data/assets?param1=url6&continue=url6'}))
+
+    def test_get_unique_continue_link_when_non_unique(self):
+        meta = [
+            {
+                "perPage": 100,
+                "continue": "/data/assets?param=url1&continue=url1",
+                "request": "/data/assets?param=url2&continue=url2"
+            },
+            {
+                "perPage": 100,
+                "continue": "/data/assets?param=url3&continue=url3",
+                "request": "/data/assets?param=url1&continue=url1"
+            },
+            {
+                "perPage": 100,
+                "continue": "/data/assets?param=url4&continue=url4",
+                "request": "/data/assets?param=url3&continue=url3"
+            },
+            {
+                "perPage": 100,
+                "continue": "/data/assets?param=url5&continue=url5",
+                "request": "/data/assets?param=url4&continue=url4"
+            },
+            {
+                "perPage": 100,
+                "continue": "/data/assets?param=url2&continue=url2",
+                "request": "/data/assets?param=url5&continue=url5"
+            }
+        ]
+        linked_resource_page_browser = LinkedResourcesPageBrowser(endpoint='', main_page_browser='',
+                                                                  resource='', owner='')
+        continue_link = linked_resource_page_browser._get_unique_continue_links(meta)
+        assert_that(continue_link, equal_to(set()))
 
 
 class TestBusinessEndpointProxy(unittest.TestCase):

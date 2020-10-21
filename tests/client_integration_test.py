@@ -1,4 +1,3 @@
-# This is to allow us to test without requiring a https transport
 import os
 import uuid
 from time import sleep
@@ -9,11 +8,11 @@ from hamcrest import assert_that, none, has_length, is_
 
 from sequoia import criteria, auth
 from sequoia.client import Client
-# Mark the test to be ran as part of the local integration testing
 from sequoia.error import HttpError, NotMatchingVersion
 from tests import mocking
 from tests.common import TestGeneric
 
+# This is to allow us to test without requiring a https transport
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 
 # Mark the test to be ran as part of the local integration testing
@@ -22,43 +21,25 @@ pytestmark = pytest.mark.integration_test
 
 class TestEndpointProxy(TestGeneric):
 
-    def test_paging_main_content_with_includes(self):
-        client = Client(self.config.sequoia.registry,
-                        grant_client_id=self.config.sequoia.username,
-                        grant_client_secret=self.config.sequoia.password)
-
-        offers_endpoint = client.metadata.offers
-
-        inclusion_contents = criteria.Criteria().add(inclusion=criteria.Inclusion.resource('scopeContents'))
-
-        offers_page_browser = offers_endpoint.browse(self.config.sequoia.owner, criteria=inclusion_contents,
-                                                     query_string='withAvailabilityStartAt=2019-03-01T15:23:14.131Z/&withAvailabilityEndAt=/2020-04-01T15:00:00.131Z')
-
-        offers = []
-        for page in offers_page_browser:
-            offers = offers + page.resources
-
-        scope_contents = []
-        for scope_contents_partial in offers_page_browser.linked('scopeContents'):
-            scope_contents = scope_contents + scope_contents_partial
-
-        assert_that(len(offers), is_(6544))
-        assert_that(len(scope_contents), is_(2003))
+    def setUp(self):
+        super().setUp()
+        self.owner = 'testmock'
+        self.registry = 'https://registry.sandbox.eu-west-1.palettedev.aws.pikselpalette.com/services/testmock'
 
     def test_can_post_and_retrieve_json_payload(self):
         random_name = 'aSampleProfile-' + str(uuid.uuid4())
         profile = profile_template % random_name
 
-        client = Client('https://registry.sandbox.eu-west-1.palettedev.aws.pikselpalette.com/services/testmock',
+        client = Client(self.registry,
                         user_id='     the_user_id',
                         application_id='the_application_id ',
                         correlation_id='                ',
                         grant_client_id=self.config.sequoia.username,
                         grant_client_secret=self.config.sequoia.password)
         profile_endpoint = client.flow.profiles
-        store_result = profile_endpoint.store('testmock', profile)
-        read_result = profile_endpoint.read('testmock', store_result.resources[0]['ref'])
-        delete_result = profile_endpoint.delete("testmock", store_result.resources[0]['ref'])
+        store_result = profile_endpoint.store(self.owner, profile)
+        read_result = profile_endpoint.read(self.owner, store_result.resources[0]['ref'])
+        delete_result = profile_endpoint.delete(self.owner, store_result.resources[0]['ref'])
 
         assert_that(store_result.status, 201)
         assert_that(delete_result.status, 204)
@@ -71,7 +52,7 @@ class TestEndpointProxy(TestGeneric):
 
     def test_can_post_and_retrieve_linked_content(self):
 
-        client = Client('https://registry-sandbox.sequoia.piksel.com/services/testmock',
+        client = Client(self.registry,
                         grant_client_id=self.config.sequoia.username,
                         grant_client_secret=self.config.sequoia.password, model_resolution='direct')
         contents_endpoint = client.metadata.contents
@@ -80,17 +61,18 @@ class TestEndpointProxy(TestGeneric):
         store_category = None
         try:
 
-            store_content = contents_endpoint.store('testmock', content_with_category_template)
-            store_category = categories_endpoint.store('testmock', category_template)
-            result = contents_endpoint.browse('testmock', criteria.Criteria().add(
+            store_content = contents_endpoint.store(self.owner, content_with_category_template)
+            store_category = categories_endpoint.store(self.owner, category_template)
+            sleep(1)
+            result = contents_endpoint.browse(self.owner, criteria.Criteria().add(
                 inclusion=criteria.Inclusion.resource('categories')).add(
                 criterion=criteria.StringExpressionFactory.field('ref').equal_to(
                     store_content.resources[0]['ref'])))
         finally:
             if store_content:
-                delete_result = contents_endpoint.delete("testmock", store_content.resources[0]['ref'])
+                delete_result = contents_endpoint.delete(self.owner, store_content.resources[0]['ref'])
             if store_category:
-                delete_result = categories_endpoint.delete("testmock", store_category.resources[0]['ref'])
+                delete_result = categories_endpoint.delete(self.owner, store_category.resources[0]['ref'])
 
         assert_that(result.model, has_length(1))
         assert_that(result.status, 201)
@@ -102,13 +84,13 @@ class TestEndpointProxy(TestGeneric):
         random_name = 'aSampleProfile-' + str(uuid.uuid4())
         profile = profile_template % random_name
 
-        client = Client('https://registry-sandbox.sequoia.piksel.com/services/testmock',
+        client = Client(self.registry,
                         grant_client_id=self.config.sequoia.username,
                         grant_client_secret=self.config.sequoia.password)
-        profile_endpoint = client.workflow.profiles
-        store_result = profile_endpoint.store('testmock', profile)
-        read_result = profile_endpoint.read('testmock', store_result.resources[0]['ref'])
-        delete_result = profile_endpoint.delete('testmock', store_result.resources[0]['ref'])
+        profile_endpoint = client.flow.profiles
+        store_result = profile_endpoint.store(self.owner, profile)
+        read_result = profile_endpoint.read(self.owner, store_result.resources[0]['ref'])
+        delete_result = profile_endpoint.delete(self.owner, store_result.resources[0]['ref'])
 
         assert_that(store_result.status, 201)
         assert_that(delete_result.status, 204)
@@ -119,67 +101,69 @@ class TestEndpointProxy(TestGeneric):
         assets_ids, content_name = self._create_ids_and_content(5)
         content = content_template % content_name
         assets = assets_template % assets_ids
-        client = Client("https://registry-sandbox.sequoia.piksel.com/services/testmock",
+        client = Client(self.registry,
                         grant_client_id=self.config.sequoia.username,
                         grant_client_secret=self.config.sequoia.password)
         content_endpoint = client.metadata.contents
         assets_endpoint = client.metadata.assets
-        content_endpoint.store('testmock', content)
-        assets_endpoint.store('testmock', assets)
+        content_endpoint.store(self.owner, content)
+        assets_endpoint.store(self.owner, assets)
+        sleep(1)
         response = assets_endpoint.browse(
-            'testmock',
+            self.owner,
             criteria.Criteria().add(
                 criterion=criteria.StringExpressionFactory.field("contentRef").equal_to(
                     'testmock:%s' % content_name)))
         assert_that(response.resources, has_length(5))
         # Clean up
-        content_endpoint.delete('testmock', 'testmock:' + content_name)
+        content_endpoint.delete(self.owner, 'testmock:' + content_name)
         for name in assets_ids:
-            assets_endpoint.delete('testmock', 'testmock:' + name)
+            assets_endpoint.delete(self.owner, 'testmock:' + name)
 
     def test_given_assets_then_browse_with_query_string_should_retrieve_assets(self):
         assets_ids, content_name = self._create_ids_and_content(5)
         content = content_template % content_name
         assets = assets_template % assets_ids
-        client = Client("https://registry-sandbox.sequoia.piksel.com/services/testmock",
+        client = Client(self.registry,
                         grant_client_id=self.config.sequoia.username,
                         grant_client_secret=self.config.sequoia.password)
         content_endpoint = client.metadata.contents
         assets_endpoint = client.metadata.assets
-        content_endpoint.store('testmock', content)
-        assets_endpoint.store('testmock', assets)
-        response = assets_endpoint.browse('testmock', query_string='withContentRef=testmock:%s' % content_name)
+        content_endpoint.store(self.owner, content)
+        assets_endpoint.store(self.owner, assets)
+        sleep(1)
+        response = assets_endpoint.browse(self.owner, query_string='withContentRef=testmock:%s' % content_name)
         assert_that(response.resources, has_length(5))
         # Clean up
-        content_endpoint.delete('testmock', 'testmock:' + content_name)
+        content_endpoint.delete(self.owner, 'testmock:' + content_name)
         for name in assets_ids:
-            assets_endpoint.delete('testmock', 'testmock:' + name)
+            assets_endpoint.delete(self.owner, 'testmock:' + name)
 
     def test_given_assets_with_pagination_then(self):
         assets_ids, content_name = self._create_ids_and_content(5)
         content = content_template % content_name
         assets = assets_template % assets_ids
-        client = Client("https://registry-sandbox.sequoia.piksel.com/services/testmock",
+        client = Client(self.registry,
                         grant_client_id=self.config.sequoia.username,
                         grant_client_secret=self.config.sequoia.password)
         content_endpoint = client.metadata.contents
         assets_endpoint = client.metadata.assets
-        content_endpoint.store('testmock', content)
-        assets_endpoint.store('testmock', assets)
+        content_endpoint.store(self.owner, content)
+        assets_endpoint.store(self.owner, assets)
 
         # Getting content stored previously, sometimes is empty
         sleep(3)
 
         query_string = 'perPage=2&withContentRef=testmock:%s' % content_name
-        content_pages = [response for response in assets_endpoint.browse('testmock', query_string=query_string)]
+        content_pages = [response for response in assets_endpoint.browse(self.owner, query_string=query_string)]
 
         assert_that(content_pages[0].resources, has_length(2))
         assert_that(content_pages[1].resources, has_length(2))
         assert_that(content_pages[2].resources, has_length(1))
         # Clean up
-        content_endpoint.delete('testmock', 'testmock:' + content_name)
+        content_endpoint.delete(self.owner, 'testmock:' + content_name)
         for name in assets_ids:
-            assets_endpoint.delete('testmock', 'testmock:' + name)
+            assets_endpoint.delete(self.owner, 'testmock:' + name)
 
     def _create_ids_and_content(self, ids_number):
         content_name = str(uuid.uuid4())
@@ -189,13 +173,13 @@ class TestEndpointProxy(TestGeneric):
         return assets_flatted_tuple, content_name
 
     def test_given_no_assets_then_browse_with_content_ref_should_not_retrieve_assets(self):
-        client = Client('https://registry-sandbox.sequoia.piksel.com/services/testmock',
+        client = Client(self.registry,
                         grant_client_id=self.config.sequoia.username,
                         grant_client_secret=self.config.sequoia.password)
         assets_endpoint = client.metadata.assets
 
         response = assets_endpoint.browse(
-            'testmock',
+            self.owner,
             criteria.Criteria().add(
                 criterion=criteria.StringExpressionFactory.field('contentRef').equal_to(
                     'testmock:nonExistingContent')))
@@ -203,75 +187,75 @@ class TestEndpointProxy(TestGeneric):
         assert len(response.resources) == 0
 
     def test_given_assets_with_errors_then_store_should_raise_an_error(self):
-        client = Client('https://registry-sandbox.sequoia.piksel.com/services/testmock',
+        client = Client(self.registry,
                         grant_client_id=self.config.sequoia.username,
                         grant_client_secret=self.config.sequoia.password)
         assets_endpoint = client.metadata.assets
         with pytest.raises(HttpError):
-            assets_endpoint.store('testmock', assets_with_errors)
+            assets_endpoint.store(self.owner, assets_with_errors)
 
     def test_given_asset_with_different_version_then_update_should_raise_an_error(self):
-        client = Client('https://registry-sandbox.sequoia.piksel.com/services/testmock',
+        client = Client(self.registry,
                         grant_client_id=self.config.sequoia.username,
                         grant_client_secret=self.config.sequoia.password)
         assets_endpoint = client.metadata.assets
-        assets_endpoint.store('testmock', asset_to_store)
+        assets_endpoint.store(self.owner, asset_to_store)
         with pytest.raises(NotMatchingVersion) as e:
-            assets_endpoint.update('testmock', asset, 'testmock:016b9e5f-c184-48ea-a5e2-6e6bc2d62791',
+            assets_endpoint.update(self.owner, asset, 'testmock:016b9e5f-c184-48ea-a5e2-6e6bc2d62791',
                                    'e3706cb187f8decf810f8a3645c4e178aa65b0d1')
 
         assert e.value.message == 'Document cannot be updated. Version does not match.'
 
     def test_given_wrong_registry_url_should_raise_an_error(self):
         with pytest.raises(HttpError) as e:
-            Client('http://registry-sandbox.sequoia.piksel.com/service/testmock',
+            Client('https://registry.sandbox.eu-west-1.palettedev.aws.pikselpalette.com/service/testmock',
                    grant_client_id=self.config.ingest.username,
                    grant_client_secret=self.config.ingest.password)
 
         assert e.value.message['statusCode'] == 404
 
     def test_given_http_registry_url_should_redirect(self):
-        client = Client('http://registry-sandbox.sequoia.piksel.com/services/testmock',
-                        grant_client_id=self.config.ingest.username,
-                        grant_client_secret=self.config.ingest.password)
+        client = Client(self.registry,
+                        grant_client_id=self.config.sequoia.username,
+                        grant_client_secret=self.config.sequoia.password)
         assert client._registry
 
     def test_validation_business_endpoint_without_authentication(self):
 
-        client_with_auth = Client('https://registry-sandbox.sequoia.piksel.com/services/testmock',
+        client_with_auth = Client(self.registry,
                                   grant_client_id=self.config.sequoia.username,
                                   grant_client_secret=self.config.sequoia.password)
 
-        client_with_auth.validation.rules.store('testmock', rule_to_post)
+        client_with_auth.validation.rules.store(self.owner, rule_to_post)
 
         rule_name = 'content-movie-validation'
-        client_without_auth = Client('http://registry-sandbox.sequoia.piksel.com/services/testmock',
+        client_without_auth = Client('http://registry.sandbox.eu-west-1.palettedev.aws.pikselpalette.com/services/testmock',
                                      auth_type=auth.AuthType.NO_AUTH)
 
         validation_endpoint = client_without_auth.validation.business('/$service/$owner/$ref$params')
 
         response = validation_endpoint.store(
-            service='v', owner='testmock',
+            service='v', owner=self.owner,
             content=content_to_validate,
             ref=rule_name, params={'validation': 'full'})
         assert_that(response.status, 200)
 
-        client_with_auth.validation.rules.delete('testmock', 'testmock:%s' % rule_name)
+        client_with_auth.validation.rules.delete(self.owner, 'testmock:%s' % rule_name)
 
     def test_flow_execution_progress_business_endpoint_when_flow_execution_not_found_raise_an_error(self):
         ref = 'flow-execution-that-not-exists'
-        client = Client("https://registry-sandbox.sequoia.piksel.com/services/testmock",
+        client = Client(self.registry,
                         grant_client_id=self.config.sequoia.username,
                         grant_client_secret=self.config.sequoia.password)
 
         with pytest.raises(HttpError):
             client.workflow.business('/$service/$owner:$ref').browse(service='flow-execution-progress',
-                                                                     owner='testmock', ref=ref)
+                                                                     owner=self.owner, ref=ref)
 
     def test_validation_business_endpoint_without_authentication_when_rule_not_exists_raise_error(self):
         rule = 'rule-not-exists'
 
-        client = Client('http://registry-sandbox.sequoia.piksel.com/services/testmock',
+        client = Client('http://registry.sandbox.eu-west-1.palettedev.aws.pikselpalette.com/services/testmock',
                         auth_type=auth.AuthType.NO_AUTH)
 
         with pytest.raises(HttpError):
@@ -280,7 +264,7 @@ class TestEndpointProxy(TestGeneric):
                                                                        ref=rule)
 
     def test_given_assets_with_pagination_then_linked_links_are_paginated(self):
-        client = Client('https://registry-sandbox.sequoia.piksel.com/services/testmock',
+        client = Client(self.registry,
                         grant_client_id=self.config.sequoia.username,
                         grant_client_secret=self.config.sequoia.password)
 
@@ -306,20 +290,20 @@ class TestEndpointProxy(TestGeneric):
         content_endpoint = client.metadata.contents
         assets_endpoint = client.metadata.assets
 
-        content_endpoint.store('testmock', content)
-        assets_endpoint.store('testmock', assets_1)
-        assets_endpoint.store('testmock', assets_2)
-        assets_endpoint.store('testmock', assets_3)
-        assets_endpoint.store('testmock', assets_4)
-        assets_endpoint.store('testmock', assets_5)
-        assets_endpoint.store('testmock', assets_6)
+        content_endpoint.store(self.owner, content)
+        assets_endpoint.store(self.owner, assets_1)
+        assets_endpoint.store(self.owner, assets_2)
+        assets_endpoint.store(self.owner, assets_3)
+        assets_endpoint.store(self.owner, assets_4)
+        assets_endpoint.store(self.owner, assets_5)
+        assets_endpoint.store(self.owner, assets_6)
 
         # Getting content stored previously, sometimes is empty
         sleep(3)
 
         query_string = 'include=assets&withRef=' + 'testmock:' + content_name
 
-        contents_response = content_endpoint.browse('testmock', query_string=query_string)
+        contents_response = content_endpoint.browse(self.owner, query_string=query_string)
 
         asset_linked = contents_response.linked('assets')
         asset_linked = contents_response.linked('assets')
@@ -332,13 +316,13 @@ class TestEndpointProxy(TestGeneric):
         assert_that(len(asset_pages[1]), is_(94))
 
         # Clean up
-        content_endpoint.delete('testmock', 'testmock:' + content_name)
+        content_endpoint.delete(self.owner, 'testmock:' + content_name)
         asset_ids = assets_ids_1 + assets_ids_2 + assets_ids_3 + assets_ids_4 + assets_ids_5 + assets_ids_6
         refs = "testmock:" + ",testmock:".join(asset_ids)
         l_refs = refs.split(",")
         splits = np.array_split(l_refs, 10)
         for split in splits:
-            assets_endpoint.delete('testmock', split.tolist())
+            assets_endpoint.delete(self.owner, split.tolist())
 
     def _create_ids_and_content_for_pagination_of_linked(self, ids_number, content_name):
         assets_tuple = zip(tuple(str(uuid.uuid4()) for i in range(0, ids_number)), [content_name] * ids_number)

@@ -59,3 +59,10 @@ History
 * Removing `transaction_id` value when the client is created
 * Allowing to provide `user_id` and `application_id` values as correlation id prefix
 
+4.0.0 (2020-10-21)
+------------------
+* Python 3.5 support removed
+* Python 3.7 supported
+* Python 3.8 supported
+* Pagination with `continue` parameter over linked resources supported
+* Requirements upgraded
