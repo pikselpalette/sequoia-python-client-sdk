@@ -5,3 +5,4 @@
 boto3
 bump2version
 colorama
+pygments
