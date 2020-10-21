@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 import os
 import re
-import sys
+
+from setuptools import setup
 
 import sequoia
-from setuptools import setup
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
@@ -35,6 +35,7 @@ _CLASSIFIERS = (
     'Programming Language :: Python :: 3.5',
     'Programming Language :: Python :: 3.6',
     'Programming Language :: Python :: 3.7',
+    'Programming Language :: Python :: 3.8',
     'Topic :: Software Development :: Libraries :: Python Modules',
 )
 

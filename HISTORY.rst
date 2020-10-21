@@ -62,5 +62,6 @@ History
 4.0.0 (2020-10-xx)
 ------------------
 * Python 3.7 supported
+* Python 3.8 supported
 * Pagination with `continue` parameter over linked resources supported
 * Requirements upgraded
