@@ -324,6 +324,70 @@ class TestEndpointProxy(TestGeneric):
         for split in splits:
             assets_endpoint.delete(self.owner, split.tolist())
 
+    def test_refresh_sequoia_token(self):
+        """
+        When you perform a query against Sequoia and your token has expired or it's been invalidated,
+        a new token is taken and used to perform your query.
+        """
+        assets_ids, content_name = self._create_ids_and_content(5)
+        content = content_template % content_name
+        assets = assets_template % assets_ids
+        client = Client(self.registry,
+                        grant_client_id=self.config.sequoia.username,
+                        grant_client_secret=self.config.sequoia.password)
+        content_endpoint = client.metadata.contents
+        assets_endpoint = client.metadata.assets
+        content_endpoint.store(self.owner, content)
+        assets_endpoint.store(self.owner, assets)
+        sleep(1)
+        response = assets_endpoint.browse(
+            self.owner,
+            criteria.Criteria().add(
+                criterion=criteria.StringExpressionFactory.field("contentRef").equal_to(
+                    'testmock:%s' % content_name)))
+        assert_that(response.resources, has_length(5))
+
+        # Revoke the token (not using clientsdk)
+        current_token = client._auth.session.access_token
+        my_auth_creds = 'cGlrc2VsLWNvbXB1dGU6SGVKdjFrSU02WHd6UjU'
+        import requests
+
+        url = "https://identity.sandbox.eu-west-1.palettedev.aws.pikselpalette.com/oauth/revoke"
+        payload = 'token=' + current_token
+        headers = {
+            'authorization': 'Basic ' + my_auth_creds,
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
+
+        response = requests.request("POST", url, headers=headers, data=payload)
+        print('*********************')
+        print(response.text)
+        print('*********************')
+        print(response)
+        print('OLD token: ' + current_token)
+        print('*********************')
+
+        # Query again
+        sleep(5)
+        response = assets_endpoint.browse(
+            self.owner,
+            criteria.Criteria().add(
+                criterion=criteria.StringExpressionFactory.field("contentRef").equal_to(
+                    'testmock:%s' % content_name)))
+        # print(len(response))
+        # assert_that(response.resources, has_length(5))
+
+        print('**************')
+        print('OLD token: ' + current_token)
+        print('NEW token: ' + client._auth.session.access_token)
+        print('**************')
+
+
+        # Clean up
+        content_endpoint.delete(self.owner, 'testmock:' + content_name)
+        for name in assets_ids:
+            assets_endpoint.delete(self.owner, 'testmock:' + name)
+
     def _create_ids_and_content_for_pagination_of_linked(self, ids_number, content_name):
         assets_tuple = zip(tuple(str(uuid.uuid4()) for i in range(0, ids_number)), [content_name] * ids_number)
         assets_flatted_tuple = tuple([element for tupl in assets_tuple for element in tupl])
