@@ -348,40 +348,32 @@ class TestEndpointProxy(TestGeneric):
         assert_that(response.resources, has_length(5))
 
         # Revoke the token (not using clientsdk)
-        current_token = client._auth.session.access_token
-        my_auth_creds = 'cGlrc2VsLWNvbXB1dGU6SGVKdjFrSU02WHd6UjU'
-        import requests
-
+        token_previous = client._auth.session.access_token
+        import base64, requests
+        my_auth_creds = base64.b64encode('{}:{}'.format(self.config.sequoia.username, self.config.sequoia.password).encode('ascii')).decode('ascii')
         url = "https://identity.sandbox.eu-west-1.palettedev.aws.pikselpalette.com/oauth/revoke"
-        payload = 'token=' + current_token
+        payload = 'token=' + token_previous
         headers = {
             'authorization': 'Basic ' + my_auth_creds,
             'Content-Type': 'application/x-www-form-urlencoded'
         }
-
         response = requests.request("POST", url, headers=headers, data=payload)
-        print('*********************')
-        print(response.text)
-        print('*********************')
-        print(response)
-        print('OLD token: ' + current_token)
-        print('*********************')
+        assert_that(response.status_code, is_(200))
 
         # Query again
-        sleep(5)
+        sleep(10)
         response = assets_endpoint.browse(
             self.owner,
             criteria.Criteria().add(
                 criterion=criteria.StringExpressionFactory.field("contentRef").equal_to(
                     'testmock:%s' % content_name)))
-        # print(len(response))
-        # assert_that(response.resources, has_length(5))
-
-        print('**************')
-        print('OLD token: ' + current_token)
-        print('NEW token: ' + client._auth.session.access_token)
-        print('**************')
-
+        assert_that(response.resources, has_length(5))
+        token_current = client._auth.session.access_token
+        print('*********')
+        print('TOKEN OLD (revoked): '+token_previous)
+        print('TOKEN NEW (updated): ' + token_current)
+        print('*********')
+        # assert_that(token_previous, is_not(equal_to(token_current)))
 
         # Clean up
         content_endpoint.delete(self.owner, 'testmock:' + content_name)
