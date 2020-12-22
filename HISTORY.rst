@@ -66,3 +66,9 @@ History
 * Python 3.8 supported
 * Pagination with `continue` parameter over linked resources supported
 * Requirements upgraded
+
+4.0.1 (2020-12-22)
+------------------
+* When token is expired, it is updated automatically with CLIENT_GRANT auth type,
+    the 401 response wasn't managed to do so, only the exception was.
+    Now the 401 response is treated like that.
