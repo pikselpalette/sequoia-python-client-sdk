@@ -10,6 +10,7 @@ from requests.exceptions import RequestException, ConnectionError, Timeout, TooM
 
 from sequoia import __version__ as client_version, util
 from sequoia import error, env
+from sequoia.auth import BYOTokenAuth
 
 try:
     from distro import linux_distribution
@@ -130,6 +131,12 @@ class HttpExecutor:
         if response.is_redirect:
             return self.request(method, response.headers['location'], data=data, params=params, headers=request_headers,
                                 retry_count=retry_count, resource_name=resource_name)
+
+        if response.status_code == 401 and not isinstance(self.session.auth, BYOTokenAuth):
+            logging.info('Updating token and retrying request')
+            return self._update_token_and_retry_request(method, url, data=data, params=params,
+                                                        headers=request_headers, retry_count=retry_count,
+                                                        resource_name=resource_name)
 
         if 400 <= response.status_code <= 600:
             self._raise_sequoia_error(response)
