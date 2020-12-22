@@ -291,6 +291,39 @@ class HttpExecutorTest(unittest.TestCase):
 
         assert_that(mock_session.auth.update_token.call_count, is_(2))
 
+    def test_request_given_server_returns_an_token_expired_error_ever_then_the_request_should_fail(self):
+        """
+        Testing the max. number of retries when requesting new token and getting 401.
+        """
+        json_response = '{"resp2": "resp2"}'
+
+        mock_response_401 = Mock()
+        mock_response_401.is_redirect = False
+        mock_response_401.status_code = 401
+        mock_response_401.json.return_value = {"statusCode":401,"error":"Unauthorized","message":"Invalid token","attributes":{"error":"Invalid token"}}
+        mock_response_401.return_value.text = '{"statusCode":401,"error":"Unauthorized","message":"Invalid token","attributes":{"error":"Invalid token"}}'
+
+        mock_auth = Mock()
+        mock_session = Mock()
+        mock_session.request.return_value = mock_response_401
+
+        http_executor = http.HttpExecutor(mock_auth,
+                                          session=mock_session,
+                                          backoff_strategy={'interval': 0, 'max_tries': 2})
+
+        with pytest.raises(error.HttpError):
+            http_executor.request("GET", "mock://test.com")
+
+        single_call = call('GET', 'mock://test.com', allow_redirects=False, data=None,
+                          headers={'User-Agent': mock.ANY, 'Content-Type': 'application/vnd.piksel+json',
+                                   'Accept': 'application/vnd.piksel+json', 'X-Correlation-ID': None},
+                          params=None,
+                          timeout=240)
+
+        call_list = [single_call, single_call, single_call, single_call]
+
+        mock_session.request.assert_has_calls(call_list)
+
     def test_request_given_server_returns_an_authorisation_error_fetching_the_token_then_error_is_not_retried(self):
 
         mock_auth = Mock()

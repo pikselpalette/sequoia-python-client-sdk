@@ -12,6 +12,8 @@ from sequoia import __version__ as client_version, util
 from sequoia import error, env
 from sequoia.auth import BYOTokenAuth
 
+MAX_TOKEN_RETRIES = 3
+
 try:
     from distro import linux_distribution
 except ImportError:
@@ -110,7 +112,8 @@ class HttpExecutor:
                                  retry_count=retry_count,
                                  resource_name=resource_name)
 
-    def _request(self, method, url, data=None, params=None, headers=None, retry_count=0, resource_name=None):
+    def _request(self, method, url, data=None, params=None, headers=None, retry_count=0,
+                 token_retry_count=0, resource_name=None):
         request_headers = util.merge_dicts(self.common_headers, headers)
         if params:
             params = OrderedDict(sorted(params.items()))
@@ -132,10 +135,13 @@ class HttpExecutor:
             return self.request(method, response.headers['location'], data=data, params=params, headers=request_headers,
                                 retry_count=retry_count, resource_name=resource_name)
 
-        if response.status_code == 401 and not isinstance(self.session.auth, BYOTokenAuth):
+        if response.status_code == 401 \
+            and not isinstance(self.session.auth, BYOTokenAuth) \
+            and token_retry_count < MAX_TOKEN_RETRIES:
             logging.info('Updating token and retrying request')
             return self._update_token_and_retry_request(method, url, data=data, params=params,
                                                         headers=request_headers, retry_count=retry_count,
+                                                        token_retry_count=token_retry_count + 1,
                                                         resource_name=resource_name)
 
         if 400 <= response.status_code <= 600:
