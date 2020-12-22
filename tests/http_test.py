@@ -210,7 +210,7 @@ class HttpExecutorTest(unittest.TestCase):
 
         assert_that(response.data, equal_to(json.loads(json_response)))
 
-    def test_request_given_server_returns_an_token_expired_error_then_the_request_should_be_retried(self):
+    def test_request_given_server_returns_an_error_then_the_request_should_be_retried(self):
         json_response = '{"resp2": "resp2"}'
 
         mock_response_500 = Mock()
@@ -246,6 +246,50 @@ class HttpExecutorTest(unittest.TestCase):
         mock_session.request.assert_has_calls(call_list)
 
         assert_that(mock_session.auth.update_token.call_count, is_(1))
+
+    def test_request_given_server_returns_an_token_expired_error_then_the_request_should_be_retried(self):
+        """
+        Testing the use of an invalid token and how the client-sdk should automatically get a new token.
+        There are two type of errors when a new token is automatically retrieved: getting the TokenExpiredError exception
+        and getting a valid response from the service with a 401 and using the auth method of providing credentials.
+
+        This unit test checks both types: the exception and the 401 status error.
+        """
+        json_response = '{"resp2": "resp2"}'
+
+        mock_response_401 = Mock()
+        mock_response_401.is_redirect = False
+        mock_response_401.status_code = 401
+        mock_response_401.json.return_value = {"statusCode":401,"error":"Unauthorized","message":"Invalid token","attributes":{"error":"Invalid token"}}
+        mock_response_401.return_value.text = '{"statusCode":401,"error":"Unauthorized","message":"Invalid token","attributes":{"error":"Invalid token"}}'
+
+        mock_response_200 = Mock()
+        mock_response_200.is_redirect = False
+        mock_response_200.status_code = 200
+        mock_response_200.return_value.text = json_response
+        mock_response_200.json.return_value = {"resp2": "resp2"}
+
+        mock_auth = Mock()
+        mock_session = Mock()
+        mock_session.request.side_effect = [error.TokenExpiredError('Token Expired'),
+                                            mock_response_401,
+                                            mock_response_200]
+
+        http_executor = http.HttpExecutor(mock_auth,
+                                          session=mock_session,
+                                          backoff_strategy={'interval': 0, 'max_tries': 2})
+        response = http_executor.request("GET", "mock://test.com")
+
+        assert_that(response.data, equal_to(json.loads(json_response)))
+
+        call_list = [call('GET', 'mock://test.com', allow_redirects=False, data=None, headers={'User-Agent': mock.ANY, 'Content-Type': 'application/vnd.piksel+json', 'Accept': 'application/vnd.piksel+json', 'X-Correlation-ID': None}, params=None, timeout=240),
+                     call('GET', 'mock://test.com', allow_redirects=False, data=None, headers={'User-Agent': mock.ANY, 'Content-Type': 'application/vnd.piksel+json', 'Accept': 'application/vnd.piksel+json', 'X-Correlation-ID': None}, params=None, timeout=240),
+                     call('GET', 'mock://test.com', allow_redirects=False, data=None, headers={'User-Agent': mock.ANY, 'Content-Type': 'application/vnd.piksel+json', 'Accept': 'application/vnd.piksel+json', 'X-Correlation-ID': None}, params=None, timeout=240)]
+
+        assert_that(mock_session.request.call_count, is_(3))
+        mock_session.request.assert_has_calls(call_list)
+
+        assert_that(mock_session.auth.update_token.call_count, is_(2))
 
     def test_request_given_server_returns_an_authorisation_error_fetching_the_token_then_error_is_not_retried(self):
 
