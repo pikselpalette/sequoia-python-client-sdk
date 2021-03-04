@@ -10,9 +10,30 @@ class Criteria(object):
 
     def add(self, **kwargs):
         if 'inclusion' in kwargs:
-            self.inclusion_entries.add(kwargs['inclusion'])
+            self.add_inclusion(kwargs['inclusion'])
         if 'criterion' in kwargs:
-            self.criterion_entries.add(kwargs['criterion'])
+            self.add_criterion(kwargs['criterion'])
+        return self
+
+    def add_inclusion(self, inclusion):
+        """
+        Allows to specify the resources you want to include in the response, resources related to the main one.
+        Optionally, you can also specify which fields to retrieve.
+
+        :param inclusion: Example of use `criteria.Inclusion.resource("assets").fields("ref", "name")`
+        :return: self object to allow the fluent API
+        """
+        self.inclusion_entries.add(inclusion)
+        return self
+
+    def add_criterion(self, criterion):
+        """
+        Allows to specify a filter to retrieve certain items.
+
+        :param criterion: Example of use `criteria.StringExpressionFactory.field("contentRef").equal_to("theContentRef")`
+        :return: self object to allow the fluent API
+        """
+        self.criterion_entries.add(criterion)
         return self
 
     def get_criteria_params(self):

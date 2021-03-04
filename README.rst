@@ -171,17 +171,32 @@ Criteria API for Requesting Data
 ================================
 
 The SDK supports a fluent criteria API to abstract client code from
-the details of the Sequoia query syntax:
+the details of the Sequoia query syntax.
+This API allows to provide filters to retrieve the queried data and a way to request for related resources and its fields:
+
+Criterion
+---------
+
+The way to provide the filter to get specific data is by using the criterion this way.
 
     .. code-block:: python
 
-        endpoint.browse("testmock", Criteria().add(
-            StringExpressionFactory.field("contentRef").equal_to("testmock:sampleContent")))
+        endpoint.browse("testmock",
+            Criteria().add_criterion(StringExpressionFactory.field("contentRef").equal_to("testmock:sampleContent"))
+        )
+
+This alternative way is also supported:
+
+    .. code-block:: python
+
+        endpoint.browse("testmock",
+            Criteria().add(criterion=StringExpressionFactory.field("contentRef").equal_to("testmock:sampleContent"))
+        )
 
 The following filtering criteria are supported:
 
 equalTo
--------
+~~~~~~~
     .. code-block:: python
 
         StringExpressionFactory.field("engine").equal_to("diesel")
@@ -197,10 +212,16 @@ Both, direct and indirect relationships, are allowed. In each case resource's *r
 
     .. code-block:: python
 
+        Criteria().add_inclusion(Inclusion.resource('assets'))
+
+This alternative way is also supported:
+
+    .. code-block:: python
+
         Criteria().add(inclusion=Inclusion.resource('assets'))
 
 Selecting fields
-----------------
+~~~~~~~~~~~~~~~~
 
 The SDK allows to specify which fields will be present in the response, discarding the rest of them.
 

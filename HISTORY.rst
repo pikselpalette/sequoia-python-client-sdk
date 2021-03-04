@@ -72,3 +72,7 @@ History
 * When token is expired, it is updated automatically with CLIENT_GRANT auth type,
     the 401 response wasn't managed to do so, only the exception was.
     Now the 401 response is treated like that.
+
+4.0.2 (2021-03-04)
+------------------
+* Two new methods added to Criterion object so the fluent API is easier to use: `add_inclusion` and `add_criterion`.
