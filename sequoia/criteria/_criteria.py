@@ -30,7 +30,8 @@ class Criteria(object):
         """
         Allows to specify a filter to retrieve certain items.
 
-        :param criterion: Example of use `criteria.StringExpressionFactory.field("contentRef").equal_to("theContentRef")`
+        :param criterion: Example of use
+            `criteria.StringExpressionFactory.field("contentRef").equal_to("theContentRef")`
         :return: self object to allow the fluent API
         """
         self.criterion_entries.add(criterion)
