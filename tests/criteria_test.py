@@ -43,7 +43,7 @@ class TestCriteria(unittest.TestCase):
         assert len(params) == 1
         assert params["withContentRef"] == "theContentRef"
 
-    def test_add_inclusion(self):
+    def test_add_inclusion_should_behave_as_add_with_inclusion_param(self):
         my_criteria_with_add = criteria.Criteria() \
             .add(inclusion=criteria.Inclusion.resource("assets").fields("ref", "name"))
         my_criteria_with_add_inclusion = criteria.Criteria() \
@@ -51,7 +51,7 @@ class TestCriteria(unittest.TestCase):
 
         assert my_criteria_with_add.get_criteria_params() == my_criteria_with_add_inclusion.get_criteria_params()
 
-    def test_add_criterion(self):
+    def test_add_criterion_should_behave_as_add_with_criterion_param(self):
         my_criteria_with_add = criteria.Criteria()\
             .add(criterion=criteria.StringExpressionFactory.field("contentRef").equal_to("theContentRef"))
         my_criteria_with_add_criterion = criteria.Criteria()\
