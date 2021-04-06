@@ -57,7 +57,7 @@ class HttpExecutor:
         if user_agent is not None:
             self.user_agent = user_agent + self.user_agent
 
-        self.backoff_strategy = backoff_strategy or HttpExecutor.DEFAULT_BACKOFF_CONF
+        self.backoff_strategy = copy.deepcopy(backoff_strategy) or HttpExecutor.DEFAULT_BACKOFF_CONF
 
         self.get_delay = get_delay
         self.session = session or Session()
