@@ -13,6 +13,8 @@ from sequoia import __version__ as client_version, util
 from sequoia import error, env
 from sequoia.auth import BYOTokenAuth
 
+MAX_TIME_SECONDS = 120
+
 MAX_TOKEN_RETRIES = 3
 
 try:
@@ -58,6 +60,7 @@ class HttpExecutor:
             self.user_agent = user_agent + self.user_agent
 
         self.backoff_strategy = copy.deepcopy(backoff_strategy) or HttpExecutor.DEFAULT_BACKOFF_CONF
+        self._remove_none_to_avoid_infinite_retries()
 
         self.get_delay = get_delay
         self.session = session or Session()
@@ -77,6 +80,10 @@ class HttpExecutor:
 
         self.request_timeout = request_timeout or env.DEFAULT_REQUEST_TIMEOUT_SECONDS
 
+    def _remove_none_to_avoid_infinite_retries(self):
+        if 'max_time' in self.backoff_strategy and not self.backoff_strategy['max_time']:
+            del self.backoff_strategy['max_time']
+
     @staticmethod
     def create_http_error(response):
         try:
@@ -92,12 +99,15 @@ class HttpExecutor:
 
     def request(self, method, url, data=None, params=None, headers=None, retry_count=0, resource_name=None):
 
-        def fatal_code(e):
-            return isinstance(e, error.HttpError) and \
-                   400 <= e.status_code < 500 and e.status_code != 429 \
-                   or isinstance(e, error.AuthorisationError)
+        retry_http_status_codes = self._http_status_codes_to_retry()
 
-        def backoff_hdlr(details):
+        def fatal_code(e):
+            return isinstance(e, error.AuthorisationError) or \
+                   isinstance(e, error.HttpError) and \
+                   400 <= e.status_code < 500 and \
+                   e.status_code not in retry_http_status_codes
+
+        def backoff_handler(details):
             logging.warning('Retry `%s` for args `%s` and kwargs `%s`', details['tries'], details['args'],
                             details['kwargs'])
 
@@ -105,12 +115,23 @@ class HttpExecutor:
                                                  (error.ConnectionError, error.Timeout, error.TooManyRedirects,
                                                   error.HttpError),
                                                  giveup=fatal_code,
-                                                 on_backoff=backoff_hdlr,
+                                                 on_backoff=backoff_handler,
+                                                 max_time=self.backoff_strategy.pop('max_time', MAX_TIME_SECONDS),
                                                  **copy.deepcopy(self.backoff_strategy))(self._request)
         return decorated_request(method, url, data=data,
                                  params=params, headers=headers,
                                  retry_count=retry_count,
                                  resource_name=resource_name)
+
+    def _http_status_codes_to_retry(self):
+        retry_http_status_codes = self.backoff_strategy.pop('retry_http_status_codes', [])
+        retry_http_status_codes = list(map(int, retry_http_status_codes)) \
+            if isinstance(retry_http_status_codes, list) or \
+               isinstance(retry_http_status_codes, tuple) or \
+               isinstance(retry_http_status_codes, str) \
+            else [retry_http_status_codes]
+        retry_http_status_codes.append(429)
+        return retry_http_status_codes
 
     def _request(self, method, url, data=None, params=None, headers=None, retry_count=0,
                  token_retry_count=0, resource_name=None):
