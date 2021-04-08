@@ -126,7 +126,7 @@ class HttpExecutor:
     def _http_status_codes_to_retry(self):
         retry_http_status_codes = self.backoff_strategy.pop('retry_http_status_codes', [])
         retry_http_status_codes = list(map(int, retry_http_status_codes)) \
-            if isinstance(retry_http_status_codes, (str, list, tuple)) else [retry_http_status_codes]
+            if isinstance(retry_http_status_codes, (list, tuple)) else [int(retry_http_status_codes)]
         retry_http_status_codes.append(429)
         return retry_http_status_codes
 
