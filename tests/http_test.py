@@ -424,8 +424,8 @@ class HttpExecutorTest(unittest.TestCase):
             http_executor.request("GET", "mock://test.com")
 
         assert_that(e.value.status_code, is_(404))
-        assert_that(self.adapter.call_count, greater_than(10))
-
+        assert_that(self.adapter.called, is_(True))
+        assert_that(self.adapter.called_once, is_(False))
 
     def test_retries_for_http_status_code_specified_in_backoff_strategy_with_number(self):
         json_response_404 = {'statusCode': 404, 'error': 'Not Found', 'message': 'Not Found'}
@@ -480,6 +480,7 @@ class HttpExecutorTest(unittest.TestCase):
                                   response_list=mock_http_response_list)
         http_executor = http.HttpExecutor(auth.AuthFactory.create(auth_type=auth.AuthType.BYO_TOKEN, byo_token='tkn'),
                                           session=self.session_mock,
+                                          user_agent='backoff_test',
                                           backoff_strategy={'max_tries': max_tries,
                                                             'max_time': 300,
                                                             'retry_http_status_codes': retry_http_codes}
@@ -488,5 +489,5 @@ class HttpExecutorTest(unittest.TestCase):
         assert_that(actual_response.status, is_(expected_http_status_code))
         assert_that(actual_response.data, equal_to(expected_json_response))
         assert_that(self.adapter.call_count, is_(expected_requests_number))
-        for i in range(2): assert_that(self.adapter.request_history[0].method, is_('GET')) and \
-                           assert_that(self.adapter.request_history[0].url, is_('mock://test.com'))
+        for i in range(expected_requests_number): assert_that(self.adapter.request_history[0].method, is_('GET')) and \
+                                                  assert_that(self.adapter.request_history[0].url, is_('mock://test.com'))
