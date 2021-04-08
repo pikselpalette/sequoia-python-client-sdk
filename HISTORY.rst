@@ -76,3 +76,10 @@ History
 4.0.2 (2021-03-04)
 ==================
 * Two new methods added to Criterion object so the fluent API is easier to use: `add_inclusion` and `add_criterion`.
+
+X.X.X (2021-04-XX)
+==================
+* Prospector version upgraded to 1.3.1 so it works with python versions 3.9.4, 3.8.9, 3.7.10, 3.6.13.
+* Lint issues solved (OAuth2SessionTokenManagementWrapper request method signature).
+* GitHub Actions configured to run lint and unit tests.
+
