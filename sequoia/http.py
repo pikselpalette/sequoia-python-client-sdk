@@ -1,3 +1,4 @@
+import backoff
 import copy
 import logging
 from collections import OrderedDict
@@ -90,7 +91,6 @@ class HttpExecutor:
         return HttpResponse(response, resource_name)
 
     def request(self, method, url, data=None, params=None, headers=None, retry_count=0, resource_name=None):
-        import backoff
 
         def fatal_code(e):
             return isinstance(e, error.HttpError) and \

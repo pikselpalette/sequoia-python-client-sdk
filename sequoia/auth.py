@@ -168,8 +168,20 @@ def oauth_token(access_token):
 
 class OAuth2SessionTokenManagementWrapper(requests_oauthlib.OAuth2Session):
 
-    def request(self, *args, **kwargs):  # pylint: disable=arguments-differ
+    # def request(self, *args, **kwargs):  # pylint: disable=arguments-differ
+    def request(
+        self,
+        method,
+        url,
+        data=None,
+        headers=None,
+        withhold_token=False,
+        client_id=None,
+        client_secret=None,
+        **kwargs
+    ):
         try:
-            return super().request(*args, **kwargs)
+            # return super().request(*args, **kwargs)
+            return super().request(method, url, data, headers, withhold_token, client_id, client_secret, **kwargs)
         except TokenExpiredError as e:
             raise error.TokenExpiredError('Request could not be performed. Token is expired', cause=e)
