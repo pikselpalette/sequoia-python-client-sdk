@@ -5,10 +5,11 @@ default: clean test
 
 clean:
 	rm -rf build dist *.egg-info .cache .coverage .pytest_cache .tox
+	find . -type f -name "*.pyc" -exec rm {} \;
 
 test:
 	coverage erase
-	pytest -n4 --cov=sequoia --cov-config=setup.cfg -m "not integration_test"
+	pytest --numprocesses auto --cov=sequoia --cov-config=setup.cfg -m "not integration_test"
 
 test-all:
 	tox
