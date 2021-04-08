@@ -5,6 +5,7 @@ from collections import namedtuple
 from platform import platform, system
 from sys import version_info as vi
 
+import backoff
 from requests import Session
 from requests.exceptions import RequestException, ConnectionError, Timeout, TooManyRedirects
 
@@ -90,7 +91,6 @@ class HttpExecutor:
         return HttpResponse(response, resource_name)
 
     def request(self, method, url, data=None, params=None, headers=None, retry_count=0, resource_name=None):
-        import backoff
 
         def fatal_code(e):
             return isinstance(e, error.HttpError) and \
