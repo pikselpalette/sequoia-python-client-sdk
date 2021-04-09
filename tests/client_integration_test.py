@@ -248,9 +248,10 @@ class TestEndpointProxy(TestGeneric):
                         grant_client_id=self.config.sequoia.username,
                         grant_client_secret=self.config.sequoia.password)
 
-        with pytest.raises(HttpError):
-            client.workflow.business('/$service/$owner:$ref').browse(service='flow-execution-progress',
+        with pytest.raises(HttpError) as e:
+            client.flow.business('/$service/$owner:$ref').browse(service='execution-progress',
                                                                      owner=self.owner, ref=ref)
+        assert_that(e.value.status_code, is_(404))
 
     def test_validation_business_endpoint_without_authentication_when_rule_not_exists_raise_error(self):
         rule = 'rule-not-exists'
