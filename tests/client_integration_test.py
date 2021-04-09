@@ -2,7 +2,6 @@ import os
 import uuid
 from time import sleep
 
-import numpy as np
 import pytest
 from hamcrest import assert_that, none, has_length, is_
 
@@ -299,9 +298,10 @@ class TestEndpointProxy(TestGeneric):
         asset_ids = assets_ids_1 + assets_ids_2 + assets_ids_3 + assets_ids_4 + assets_ids_5 + assets_ids_6
         refs = "testmock:" + ",testmock:".join(asset_ids)
         l_refs = refs.split(",")
-        splits = np.array_split(l_refs, 10)
+        max_size_each_sublist = 119
+        splits = [l_refs[x:x+max_size_each_sublist] for x in range(0, len(l_refs), max_size_each_sublist)]
         for split in splits:
-            assets_endpoint.delete(self.owner, split.tolist())
+            assets_endpoint.delete(self.owner, split)
 
     def test_refresh_sequoia_token(self):
         """

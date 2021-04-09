@@ -4,7 +4,6 @@
 -r requirements.txt
 
 jsonpickle==1.*
-numpy==1.16.*
 prospector==1.3.1
 pyhamcrest==1.9.*
 pytest==3.5.*
