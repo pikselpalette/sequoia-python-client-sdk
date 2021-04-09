@@ -5,7 +5,7 @@ from unittest.mock import patch, Mock, call
 import pytest
 import requests
 import requests_mock
-from hamcrest import assert_that, instance_of, is_in, none, equal_to, is_
+from hamcrest import assert_that, instance_of, is_in, none, equal_to, is_, starts_with
 from jsonpickle import json
 
 from sequoia import auth, http, error
@@ -25,10 +25,12 @@ class HttpExecutorTest(unittest.TestCase):
         session_mock.request.return_value.url = 'mock://some_url'
         session_mock.request.return_value.status_code = 200
         session_mock.request.return_value.is_redirect = False
+        my_user_agent = 'my_user_agent'
 
         http_executor = http.HttpExecutor(auth.AuthFactory.create(grant_client_id="client_id",
                                                                   grant_client_secret="client_secret"),
                                           session=session_mock, correlation_id="my_correlation_id",
+                                          user_agent=my_user_agent,
                                           content_type="application/json")
 
         http_executor.request("POST", "mock://some_url",
@@ -46,6 +48,7 @@ class HttpExecutorTest(unittest.TestCase):
 
         session_mock.request.assert_called_with('POST', 'mock://some_url', allow_redirects=False, data='some data',
                                                 headers=expected_headers, params={'key1': 'value1'}, timeout=240)
+        assert_that(http_executor.user_agent, starts_with(my_user_agent))
 
     @staticmethod
     def match_request_text(request):
