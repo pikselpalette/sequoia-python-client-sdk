@@ -79,6 +79,7 @@ History
 
 X.X.X (2021-04-XX)
 ==================
+* New keyword `retry_http_status_codes` for the `backoff_strategy` to retry specific http status codes.
 * Prospector version upgraded to 1.3.1 so it works with python versions 3.9.4, 3.8.9, 3.7.10, 3.6.13.
 * Lint issues solved (OAuth2SessionTokenManagementWrapper request method signature).
 * GitHub Actions configured to run lint and unit tests.
