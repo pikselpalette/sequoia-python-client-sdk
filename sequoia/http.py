@@ -107,21 +107,20 @@ class HttpExecutor:
                    400 <= e.status_code < 500 and \
                    e.status_code not in retry_http_status_codes
 
-        def backoff_handler(details):
-            logging.warning('Retry `%s` for args `%s` and kwargs `%s`', details['tries'], details['args'],
-                            details['kwargs'])
-
+        self._enable_backoff_logs()
         decorated_request = backoff.on_exception(self.backoff_strategy.pop('wait_gen', backoff.constant),
                                                  (error.ConnectionError, error.Timeout, error.TooManyRedirects,
                                                   error.HttpError),
                                                  giveup=fatal_code,
-                                                 on_backoff=backoff_handler,
                                                  max_time=self.backoff_strategy.pop('max_time', MAX_TIME_SECONDS),
                                                  **copy.deepcopy(self.backoff_strategy))(self._request)
         return decorated_request(method, url, data=data,
                                  params=params, headers=headers,
                                  retry_count=retry_count,
                                  resource_name=resource_name)
+
+    def _enable_backoff_logs(self):
+        logging.getLogger('backoff').addHandler(logging.StreamHandler())
 
     def _http_status_codes_to_retry(self):
         retry_http_status_codes = self.backoff_strategy.pop('retry_http_status_codes', [])
