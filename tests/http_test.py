@@ -239,9 +239,18 @@ class HttpExecutorTest(unittest.TestCase):
 
         assert_that(response.data, equal_to(json.loads(json_response)))
 
-        call_list = [call('GET', 'mock://test.com', allow_redirects=False, data=None, headers={'User-Agent': mock.ANY, 'Content-Type': 'application/vnd.piksel+json', 'Accept': 'application/vnd.piksel+json', 'X-Correlation-ID': None}, params=None, timeout=240),
-                     call('GET', 'mock://test.com', allow_redirects=False, data=None, headers={'User-Agent': mock.ANY, 'Content-Type': 'application/vnd.piksel+json', 'Accept': 'application/vnd.piksel+json', 'X-Correlation-ID': None}, params=None, timeout=240),
-                     call('GET', 'mock://test.com', allow_redirects=False, data=None, headers={'User-Agent': mock.ANY, 'Content-Type': 'application/vnd.piksel+json', 'Accept': 'application/vnd.piksel+json', 'X-Correlation-ID': None}, params=None, timeout=240)]
+        call_list = [call('GET', 'mock://test.com', allow_redirects=False, data=None,
+                          headers={'User-Agent': mock.ANY, 'Content-Type': 'application/vnd.piksel+json',
+                                   'Accept': 'application/vnd.piksel+json', 'X-Correlation-ID': None}, params=None,
+                          timeout=240),
+                     call('GET', 'mock://test.com', allow_redirects=False, data=None,
+                          headers={'User-Agent': mock.ANY, 'Content-Type': 'application/vnd.piksel+json',
+                                   'Accept': 'application/vnd.piksel+json', 'X-Correlation-ID': None}, params=None,
+                          timeout=240),
+                     call('GET', 'mock://test.com', allow_redirects=False, data=None,
+                          headers={'User-Agent': mock.ANY, 'Content-Type': 'application/vnd.piksel+json',
+                                   'Accept': 'application/vnd.piksel+json', 'X-Correlation-ID': None}, params=None,
+                          timeout=240)]
 
         assert_that(mock_session.request.call_count, is_(3))
         mock_session.request.assert_has_calls(call_list)
@@ -261,7 +270,8 @@ class HttpExecutorTest(unittest.TestCase):
         mock_response_401 = Mock()
         mock_response_401.is_redirect = False
         mock_response_401.status_code = 401
-        mock_response_401.json.return_value = {"statusCode":401,"error":"Unauthorized","message":"Invalid token","attributes":{"error":"Invalid token"}}
+        mock_response_401.json.return_value = {"statusCode": 401, "error": "Unauthorized", "message": "Invalid token",
+                                               "attributes": {"error": "Invalid token"}}
         mock_response_401.return_value.text = '{"statusCode":401,"error":"Unauthorized","message":"Invalid token","attributes":{"error":"Invalid token"}}'
 
         mock_response_200 = Mock()
@@ -283,9 +293,18 @@ class HttpExecutorTest(unittest.TestCase):
 
         assert_that(response.data, equal_to(json.loads(json_response)))
 
-        call_list = [call('GET', 'mock://test.com', allow_redirects=False, data=None, headers={'User-Agent': mock.ANY, 'Content-Type': 'application/vnd.piksel+json', 'Accept': 'application/vnd.piksel+json', 'X-Correlation-ID': None}, params=None, timeout=240),
-                     call('GET', 'mock://test.com', allow_redirects=False, data=None, headers={'User-Agent': mock.ANY, 'Content-Type': 'application/vnd.piksel+json', 'Accept': 'application/vnd.piksel+json', 'X-Correlation-ID': None}, params=None, timeout=240),
-                     call('GET', 'mock://test.com', allow_redirects=False, data=None, headers={'User-Agent': mock.ANY, 'Content-Type': 'application/vnd.piksel+json', 'Accept': 'application/vnd.piksel+json', 'X-Correlation-ID': None}, params=None, timeout=240)]
+        call_list = [call('GET', 'mock://test.com', allow_redirects=False, data=None,
+                          headers={'User-Agent': mock.ANY, 'Content-Type': 'application/vnd.piksel+json',
+                                   'Accept': 'application/vnd.piksel+json', 'X-Correlation-ID': None}, params=None,
+                          timeout=240),
+                     call('GET', 'mock://test.com', allow_redirects=False, data=None,
+                          headers={'User-Agent': mock.ANY, 'Content-Type': 'application/vnd.piksel+json',
+                                   'Accept': 'application/vnd.piksel+json', 'X-Correlation-ID': None}, params=None,
+                          timeout=240),
+                     call('GET', 'mock://test.com', allow_redirects=False, data=None,
+                          headers={'User-Agent': mock.ANY, 'Content-Type': 'application/vnd.piksel+json',
+                                   'Accept': 'application/vnd.piksel+json', 'X-Correlation-ID': None}, params=None,
+                          timeout=240)]
 
         assert_that(mock_session.request.call_count, is_(3))
         mock_session.request.assert_has_calls(call_list)
@@ -301,7 +320,8 @@ class HttpExecutorTest(unittest.TestCase):
         mock_response_401 = Mock()
         mock_response_401.is_redirect = False
         mock_response_401.status_code = 401
-        mock_response_401.json.return_value = {"statusCode":401,"error":"Unauthorized","message":"Invalid token","attributes":{"error":"Invalid token"}}
+        mock_response_401.json.return_value = {"statusCode": 401, "error": "Unauthorized", "message": "Invalid token",
+                                               "attributes": {"error": "Invalid token"}}
         mock_response_401.return_value.text = '{"statusCode":401,"error":"Unauthorized","message":"Invalid token","attributes":{"error":"Invalid token"}}'
 
         mock_auth = Mock()
@@ -316,10 +336,10 @@ class HttpExecutorTest(unittest.TestCase):
             http_executor.request("GET", "mock://test.com")
 
         single_call = call('GET', 'mock://test.com', allow_redirects=False, data=None,
-                          headers={'User-Agent': mock.ANY, 'Content-Type': 'application/vnd.piksel+json',
-                                   'Accept': 'application/vnd.piksel+json', 'X-Correlation-ID': None},
-                          params=None,
-                          timeout=240)
+                           headers={'User-Agent': mock.ANY, 'Content-Type': 'application/vnd.piksel+json',
+                                    'Accept': 'application/vnd.piksel+json', 'X-Correlation-ID': None},
+                           params=None,
+                           timeout=240)
 
         call_list = [single_call, single_call, single_call, single_call]
 
