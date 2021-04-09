@@ -6,7 +6,6 @@ import pytest
 import requests
 import requests_mock
 from hamcrest import assert_that, instance_of, is_in, none, equal_to, is_, starts_with
-from jsonpickle import json
 
 from sequoia import auth, http, error
 
@@ -192,7 +191,7 @@ class HttpExecutorTest(unittest.TestCase):
         assert_that(sequoia_error.value.status_code, is_(500))
 
     def test_request_given_server_returns_an_error_then_the_request_should_be_retried_configured_times_by_default(self):
-        json_response = '{"resp2": "resp2"}'
+        json_response = {"resp2": "resp2"}
 
         self.adapter.register_uri('GET', 'mock://test.com', [{'text': 'resp1', 'status_code': 500},
                                                              {'text': 'resp1', 'status_code': 500},
@@ -204,7 +203,7 @@ class HttpExecutorTest(unittest.TestCase):
                                                              {'text': 'resp1', 'status_code': 500},
                                                              {'text': 'resp1', 'status_code': 500},
                                                              {'text': 'resp1', 'status_code': 500},
-                                                             {'text': json_response, 'status_code': 200}])
+                                                             {'json': json_response, 'status_code': 200}])
 
         http_executor = http.HttpExecutor(auth.AuthFactory.create(grant_client_id="client_id",
                                                                   grant_client_secret="client_secret"),
@@ -212,22 +211,20 @@ class HttpExecutorTest(unittest.TestCase):
                                           backoff_strategy={'interval': 0, 'max_tries': 11})
         response = http_executor.request("GET", "mock://test.com")
 
-        assert_that(response.data, equal_to(json.loads(json_response)))
+        assert_that(response.data, equal_to(json_response))
 
     def test_request_given_server_returns_an_error_due_to_token_expired_then_the_request_should_be_retried(self):
-        json_response = '{"resp2": "resp2"}'
+        json_response = {"resp2": "resp2"}
 
         mock_response_500 = Mock()
         mock_response_500.is_redirect = False
         mock_response_500.status_code = 500
-        mock_response_500.json.return_value = {}
-        mock_response_500.return_value.text = json_response
+        mock_response_500.return_value.json = json_response
 
         mock_response_200 = Mock()
         mock_response_200.is_redirect = False
         mock_response_200.status_code = 200
-        mock_response_200.return_value.text = json_response
-        mock_response_200.json.return_value = {"resp2": "resp2"}
+        mock_response_200.json.return_value = json_response
 
         mock_auth = Mock()
         mock_session = Mock()
@@ -240,7 +237,7 @@ class HttpExecutorTest(unittest.TestCase):
                                           backoff_strategy={'interval': 0, 'max_tries': 2})
         response = http_executor.request("GET", "mock://test.com")
 
-        assert_that(response.data, equal_to(json.loads(json_response)))
+        assert_that(response.data, equal_to(json_response))
 
         call_list = [call('GET', 'mock://test.com', allow_redirects=False, data=None,
                           headers={'User-Agent': mock.ANY, 'Content-Type': 'application/vnd.piksel+json',
@@ -268,7 +265,7 @@ class HttpExecutorTest(unittest.TestCase):
 
         This unit test checks both types: the exception and the 401 status error.
         """
-        json_response = '{"resp2": "resp2"}'
+        json_response = {"resp2": "resp2"}
 
         mock_response_401 = Mock()
         mock_response_401.is_redirect = False
@@ -281,7 +278,7 @@ class HttpExecutorTest(unittest.TestCase):
         mock_response_200.is_redirect = False
         mock_response_200.status_code = 200
         mock_response_200.return_value.text = json_response
-        mock_response_200.json.return_value = {"resp2": "resp2"}
+        mock_response_200.json.return_value = json_response
 
         mock_auth = Mock()
         mock_session = Mock()
@@ -294,7 +291,7 @@ class HttpExecutorTest(unittest.TestCase):
                                           backoff_strategy={'interval': 0, 'max_tries': 2})
         response = http_executor.request("GET", "mock://test.com")
 
-        assert_that(response.data, equal_to(json.loads(json_response)))
+        assert_that(response.data, equal_to(json_response))
 
         call_list = [call('GET', 'mock://test.com', allow_redirects=False, data=None,
                           headers={'User-Agent': mock.ANY, 'Content-Type': 'application/vnd.piksel+json',
@@ -433,7 +430,7 @@ class HttpExecutorTest(unittest.TestCase):
 
     def test_retries_for_http_status_code_specified_in_backoff_strategy_reach_default_limit(self):
         def _patch_max_time_to_run_unit_test_faster():
-            http_executor.MAX_TIME_SECONDS = 5
+            http_executor.MAX_TIME_SECONDS = 2
 
         json_response_404 = {'statusCode': 404, 'error': 'Not Found', 'message': 'Not Found'}
         mock_http_response_list = [{'json': json_response_404, 'status_code': 404}]

@@ -12,6 +12,7 @@ test:
 	pytest --numprocesses auto --cov=sequoia --cov-config=setup.cfg -m "not integration_test"
 
 test-all:
+	pip install --upgrade tox==3.23
 	tox
 
 lint:
