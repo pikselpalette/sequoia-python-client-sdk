@@ -5,7 +5,7 @@ from unittest.mock import patch, Mock, call
 import pytest
 import requests
 import requests_mock
-from hamcrest import assert_that, instance_of, is_in, none, equal_to, is_, greater_than
+from hamcrest import assert_that, instance_of, is_in, none, equal_to, is_
 from jsonpickle import json
 
 from sequoia import auth, http, error
@@ -151,18 +151,19 @@ class HttpExecutorTest(unittest.TestCase):
         assert_that(sequoia_error.value.cause, none())
 
     def test_request_given_server_returns_an_error_then_the_request_should_be_retried(self):
-        json_response = '{"resp2": "resp2"}'
-
-        self.adapter.register_uri('GET', 'mock://test.com', [{'text': 'resp1', 'status_code': 500},
-                                                             {'text': json_response, 'status_code': 200}])
+        json_response = {"resp2": "resp2"}
+        self.adapter.register_uri('GET', 'mock://test.com',
+                                  [
+                                      {'text': 'resp1', 'status_code': 500},
+                                      {'json': json_response, 'status_code': 200}
+                                  ])
 
         http_executor = http.HttpExecutor(auth.AuthFactory.create(grant_client_id="client_id",
                                                                   grant_client_secret="client_secret"),
                                           session=self.session_mock)
-
         response = http_executor.request("GET", "mock://test.com")
 
-        assert_that(response.data, equal_to(json.loads(json_response)))
+        assert_that(response.data, equal_to(json_response))
 
     def test_request_given_server_returns_an_error_then_the_request_should_be_retried_10_times_by_default(self):
         json_response = '{"resp2": "resp2"}'
@@ -210,7 +211,7 @@ class HttpExecutorTest(unittest.TestCase):
 
         assert_that(response.data, equal_to(json.loads(json_response)))
 
-    def test_request_given_server_returns_an_error_then_the_request_should_be_retried(self):
+    def test_request_given_server_returns_an_error_due_to_token_expired_then_the_request_should_be_retried(self):
         json_response = '{"resp2": "resp2"}'
 
         mock_response_500 = Mock()
