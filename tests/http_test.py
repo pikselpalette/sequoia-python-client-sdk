@@ -436,7 +436,7 @@ class HttpExecutorTest(unittest.TestCase):
         ]
         self.backoff_test(mock_http_response_list=http_response_list,
                           max_tries=2,
-                          retry_http_codes=404,
+                          retry_http_codes='404',
                           expected_http_status_code=200,
                           expected_json_response=json_response_200,
                           expected_requests_number=2)
