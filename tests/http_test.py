@@ -432,6 +432,9 @@ class HttpExecutorTest(unittest.TestCase):
         assert_that(http_executor.common_headers['Accept'], is_('abc'))
 
     def test_retries_for_http_status_code_specified_in_backoff_strategy_reach_default_limit(self):
+        def _patch_max_time_to_run_unit_test_faster():
+            http_executor.MAX_TIME_SECONDS = 5
+
         json_response_404 = {'statusCode': 404, 'error': 'Not Found', 'message': 'Not Found'}
         mock_http_response_list = [{'json': json_response_404, 'status_code': 404}]
 
@@ -444,6 +447,7 @@ class HttpExecutorTest(unittest.TestCase):
                                                             'max_time': None,
                                                             'retry_http_status_codes': 404}
                                           )
+        _patch_max_time_to_run_unit_test_faster()
         with pytest.raises(error.HttpError) as e:
             http_executor.request("GET", "mock://test.com")
 
