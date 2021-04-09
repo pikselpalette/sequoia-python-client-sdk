@@ -220,28 +220,6 @@ class TestEndpointProxy(TestGeneric):
                         grant_client_secret=self.config.sequoia.password)
         assert client._registry
 
-    def test_validation_business_endpoint_without_authentication(self):
-
-        client_with_auth = Client(self.registry,
-                                  grant_client_id=self.config.sequoia.username,
-                                  grant_client_secret=self.config.sequoia.password)
-
-        client_with_auth.validation.rules.store(self.owner, rule_to_post)
-
-        rule_name = 'content-movie-validation'
-        client_without_auth = Client('http://registry.sandbox.eu-west-1.palettedev.aws.pikselpalette.com/services/testmock',
-                                     auth_type=auth.AuthType.NO_AUTH)
-
-        validation_endpoint = client_without_auth.validation.business('/$service/$owner/$ref$params')
-
-        response = validation_endpoint.store(
-            service='v', owner=self.owner,
-            content=content_to_validate,
-            ref=rule_name, params={'validation': 'full'})
-        assert_that(response.status, 200)
-
-        client_with_auth.validation.rules.delete(self.owner, 'testmock:%s' % rule_name)
-
     def test_flow_execution_progress_business_endpoint_when_flow_execution_not_found_raise_an_error(self):
         ref = 'flow-execution-that-not-exists'
         client = Client(self.registry,
