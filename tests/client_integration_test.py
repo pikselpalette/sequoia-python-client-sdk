@@ -2,7 +2,6 @@ import os
 import uuid
 from time import sleep
 
-import numpy as np
 import pytest
 from hamcrest import assert_that, none, has_length, is_
 
@@ -220,37 +219,16 @@ class TestEndpointProxy(TestGeneric):
                         grant_client_secret=self.config.sequoia.password)
         assert client._registry
 
-    def test_validation_business_endpoint_without_authentication(self):
-
-        client_with_auth = Client(self.registry,
-                                  grant_client_id=self.config.sequoia.username,
-                                  grant_client_secret=self.config.sequoia.password)
-
-        client_with_auth.validation.rules.store(self.owner, rule_to_post)
-
-        rule_name = 'content-movie-validation'
-        client_without_auth = Client('http://registry.sandbox.eu-west-1.palettedev.aws.pikselpalette.com/services/testmock',
-                                     auth_type=auth.AuthType.NO_AUTH)
-
-        validation_endpoint = client_without_auth.validation.business('/$service/$owner/$ref$params')
-
-        response = validation_endpoint.store(
-            service='v', owner=self.owner,
-            content=content_to_validate,
-            ref=rule_name, params={'validation': 'full'})
-        assert_that(response.status, 200)
-
-        client_with_auth.validation.rules.delete(self.owner, 'testmock:%s' % rule_name)
-
     def test_flow_execution_progress_business_endpoint_when_flow_execution_not_found_raise_an_error(self):
         ref = 'flow-execution-that-not-exists'
         client = Client(self.registry,
                         grant_client_id=self.config.sequoia.username,
                         grant_client_secret=self.config.sequoia.password)
 
-        with pytest.raises(HttpError):
-            client.workflow.business('/$service/$owner:$ref').browse(service='flow-execution-progress',
+        with pytest.raises(HttpError) as e:
+            client.flow.business('/$service/$owner:$ref').browse(service='execution-progress',
                                                                      owner=self.owner, ref=ref)
+        assert_that(e.value.status_code, is_(404))
 
     def test_validation_business_endpoint_without_authentication_when_rule_not_exists_raise_error(self):
         rule = 'rule-not-exists'
@@ -320,9 +298,10 @@ class TestEndpointProxy(TestGeneric):
         asset_ids = assets_ids_1 + assets_ids_2 + assets_ids_3 + assets_ids_4 + assets_ids_5 + assets_ids_6
         refs = "testmock:" + ",testmock:".join(asset_ids)
         l_refs = refs.split(",")
-        splits = np.array_split(l_refs, 10)
+        max_size_each_sublist = 119
+        splits = [l_refs[x:x+max_size_each_sublist] for x in range(0, len(l_refs), max_size_each_sublist)]
         for split in splits:
-            assets_endpoint.delete(self.owner, split.tolist())
+            assets_endpoint.delete(self.owner, split)
 
     def test_refresh_sequoia_token(self):
         """

@@ -314,6 +314,25 @@ We can set a different backoff strategy.
 
 Here an exponential strategy will be used, with a base of 2 and factor 1.
 
+You can also provide a number of HTTP status codes to perform the retry of the query, this is, when the query you are
+performing returns one of the status codes you've specified, the query is automatically retried.
+The key word you have to use for this is `retry_http_status_codes` within the backoff_strategy dictionary.
+
+For instance:
+
+    .. code-block:: python
+
+        client = Client("https://registry-sandbox.sequoia.piksel.com/services/testmock",
+                        grant_client_id="clientId",
+                        grant_client_secret="clientSecret",
+                        backoff_strategy={'wait_gen': backoff.expo, 'max_tries': 5, 'max_time': 300,
+                                          'retry_http_status_codes': [404, 409]}
+                        )
+
+
+When `max_time` is set to None or not passed a default value is automatically set to avoid possible undesired behaviour
+such as infinite loops. The default value is set to 120 seconds.
+
 For more info about backoff strategies https://github.com/litl/backoff
 
 Correlation ID

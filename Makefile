@@ -9,7 +9,7 @@ clean:
 
 test:
 	coverage erase
-	pytest -n4 --cov=sequoia --cov-config=setup.cfg -m "not integration_test"
+	pytest --numprocesses auto --cov=sequoia --cov-config=setup.cfg -m "not integration_test"
 
 test-all:
 	tox

@@ -5,7 +5,7 @@ from unittest.mock import patch, Mock, call
 import pytest
 import requests
 import requests_mock
-from hamcrest import assert_that, instance_of, is_in, none, equal_to, is_
+from hamcrest import assert_that, instance_of, is_in, none, equal_to, is_, starts_with
 from jsonpickle import json
 
 from sequoia import auth, http, error
@@ -25,10 +25,12 @@ class HttpExecutorTest(unittest.TestCase):
         session_mock.request.return_value.url = 'mock://some_url'
         session_mock.request.return_value.status_code = 200
         session_mock.request.return_value.is_redirect = False
+        my_user_agent = 'my_user_agent'
 
         http_executor = http.HttpExecutor(auth.AuthFactory.create(grant_client_id="client_id",
                                                                   grant_client_secret="client_secret"),
                                           session=session_mock, correlation_id="my_correlation_id",
+                                          user_agent=my_user_agent,
                                           content_type="application/json")
 
         http_executor.request("POST", "mock://some_url",
@@ -46,6 +48,7 @@ class HttpExecutorTest(unittest.TestCase):
 
         session_mock.request.assert_called_with('POST', 'mock://some_url', allow_redirects=False, data='some data',
                                                 headers=expected_headers, params={'key1': 'value1'}, timeout=240)
+        assert_that(http_executor.user_agent, starts_with(my_user_agent))
 
     @staticmethod
     def match_request_text(request):
@@ -151,18 +154,19 @@ class HttpExecutorTest(unittest.TestCase):
         assert_that(sequoia_error.value.cause, none())
 
     def test_request_given_server_returns_an_error_then_the_request_should_be_retried(self):
-        json_response = '{"resp2": "resp2"}'
-
-        self.adapter.register_uri('GET', 'mock://test.com', [{'text': 'resp1', 'status_code': 500},
-                                                             {'text': json_response, 'status_code': 200}])
+        json_response = {"resp2": "resp2"}
+        self.adapter.register_uri('GET', 'mock://test.com',
+                                  [
+                                      {'text': 'resp1', 'status_code': 500},
+                                      {'json': json_response, 'status_code': 200}
+                                  ])
 
         http_executor = http.HttpExecutor(auth.AuthFactory.create(grant_client_id="client_id",
                                                                   grant_client_secret="client_secret"),
                                           session=self.session_mock)
-
         response = http_executor.request("GET", "mock://test.com")
 
-        assert_that(response.data, equal_to(json.loads(json_response)))
+        assert_that(response.data, equal_to(json_response))
 
     def test_request_given_server_returns_an_error_then_the_request_should_be_retried_10_times_by_default(self):
         json_response = '{"resp2": "resp2"}'
@@ -210,7 +214,7 @@ class HttpExecutorTest(unittest.TestCase):
 
         assert_that(response.data, equal_to(json.loads(json_response)))
 
-    def test_request_given_server_returns_an_error_then_the_request_should_be_retried(self):
+    def test_request_given_server_returns_an_error_due_to_token_expired_then_the_request_should_be_retried(self):
         json_response = '{"resp2": "resp2"}'
 
         mock_response_500 = Mock()
@@ -238,9 +242,18 @@ class HttpExecutorTest(unittest.TestCase):
 
         assert_that(response.data, equal_to(json.loads(json_response)))
 
-        call_list = [call('GET', 'mock://test.com', allow_redirects=False, data=None, headers={'User-Agent': mock.ANY, 'Content-Type': 'application/vnd.piksel+json', 'Accept': 'application/vnd.piksel+json', 'X-Correlation-ID': None}, params=None, timeout=240),
-                     call('GET', 'mock://test.com', allow_redirects=False, data=None, headers={'User-Agent': mock.ANY, 'Content-Type': 'application/vnd.piksel+json', 'Accept': 'application/vnd.piksel+json', 'X-Correlation-ID': None}, params=None, timeout=240),
-                     call('GET', 'mock://test.com', allow_redirects=False, data=None, headers={'User-Agent': mock.ANY, 'Content-Type': 'application/vnd.piksel+json', 'Accept': 'application/vnd.piksel+json', 'X-Correlation-ID': None}, params=None, timeout=240)]
+        call_list = [call('GET', 'mock://test.com', allow_redirects=False, data=None,
+                          headers={'User-Agent': mock.ANY, 'Content-Type': 'application/vnd.piksel+json',
+                                   'Accept': 'application/vnd.piksel+json', 'X-Correlation-ID': None}, params=None,
+                          timeout=240),
+                     call('GET', 'mock://test.com', allow_redirects=False, data=None,
+                          headers={'User-Agent': mock.ANY, 'Content-Type': 'application/vnd.piksel+json',
+                                   'Accept': 'application/vnd.piksel+json', 'X-Correlation-ID': None}, params=None,
+                          timeout=240),
+                     call('GET', 'mock://test.com', allow_redirects=False, data=None,
+                          headers={'User-Agent': mock.ANY, 'Content-Type': 'application/vnd.piksel+json',
+                                   'Accept': 'application/vnd.piksel+json', 'X-Correlation-ID': None}, params=None,
+                          timeout=240)]
 
         assert_that(mock_session.request.call_count, is_(3))
         mock_session.request.assert_has_calls(call_list)
@@ -260,7 +273,8 @@ class HttpExecutorTest(unittest.TestCase):
         mock_response_401 = Mock()
         mock_response_401.is_redirect = False
         mock_response_401.status_code = 401
-        mock_response_401.json.return_value = {"statusCode":401,"error":"Unauthorized","message":"Invalid token","attributes":{"error":"Invalid token"}}
+        mock_response_401.json.return_value = {"statusCode": 401, "error": "Unauthorized", "message": "Invalid token",
+                                               "attributes": {"error": "Invalid token"}}
         mock_response_401.return_value.text = '{"statusCode":401,"error":"Unauthorized","message":"Invalid token","attributes":{"error":"Invalid token"}}'
 
         mock_response_200 = Mock()
@@ -282,9 +296,18 @@ class HttpExecutorTest(unittest.TestCase):
 
         assert_that(response.data, equal_to(json.loads(json_response)))
 
-        call_list = [call('GET', 'mock://test.com', allow_redirects=False, data=None, headers={'User-Agent': mock.ANY, 'Content-Type': 'application/vnd.piksel+json', 'Accept': 'application/vnd.piksel+json', 'X-Correlation-ID': None}, params=None, timeout=240),
-                     call('GET', 'mock://test.com', allow_redirects=False, data=None, headers={'User-Agent': mock.ANY, 'Content-Type': 'application/vnd.piksel+json', 'Accept': 'application/vnd.piksel+json', 'X-Correlation-ID': None}, params=None, timeout=240),
-                     call('GET', 'mock://test.com', allow_redirects=False, data=None, headers={'User-Agent': mock.ANY, 'Content-Type': 'application/vnd.piksel+json', 'Accept': 'application/vnd.piksel+json', 'X-Correlation-ID': None}, params=None, timeout=240)]
+        call_list = [call('GET', 'mock://test.com', allow_redirects=False, data=None,
+                          headers={'User-Agent': mock.ANY, 'Content-Type': 'application/vnd.piksel+json',
+                                   'Accept': 'application/vnd.piksel+json', 'X-Correlation-ID': None}, params=None,
+                          timeout=240),
+                     call('GET', 'mock://test.com', allow_redirects=False, data=None,
+                          headers={'User-Agent': mock.ANY, 'Content-Type': 'application/vnd.piksel+json',
+                                   'Accept': 'application/vnd.piksel+json', 'X-Correlation-ID': None}, params=None,
+                          timeout=240),
+                     call('GET', 'mock://test.com', allow_redirects=False, data=None,
+                          headers={'User-Agent': mock.ANY, 'Content-Type': 'application/vnd.piksel+json',
+                                   'Accept': 'application/vnd.piksel+json', 'X-Correlation-ID': None}, params=None,
+                          timeout=240)]
 
         assert_that(mock_session.request.call_count, is_(3))
         mock_session.request.assert_has_calls(call_list)
@@ -300,7 +323,8 @@ class HttpExecutorTest(unittest.TestCase):
         mock_response_401 = Mock()
         mock_response_401.is_redirect = False
         mock_response_401.status_code = 401
-        mock_response_401.json.return_value = {"statusCode":401,"error":"Unauthorized","message":"Invalid token","attributes":{"error":"Invalid token"}}
+        mock_response_401.json.return_value = {"statusCode": 401, "error": "Unauthorized", "message": "Invalid token",
+                                               "attributes": {"error": "Invalid token"}}
         mock_response_401.return_value.text = '{"statusCode":401,"error":"Unauthorized","message":"Invalid token","attributes":{"error":"Invalid token"}}'
 
         mock_auth = Mock()
@@ -315,10 +339,10 @@ class HttpExecutorTest(unittest.TestCase):
             http_executor.request("GET", "mock://test.com")
 
         single_call = call('GET', 'mock://test.com', allow_redirects=False, data=None,
-                          headers={'User-Agent': mock.ANY, 'Content-Type': 'application/vnd.piksel+json',
-                                   'Accept': 'application/vnd.piksel+json', 'X-Correlation-ID': None},
-                          params=None,
-                          timeout=240)
+                           headers={'User-Agent': mock.ANY, 'Content-Type': 'application/vnd.piksel+json',
+                                    'Accept': 'application/vnd.piksel+json', 'X-Correlation-ID': None},
+                           params=None,
+                           timeout=240)
 
         call_list = [single_call, single_call, single_call, single_call]
 
@@ -406,3 +430,92 @@ class HttpExecutorTest(unittest.TestCase):
         http_executor = http.HttpExecutor(None, content_type='abc')
         assert_that(http_executor.common_headers['Content-Type'], is_('abc'))
         assert_that(http_executor.common_headers['Accept'], is_('abc'))
+
+    def test_retries_for_http_status_code_specified_in_backoff_strategy_reach_default_limit(self):
+        def _patch_max_time_to_run_unit_test_faster():
+            http_executor.MAX_TIME_SECONDS = 5
+
+        json_response_404 = {'statusCode': 404, 'error': 'Not Found', 'message': 'Not Found'}
+        mock_http_response_list = [{'json': json_response_404, 'status_code': 404}]
+
+        self.adapter.register_uri(method='GET',
+                                  url='mock://test.com',
+                                  response_list=mock_http_response_list)
+        http_executor = http.HttpExecutor(auth.AuthFactory.create(auth_type=auth.AuthType.BYO_TOKEN, byo_token='tkn'),
+                                          session=self.session_mock,
+                                          backoff_strategy={'max_tries': None,
+                                                            'max_time': None,
+                                                            'retry_http_status_codes': 404}
+                                          )
+        _patch_max_time_to_run_unit_test_faster()
+        with pytest.raises(error.HttpError) as e:
+            http_executor.request("GET", "mock://test.com")
+
+        assert_that(e.value.status_code, is_(404))
+        assert_that(self.adapter.called, is_(True))
+        assert_that(self.adapter.called_once, is_(False))
+
+    def test_retries_for_http_status_code_specified_in_backoff_strategy_with_number(self):
+        json_response_404 = {'statusCode': 404, 'error': 'Not Found', 'message': 'Not Found'}
+        json_response_200 = {'resources': [{'message': 'Found'}]}
+        http_response_list = [
+            {'json': json_response_404, 'status_code': 404},
+            {'json': json_response_200, 'status_code': 200}
+        ]
+        self.backoff_test(mock_http_response_list=http_response_list,
+                          max_tries=2,
+                          retry_http_codes='404',
+                          expected_http_status_code=200,
+                          expected_json_response=json_response_200,
+                          expected_requests_number=2)
+
+    def test_retries_for_http_status_code_specified_in_backoff_strategy_with_list(self):
+        json_response_404 = {'statusCode': 404, 'error': 'Not Found', 'message': 'Not Found'}
+        json_response_409 = {'statusCode': 409, 'error': 'Conflict', 'message': 'Conflict'}
+        json_response_200 = {'resources': [{'message': 'Found'}]}
+        http_response_list = [
+            {'json': json_response_404, 'status_code': 404},
+            {'json': json_response_409, 'status_code': 409},
+            {'json': json_response_200, 'status_code': 200}
+        ]
+        self.backoff_test(mock_http_response_list=http_response_list,
+                          max_tries=4,
+                          retry_http_codes=['404', 409, 410],
+                          expected_http_status_code=200,
+                          expected_json_response=json_response_200,
+                          expected_requests_number=3)
+
+    def test_retries_for_http_status_code_specified_in_backoff_strategy_with_tuple(self):
+        json_response_404 = {'statusCode': 404, 'error': 'Not Found', 'message': 'Not Found'}
+        json_response_409 = {'statusCode': 409, 'error': 'Conflict', 'message': 'Conflict'}
+        json_response_200 = {'resources': [{'message': 'Found'}]}
+        http_response_list = [
+            {'json': json_response_404, 'status_code': 404},
+            {'json': json_response_409, 'status_code': 409},
+            {'json': json_response_200, 'status_code': 200}
+        ]
+        self.backoff_test(mock_http_response_list=http_response_list,
+                          max_tries=4,
+                          retry_http_codes=(404, '409', 410),
+                          expected_http_status_code=200,
+                          expected_json_response=json_response_200,
+                          expected_requests_number=3)
+
+    def backoff_test(self, mock_http_response_list, max_tries, retry_http_codes,
+                     expected_http_status_code, expected_json_response, expected_requests_number):
+        self.adapter.register_uri(method='GET',
+                                  url='mock://test.com',
+                                  response_list=mock_http_response_list)
+        http_executor = http.HttpExecutor(auth.AuthFactory.create(auth_type=auth.AuthType.BYO_TOKEN, byo_token='tkn'),
+                                          session=self.session_mock,
+                                          user_agent='backoff_test',
+                                          backoff_strategy={'max_tries': max_tries,
+                                                            'max_time': 300,
+                                                            'retry_http_status_codes': retry_http_codes}
+                                          )
+        actual_response = http_executor.request("GET", "mock://test.com")
+        assert_that(actual_response.status, is_(expected_http_status_code))
+        assert_that(actual_response.data, equal_to(expected_json_response))
+        assert_that(self.adapter.call_count, is_(expected_requests_number))
+        for i in range(expected_requests_number): assert_that(self.adapter.request_history[0].method, is_('GET')) and \
+                                                  assert_that(self.adapter.request_history[0].url, is_('mock://test.com'))
