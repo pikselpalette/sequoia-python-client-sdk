@@ -7,10 +7,10 @@ from sys import version_info as vi
 
 import backoff
 from requests import Session
-from requests.exceptions import RequestException, ConnectionError, Timeout, TooManyRedirects
+from requests.exceptions import ConnectionError, RequestException, Timeout, TooManyRedirects
 
 from sequoia import __version__ as client_version, util
-from sequoia import error, env
+from sequoia import env, error
 from sequoia.auth import BYOTokenAuth
 
 RETRY_HTTP_STATUS_CODES = 'retry_http_status_codes'
@@ -60,8 +60,7 @@ class HttpExecutor:
         if user_agent is not None:
             self.user_agent = user_agent + self.user_agent
 
-        self.backoff_strategy = copy.deepcopy(backoff_strategy) or HttpExecutor.DEFAULT_BACKOFF_CONF
-        self._remove_none_to_avoid_infinite_retries()
+        self._set_backoff_strategy(backoff_strategy)
 
         self.get_delay = get_delay
         self.session = session or Session()
@@ -81,9 +80,14 @@ class HttpExecutor:
 
         self.request_timeout = request_timeout or env.DEFAULT_REQUEST_TIMEOUT_SECONDS
 
+    def _set_backoff_strategy(self, backoff_strategy):
+        self.backoff_strategy = copy.deepcopy(backoff_strategy) or HttpExecutor.DEFAULT_BACKOFF_CONF
+        self._remove_none_to_avoid_infinite_retries()
+
     def _remove_none_to_avoid_infinite_retries(self):
-        if 'max_time' in self.backoff_strategy and not self.backoff_strategy['max_time']:
-            del self.backoff_strategy['max_time']
+        if ('max_time' in self.backoff_strategy and not self.backoff_strategy['max_time']) or \
+           'max_time' not in self.backoff_strategy:
+            self.backoff_strategy['max_time'] = self.MAX_TIME_SECONDS
 
     @staticmethod
     def create_http_error(response):
@@ -122,7 +126,6 @@ class HttpExecutor:
                                                  (error.ConnectionError, error.Timeout, error.TooManyRedirects,
                                                   error.HttpError),
                                                  giveup=fatal_code,
-                                                 max_time=self.backoff_strategy.pop('max_time', self.MAX_TIME_SECONDS),
                                                  **copy.deepcopy(self.backoff_strategy))(self._request)
         return decorated_request(method, url, data=data,
                                  params=params, headers=headers,
