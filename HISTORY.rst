@@ -24,48 +24,48 @@ History
 1.2.1 (2019-03-26)
 ==================
 
-* Load yaml config file for testing in a safer way as specified in `PyYAML <https://github.com/yaml/pyyaml/wiki/PyYAML-yaml.load(input)-Deprecation>`_
+* Load yaml config file for testing in a safer way as specified in `PyYAML <https://github.com/yaml/pyyaml/wiki/PyYAML-yaml.load(input)-Deprecation>`_.
 
 2.0.0 (2019-06-06)
 ==================
 
-* Removing python 2.7 compatibility
+* Removing python 2.7 compatibility.
 
-* Adding backoff to http requests. Configurable backoff from client creation
+* Adding backoff to http requests. Configurable backoff from client creation.
 
-* Libraries `urllib3` and `requests` upgraded to solve security issues
+* Libraries `urllib3` and `requests` upgraded to solve security issues.
 
 2.1.0 (2019-09-30)
 ==================
 
-* Modifying setup.cfg to allow different version formats (i.e development versions)
-* Paging with `continue` parameter
-* When token is expired, it is updated automatically with CLIENT_GRANT auth type
+* Modifying setup.cfg to allow different version formats (i.e development versions).
+* Paging with `continue` parameter.
+* When token is expired, it is updated automatically with CLIENT_GRANT auth type.
 
 2.1.1 (2019-10-02)
 ==================
-* Token fetching not restarting backoff. Retries continuing its count instead of restarting it when there is a invalid token
+* Token fetching not restarting backoff. Retries continuing its count instead of restarting it when there is a invalid token.
 
 2.2.0 (2020-08-13)
 ==================
-* Allowing to provide `correlation_id` value when the client is created
-* Caching tokens by `grant_client_id` and `token_url` to avoid calling identity in case credentials are cached
-* PageBrowser keeping a response cache to avoid duplicated requests
-* Bug fixed when paging main content. Query params should to be added to next url
-* New `AuthType.MUTUAL`
+* Allowing to provide `correlation_id` value when the client is created.
+* Caching tokens by `grant_client_id` and `token_url` to avoid calling identity in case credentials are cached.
+* PageBrowser keeping a response cache to avoid duplicated requests.
+* Bug fixed when paging main content. Query params should to be added to next url.
+* New `AuthType.MUTUAL`.
 
 3.0.0 (2020-10-06)
 ==================
-* Removing `transaction_id` value when the client is created
-* Allowing to provide `user_id` and `application_id` values as correlation id prefix
+* Removing `transaction_id` value when the client is created.
+* Allowing to provide `user_id` and `application_id` values as correlation id prefix.
 
 4.0.0 (2020-10-21)
 ==================
-* Python 3.5 support removed
-* Python 3.7 supported
-* Python 3.8 supported
-* Pagination with `continue` parameter over linked resources supported
-* Requirements upgraded
+* Python 3.5 support removed.
+* Python 3.7 supported.
+* Python 3.8 supported.
+* Pagination with `continue` parameter over linked resources supported.
+* Requirements upgraded.
 
 4.0.1 (2020-12-22)
 ==================
@@ -84,3 +84,9 @@ History
 * Lint issues solved (OAuth2SessionTokenManagementWrapper request method signature).
 * GitHub Actions configured to run lint and unit tests.
 
+4.2.0 (2021-04-13)
+==================
+* Python 3.9 supported.
+* Requirements upgraded.
+* Drop the use of some libraries: jsonpickle, twine.
+* Tox is installed in the Makefile when used.

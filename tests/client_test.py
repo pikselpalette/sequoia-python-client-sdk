@@ -4,14 +4,14 @@ import unittest
 from unittest.mock import patch
 
 import pytest
-from hamcrest import assert_that, empty, has_length, instance_of, equal_to, none, is_
+from hamcrest import assert_that, empty, equal_to, has_length, instance_of, is_, none
 from oauthlib.oauth2 import InvalidGrantError
 from requests import Response
 
-from sequoia import criteria, auth
+from sequoia import auth, criteria
 from sequoia import error
-from sequoia.auth import TokenCache, AuthType
-from sequoia.client import Client, ResponseBuilder, LinkedResourcesPageBrowser
+from sequoia.auth import AuthType, TokenCache
+from sequoia.client import Client, LinkedResourcesPageBrowser, ResponseBuilder
 from sequoia.criteria import Criteria, Inclusion
 from tests import mocking
 
@@ -30,7 +30,7 @@ class TestResourceEndpointProxy(unittest.TestCase):
 
     def test_browse_with_provided_correlation_id_returns_it_in_response_headers(self):
         mocking.add_get_mapping_for_url(self.mock,
-                                        'data/assets\?withContentRef=theContentRef&owner=testmock',
+                                        r'data/assets\?withContentRef=theContentRef&owner=testmock',
                                         'valid_metadata_assets_response')
         mocking.add_get_mapping_for_url(self.mock,
                                         'descriptor',
@@ -48,7 +48,7 @@ class TestResourceEndpointProxy(unittest.TestCase):
 
     def test_browse_with_user_id_and_application_id_returns_them_in_response_correlation_id(self):
         mocking.add_get_mapping_for_url(self.mock,
-                                        'data/assets\?withContentRef=theContentRef&owner=testmock',
+                                        r'data/assets\?withContentRef=theContentRef&owner=testmock',
                                         'valid_metadata_assets_response')
         mocking.add_get_mapping_for_url(self.mock,
                                         'descriptor',
@@ -67,7 +67,7 @@ class TestResourceEndpointProxy(unittest.TestCase):
 
     def test_operation_should_prioritize_correlation_id_over_arguments_to_build_it(self):
         mocking.add_get_mapping_for_url(self.mock,
-                                        'data/assets\?withContentRef=theContentRef&owner=testmock',
+                                        r'data/assets\?withContentRef=theContentRef&owner=testmock',
                                         'valid_metadata_assets_response')
         mocking.add_get_mapping_for_url(self.mock,
                                         'descriptor',
@@ -88,7 +88,7 @@ class TestResourceEndpointProxy(unittest.TestCase):
 
     def test_two_requests_have_different_correlation_id_in_response(self):
         mocking.add_get_mapping_for_url(self.mock,
-                                        'data/assets\?withContentRef=theContentRef&owner=testmock',
+                                        r'data/assets\?withContentRef=theContentRef&owner=testmock',
                                         'valid_metadata_assets_response')
         mocking.add_get_mapping_for_url(self.mock,
                                         'descriptor',
@@ -114,15 +114,15 @@ class TestResourceEndpointProxy(unittest.TestCase):
 
     def test_browse_with_several_pages_should_share_correlation_id_throughout_pages(self):
         mocking.add_get_mapping_for_url(self.mock,
-                                        'data/contents\?include=assets&owner=testmock',
+                                        r'data/contents\?include=assets&owner=testmock',
                                         'pagination_main_page')
 
         mocking.add_get_mapping_for_url(self.mock,
-                                        'data/contents\?include=assets&owner=testmock&page=2&perPage=100',
+                                        r'data/contents\?include=assets&owner=testmock&page=2&perPage=100',
                                         'pagination_main_second_page')
 
         mocking.add_get_mapping_for_url(self.mock,
-                                        'data/contents\?include=assets&owner=testmock&page=3&perPage=100',
+                                        r'data/contents\?include=assets&owner=testmock&page=3&perPage=100',
                                         'pagination_main_third_page')
 
         client = Client('http://mock-registry/services/testmock',
@@ -221,7 +221,7 @@ class TestResourceEndpointProxy(unittest.TestCase):
 
     def test_browse_assets_with_fields_returns_mocked_assets(self):
         mocking.add_get_mapping_for_url(self.mock,
-                                        'data/assets\?fields=name\%2Cref&owner=testmock&withContentRef=theContentRef',
+                                        r'data/assets\?fields=name\%2Cref&owner=testmock&withContentRef=theContentRef',
                                         'valid_metadata_assets_response')
         my_criteria = criteria.Criteria()
         my_criteria.add(criterion=criteria.StringExpressionFactory.field('contentRef').equal_to('theContentRef'))
@@ -234,7 +234,7 @@ class TestResourceEndpointProxy(unittest.TestCase):
 
     def test_browse_assets_with_query_string_returns_mocked_assets(self):
         mocking.add_get_mapping_for_url(self.mock,
-                                        'data/assets\?withContentRef=theContentRef&owner=testmock',
+                                        r'data/assets\?withContentRef=theContentRef&owner=testmock',
                                         'valid_metadata_assets_response')
         under_test = self.client.metadata.assets
 
@@ -245,13 +245,13 @@ class TestResourceEndpointProxy(unittest.TestCase):
 
     def test_browse_assets_paging_with_continue_returns_mocked_assets(self):
         mocking.add_get_mapping_for_url(self.mock,
-                                        'data/contents\?continue=true&perPage=2&owner=testmock',
+                                        r'data/contents\?continue=true&perPage=2&owner=testmock',
                                         'pagination_continue_page_1')
         mocking.add_get_mapping_for_url(self.mock,
-                                        '/data/contents\?continue=00abcdefghijklmnopqrstuvwxyz11&owner=test&perPage=2',
+                                        r'/data/contents\?continue=00abcdefghijklmnopqrstuvwxyz11&owner=test&perPage=2',
                                         'pagination_continue_page_2')
         mocking.add_get_mapping_for_url(self.mock,
-                                        '/data/contents\?continue=00abcdefghijklmnopqrstuvwxyz22&owner=test&perPage=2',
+                                        r'/data/contents\?continue=00abcdefghijklmnopqrstuvwxyz22&owner=test&perPage=2',
                                         'pagination_continue_page_3')
 
         under_test = self.client.metadata.contents
@@ -272,10 +272,10 @@ class TestResourceEndpointProxy(unittest.TestCase):
 
     def test_pagination_over_linked_resources(self):
         mocking.add_get_mapping_for_url(self.mock,
-                                        'data/contents\?withRef=testmock:cc0a675a-3b8a-4c87-9293-16e87e9ae599&include=assets&continue=true&owner=testmock',
+                                        r'data/contents\?withRef=testmock:cc0a675a-3b8a-4c87-9293-16e87e9ae599&include=assets&continue=true&owner=testmock',
                                         'pagination_over_linked_1')
         mocking.add_get_mapping_for_url(self.mock,
-                                        '/data/assets\?fields=ref%2Cname%2CcontentRef%2Ctype%2Curl%2CfileFormat%2Ctitle%2CfileSize%2Ctags&continue=eyJndCI6eyJmaWVsZCI6InJlZiIsInZhbHVlIjoidGVzdG1vY2s6ZDMyNWM4YWUtM2I1NS00YjhjLWI4MDYtZjFjNGEwNmYyYmU0IiwiY3Vyc29yIjp0cnVlfX0%3D&withContentRef=testmock%3Acc0a675a-3b8a-4c87-9293-16e87e9ae599&perPage=100',
+                                        r'/data/assets\?fields=ref%2Cname%2CcontentRef%2Ctype%2Curl%2CfileFormat%2Ctitle%2CfileSize%2Ctags&continue=eyJndCI6eyJmaWVsZCI6InJlZiIsInZhbHVlIjoidGVzdG1vY2s6ZDMyNWM4YWUtM2I1NS00YjhjLWI4MDYtZjFjNGEwNmYyYmU0IiwiY3Vyc29yIjp0cnVlfX0%3D&withContentRef=testmock%3Acc0a675a-3b8a-4c87-9293-16e87e9ae599&perPage=100',
                                         'pagination_over_linked_2')
 
         under_test = self.client.metadata.contents
@@ -297,7 +297,7 @@ class TestResourceEndpointProxy(unittest.TestCase):
 
     def test_browse_assets_with_model_query_string_returns_mocked_assets(self):
         mocking.add_get_mapping_for_url(self.mock,
-                                        'data/assets\?withContentRef=theContentRef&owner=testmock',
+                                        r'data/assets\?withContentRef=theContentRef&owner=testmock',
                                         'valid_metadata_assets_response')
         mocking.add_get_mapping_for_url(self.mock,
                                         'descriptor',
@@ -316,15 +316,15 @@ class TestResourceEndpointProxy(unittest.TestCase):
 
     def test_browse_linked_resources_with_more_than_one_page_goes_throw_several_pages(self):
         mocking.add_get_mapping_for_url(self.mock,
-                                        'data/contents\?include=assets&owner=testmock',
+                                        r'data/contents\?include=assets&owner=testmock',
                                         'pagination_main_page')
 
         mocking.add_get_mapping_for_url(self.mock,
-                                        'data/contents\?include=assets&owner=testmock&page=2&perPage=100',
+                                        r'data/contents\?include=assets&owner=testmock&page=2&perPage=100',
                                         'pagination_main_second_page')
 
         mocking.add_get_mapping_for_url(self.mock,
-                                        'data/contents\?include=assets&owner=testmock&page=3&perPage=100',
+                                        r'data/contents\?include=assets&owner=testmock&page=3&perPage=100',
                                         'pagination_main_third_page')
 
         under_test = self.client.metadata.contents
@@ -354,15 +354,15 @@ class TestResourceEndpointProxy(unittest.TestCase):
 
     def test_cache_modified_while_other_iterator_is_browsing(self):
         mocking.add_get_mapping_for_url(self.mock,
-                                        'data/contents\?include=assets&owner=testmock',
+                                        r'data/contents\?include=assets&owner=testmock',
                                         'pagination_main_page')
 
         mocking.add_get_mapping_for_url(self.mock,
-                                        'data/contents\?include=assets&owner=testmock&page=2&perPage=100',
+                                        r'data/contents\?include=assets&owner=testmock&page=2&perPage=100',
                                         'pagination_main_second_page')
 
         mocking.add_get_mapping_for_url(self.mock,
-                                        'data/contents\?include=assets&owner=testmock&page=3&perPage=100',
+                                        r'data/contents\?include=assets&owner=testmock&page=3&perPage=100',
                                         'pagination_main_third_page')
 
         under_test = self.client.metadata.contents
@@ -390,15 +390,15 @@ class TestResourceEndpointProxy(unittest.TestCase):
 
     def test_browse_linked_resources_with_prefetch_and_more_than_one_page_goes_throw_several_pages(self):
         mocking.add_get_mapping_for_url(self.mock,
-                                        'data/contents\?include=assets&owner=testmock',
+                                        r'data/contents\?include=assets&owner=testmock',
                                         'pagination_main_page')
 
         mocking.add_get_mapping_for_url(self.mock,
-                                        'data/contents\?include=assets&owner=testmock&page=2&perPage=100',
+                                        r'data/contents\?include=assets&owner=testmock&page=2&perPage=100',
                                         'pagination_main_second_page')
 
         mocking.add_get_mapping_for_url(self.mock,
-                                        'data/contents\?include=assets&owner=testmock&page=3&perPage=100',
+                                        r'data/contents\?include=assets&owner=testmock&page=3&perPage=100',
                                         'pagination_main_third_page')
 
         under_test = self.client.metadata.contents
@@ -428,10 +428,10 @@ class TestResourceEndpointProxy(unittest.TestCase):
 
     def test_browse_assets_with_paging_returns_mocked_assets(self):
         mocking.add_get_mapping_for_url(self.mock,
-                                        'data/assets\?withContentRef=theContentRef&perPage=2&owner=testmock',
+                                        r'data/assets\?withContentRef=theContentRef&perPage=2&owner=testmock',
                                         'valid_metadata_assets_response_page_1')
         mocking.add_get_mapping_for_url(self.mock,
-                                        'data/assets\?owner=testmock&withContentRef=testmock&page=2&perPage=2',
+                                        r'data/assets\?owner=testmock&withContentRef=testmock&page=2&perPage=2',
                                         'valid_metadata_assets_response_page_2')
         under_test = self.client.metadata.assets
 
@@ -449,10 +449,10 @@ class TestResourceEndpointProxy(unittest.TestCase):
 
     def test_browse_assets_with_paging_and_inclusions_returns_mocked_assets(self):
         mocking.add_get_mapping_for_url(self.mock,
-                                        'data/assets\?withContentRef=theContentRef&perPage=2&include=content&owner=testmock',
+                                        r'data/assets\?withContentRef=theContentRef&perPage=2&include=content&owner=testmock',
                                         'valid_metadata_assets_response_with_include_page_1')
         mocking.add_get_mapping_for_url(self.mock,
-                                        'data/assets\?owner=testmock&withContentRef=testmock&page=2&perPage=2&include=content',
+                                        r'data/assets\?owner=testmock&withContentRef=testmock&page=2&perPage=2&include=content',
                                         'valid_metadata_assets_response_with_include_page_2')
         under_test = self.client.metadata.assets
 
@@ -483,7 +483,7 @@ class TestResourceEndpointProxy(unittest.TestCase):
 
     def test_browse_assets_with_iteration_and_one_page_returns_mocked_assets(self):
         mocking.add_get_mapping_for_url(self.mock,
-                                        'data/assets\?withContentRef=theContentRef&perPage=2&owner=testmock',
+                                        r'data/assets\?withContentRef=theContentRef&perPage=2&owner=testmock',
                                         'valid_metadata_assets_response_page_2')
         under_test = self.client.metadata.assets
 
@@ -498,7 +498,7 @@ class TestResourceEndpointProxy(unittest.TestCase):
 
     def test_browse_assets_with_iteration_and_prefetch_2_and_one_page_returns_mocked_assets(self):
         mocking.add_get_mapping_for_url(self.mock,
-                                        'data/assets\?withContentRef=theContentRef&perPage=2&owner=testmock',
+                                        r'data/assets\?withContentRef=theContentRef&perPage=2&owner=testmock',
                                         'valid_metadata_assets_response_page_2')
         under_test = self.client.metadata.assets
 
@@ -514,7 +514,7 @@ class TestResourceEndpointProxy(unittest.TestCase):
 
     def test_browse_assets_with_query_string_and_criteria_returns_mocked_assets(self):
         mocking.add_get_mapping_for_url(self.mock,
-                                        'data/assets\?withContentRef=theContentRef&owner=testmock&withType=type',
+                                        r'data/assets\?withContentRef=theContentRef&owner=testmock&withType=type',
                                         'valid_metadata_assets_response')
         under_test = self.client.metadata.assets
         a_criteria = criteria.Criteria().add(criterion=criteria.StringExpressionFactory.field('type').equal_to('type'))

@@ -35,6 +35,7 @@ _CLASSIFIERS = (
     'Programming Language :: Python :: 3.6',
     'Programming Language :: Python :: 3.7',
     'Programming Language :: Python :: 3.8',
+    'Programming Language :: Python :: 3.9',
     'Topic :: Software Development :: Libraries :: Python Modules',
 )
 
@@ -44,7 +45,7 @@ _KEYWORDS = ' '.join([
 
 setup(
     name='sequoia-client-sdk',
-    version='4.1.0',
+    version='4.2.0',
     description=sequoia.__description__,
     long_description=_LONG_DESCRIPTION,
     long_description_content_type='text/x-rst',
