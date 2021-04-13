@@ -77,7 +77,7 @@ History
 ==================
 * Two new methods added to Criterion object so the fluent API is easier to use: `add_inclusion` and `add_criterion`.
 
-X.X.X (2021-04-XX)
+4.1.0 (2021-04-13)
 ==================
 * New keyword `retry_http_status_codes` for the `backoff_strategy` to retry specific http status codes.
 * Prospector version upgraded to 1.3.1 so it works with python versions 3.9.4, 3.8.9, 3.7.10, 3.6.13.
