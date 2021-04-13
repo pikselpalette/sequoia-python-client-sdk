@@ -84,7 +84,7 @@ History
 * Lint issues solved (OAuth2SessionTokenManagementWrapper request method signature).
 * GitHub Actions configured to run lint and unit tests.
 
-Y.Y.Y (2021-04-XX)
+4.2.0 (2021-04-13)
 ==================
 * Python 3.9 supported.
 * Requirements upgraded.
