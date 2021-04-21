@@ -1,13 +1,13 @@
 import unittest
 from unittest import mock
-from unittest.mock import patch, Mock, call
+from unittest.mock import Mock, call, patch
 
 import pytest
 import requests
 import requests_mock
-from hamcrest import assert_that, instance_of, is_in, none, equal_to, is_, starts_with
+from hamcrest import assert_that, equal_to, instance_of, is_, is_in, none, starts_with
 
-from sequoia import auth, http, error
+from sequoia import auth, error, http
 
 
 class HttpExecutorTest(unittest.TestCase):
@@ -430,7 +430,7 @@ class HttpExecutorTest(unittest.TestCase):
 
     def test_retries_for_http_status_code_specified_in_backoff_strategy_reach_default_limit(self):
         def _patch_max_time_to_run_unit_test_faster():
-            http_executor.MAX_TIME_SECONDS = 2
+            http_executor.MAX_TIME_SECONDS = 1.5
 
         json_response_404 = {'statusCode': 404, 'error': 'Not Found', 'message': 'Not Found'}
         mock_http_response_list = [{'json': json_response_404, 'status_code': 404}]
@@ -508,7 +508,8 @@ class HttpExecutorTest(unittest.TestCase):
                                           user_agent='backoff_test',
                                           backoff_strategy={'max_tries': max_tries,
                                                             'max_time': 300,
-                                                            'retry_http_status_codes': retry_http_codes}
+                                                            'retry_http_status_codes': retry_http_codes
+                                                            }
                                           )
         actual_response = http_executor.request("GET", "mock://test.com")
         assert_that(actual_response.status, is_(expected_http_status_code))

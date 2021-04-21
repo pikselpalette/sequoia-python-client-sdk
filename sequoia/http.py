@@ -85,9 +85,8 @@ class HttpExecutor:
         self._remove_none_to_avoid_infinite_retries()
 
     def _remove_none_to_avoid_infinite_retries(self):
-        if ('max_time' in self.backoff_strategy and not self.backoff_strategy['max_time']) or \
-           'max_time' not in self.backoff_strategy:
-            self.backoff_strategy['max_time'] = self.MAX_TIME_SECONDS
+        if 'max_time' in self.backoff_strategy and not self.backoff_strategy['max_time']:
+            del self.backoff_strategy['max_time']
 
     @staticmethod
     def create_http_error(response):
@@ -125,6 +124,7 @@ class HttpExecutor:
         decorated_request = backoff.on_exception(self.backoff_strategy.pop('wait_gen', backoff.constant),
                                                  (error.ConnectionError, error.Timeout, error.TooManyRedirects,
                                                   error.HttpError),
+                                                 max_time=self.backoff_strategy.pop('max_time', self.MAX_TIME_SECONDS),
                                                  giveup=fatal_code,
                                                  **copy.deepcopy(self.backoff_strategy))(self._request)
         return decorated_request(method, url, data=data,
