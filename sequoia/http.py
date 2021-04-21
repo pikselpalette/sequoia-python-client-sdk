@@ -83,6 +83,7 @@ class HttpExecutor:
     def _set_backoff_strategy(self, backoff_strategy):
         self.backoff_strategy = copy.deepcopy(backoff_strategy) or HttpExecutor.DEFAULT_BACKOFF_CONF
         self._remove_none_to_avoid_infinite_retries()
+        self.retry_when_empty_result = self.backoff_strategy.pop('retry_when_empty_result', None)
 
     def _remove_none_to_avoid_infinite_retries(self):
         if 'max_time' in self.backoff_strategy and not self.backoff_strategy['max_time']:
@@ -121,12 +122,22 @@ class HttpExecutor:
             logging.getLogger('backoff').addHandler(logging.StreamHandler())
 
         enable_backoff_logs()
-        decorated_request = backoff.on_exception(self.backoff_strategy.pop('wait_gen', backoff.constant),
-                                                 (error.ConnectionError, error.Timeout, error.TooManyRedirects,
-                                                  error.HttpError),
-                                                 max_time=self.backoff_strategy.pop('max_time', self.MAX_TIME_SECONDS),
-                                                 giveup=fatal_code,
-                                                 **copy.deepcopy(self.backoff_strategy))(self._request)
+        decorated_request = backoff.on_exception(
+            self.backoff_strategy.pop('wait_gen', backoff.constant),
+            (error.ConnectionError, error.Timeout, error.TooManyRedirects, error.HttpError),
+            max_time=self.backoff_strategy.pop('max_time', self.MAX_TIME_SECONDS),
+            giveup=fatal_code,
+            **copy.deepcopy(self.backoff_strategy)
+        )(self._request)
+
+        if self.retry_when_empty_result:
+            decorated_request = backoff.on_predicate(
+                wait_gen=self.backoff_strategy.pop('wait_gen', backoff.constant),
+                predicate=lambda x: not x.json,
+                max_time=self.backoff_strategy.pop('max_time', self.MAX_TIME_SECONDS),
+                **copy.deepcopy(self.backoff_strategy)
+            )(decorated_request)
+
         return decorated_request(method, url, data=data,
                                  params=params, headers=headers,
                                  retry_count=retry_count,
