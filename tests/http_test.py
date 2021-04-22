@@ -508,6 +508,7 @@ class HttpExecutorTest(unittest.TestCase):
                                           user_agent='backoff_test',
                                           backoff_strategy={'max_tries': max_tries,
                                                             'max_time': 300,
+                                                            'interval': 0,
                                                             'retry_http_status_codes': retry_http_codes
                                                             }
                                           )
@@ -706,6 +707,7 @@ class HttpExecutorTest(unittest.TestCase):
             user_agent='backoff_test',
             backoff_strategy={
                 'max_tries': max_tries,
+                'interval': 0,
                 'retry_when_empty_result': retry_when_empty_result
             })
         actual_response = http_executor.request(
