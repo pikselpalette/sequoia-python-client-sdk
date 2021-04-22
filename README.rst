@@ -314,6 +314,9 @@ We can set a different backoff strategy.
 
 Here an exponential strategy will be used, with a base of 2 and factor 1.
 
+Retry when status code
+----------------------
+
 You can also provide a number of HTTP status codes to perform the retry of the query, this is, when the query you are
 performing returns one of the status codes you've specified, the query is automatically retried.
 The key word you have to use for this is `retry_http_status_codes` within the backoff_strategy dictionary.
@@ -330,10 +333,40 @@ For instance:
                         )
 
 
-When `max_time` is set to None or not passed a default value is automatically set to avoid possible undesired behaviour
+When `max_time` is set to None or not passed, a default value is automatically set to avoid possible undesired behaviour
 such as infinite loops. The default value is set to 120 seconds.
 
 For more info about backoff strategies https://github.com/litl/backoff
+
+Retry when empty result
+-----------------------
+
+You can also set up the retries policy for the case in that the resources you are querying for are missing in the
+response. This is useful when you are quite sure the data you are querying will eventually exist in the service even
+though it doesn't exist yet.
+
+The way to configure this is by setting the keyword `retry_when_empty_result` in the `backoff_strategy` dictionary
+as you can see in this example:
+
+    .. code-block:: python
+
+        client = Client("https://registry-sandbox.sequoia.piksel.com/services/testmock",
+                        grant_client_id="clientId",
+                        grant_client_secret="clientSecret",
+                        backoff_strategy={
+                            'retry_when_empty_result': {
+                                'contents': True,
+                                'assets': False,
+                                'categories': True
+                            }}
+                        )
+
+In that example both resources contents and categories are checked to be returned.
+
+In case the limit of retries is reached and that condition is not fulfilled the latest response is returned.
+Bear in mind that the response can very likely have a status code of 200 and a body with data.
+
+Remember, as specified above a `max_time` is automatically set even though it is not given.
 
 Correlation ID
 ==============

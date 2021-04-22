@@ -515,5 +515,204 @@ class HttpExecutorTest(unittest.TestCase):
         assert_that(actual_response.status, is_(expected_http_status_code))
         assert_that(actual_response.data, equal_to(expected_json_response))
         assert_that(self.adapter.call_count, is_(expected_requests_number))
-        for i in range(expected_requests_number): assert_that(self.adapter.request_history[0].method, is_('GET')) and \
-                                                  assert_that(self.adapter.request_history[0].url, is_('mock://test.com'))
+        for i in range(expected_requests_number): assert_that(self.adapter.request_history[i].method, is_('GET')) and \
+                                                  assert_that(self.adapter.request_history[i].url, is_('mock://test.com'))
+
+    def test_retries_when_main_resource_is_empty(self):
+        """
+        As the main resource is empty, the query is retried until it reached the limit of retries, then the latest
+        http response is returned.
+        """
+        json_response_200 = {
+            "meta": {
+                "perPage": 100, "page": 1,
+                "first": "/data/contents?include=assets%2Ccategories&owner=test&withRef=test%3Ac0007&page=1&perPage=100",
+                "linked": {
+                    "assets": [{"perPage": 100,
+                                "request": "/data/assets?owner=test&fields=ref%2Cname%2CcontentRef%2Ctype%2Curl%2CfileFormat%2Ctitle%2CfileSize%2Ctags&continue=true&withContentRef=test%3Ac0007"}],
+                    "categories": [{"perPage": 100, "page": 1,
+                                    "first": "/data/categories?owner=test&withRef=test%3Acategory-1%7C%7Ctest%3Acategory-2&page=1&perPage=100",
+                                    "request": "/data/categories?owner=test&withRef=test%3Acategory-1%7C%7Ctest%3Acategory-2"}
+                                   ]}},
+            "contents": [],
+            "linked": {
+                "assets": [
+                    {"ref": "test:asset-1", "title": "asset 1"}
+                ],
+                "categories": [
+                    {"ref": "test:category-1", "title": "a tag category", "scheme": "tags", "value": "tag"},
+                    {"ref": "test:category-2", "title": "a tag category", "scheme": "tags", "value": "tag"}
+                ]}}
+        http_response_list = [
+            {'json': json_response_200, 'status_code': 200}
+        ]
+        self.retry_when_empty_result_test(http_response_list, max_tries=5, retry_when_empty_result={
+            'contents': True
+        }, expected_http_status_code=200, expected_json_response=json_response_200, expected_requests_number=5)
+
+    def test_retries_when_main_resource_is_empty_then_it_is_not(self):
+        """
+        As the main resource is empty for the first queries, the query is retried until the main resource is not empty
+        anymore in the response, then the response is returned.
+        """
+        json_response_200_empty = {
+            "meta": {
+                "perPage": 100, "page": 1,
+                "first": "/data/contents?include=assets%2Ccategories&owner=test&withRef=test%3Ac0007&page=1&perPage=100",
+                "linked": {
+                    "assets": [{"perPage": 100,
+                                "request": "/data/assets?owner=test&fields=ref%2Cname%2CcontentRef%2Ctype%2Curl%2CfileFormat%2Ctitle%2CfileSize%2Ctags&continue=true&withContentRef=test%3Ac0007"}],
+                    "categories": [{"perPage": 100, "page": 1,
+                                    "first": "/data/categories?owner=test&withRef=test%3Acategory-1%7C%7Ctest%3Acategory-2&page=1&perPage=100",
+                                    "request": "/data/categories?owner=test&withRef=test%3Acategory-1%7C%7Ctest%3Acategory-2"}
+                                   ]}},
+            "contents": [],
+            "linked": {
+                "assets": [
+                    {"ref": "test:asset-1", "title": "asset 1"}
+                ],
+                "categories": [
+                    {"ref": "test:category-1", "title": "a tag category", "scheme": "tags", "value": "tag"},
+                    {"ref": "test:category-2", "title": "a tag category", "scheme": "tags", "value": "tag"}
+                ]}}
+        json_response_200 = {
+            "meta": {
+                "perPage": 100, "page": 1,
+                "first": "/data/contents?include=assets%2Ccategories&owner=test&withRef=test%3Ac0007&page=1&perPage=100",
+                "linked": {
+                    "assets": [{"perPage": 100,
+                                "request": "/data/assets?owner=test&fields=ref%2Cname%2CcontentRef%2Ctype%2Curl%2CfileFormat%2Ctitle%2CfileSize%2Ctags&continue=true&withContentRef=test%3Ac0007"}],
+                    "categories": [{"perPage": 100, "page": 1,
+                                    "first": "/data/categories?owner=test&withRef=test%3Acategory-1%7C%7Ctest%3Acategory-2&page=1&perPage=100",
+                                    "request": "/data/categories?owner=test&withRef=test%3Acategory-1%7C%7Ctest%3Acategory-2"}
+                                   ]}},
+            "contents": [
+                {"ref": "test:c0007", "owner": "test", "name": "c0007", "title": "Interstellar",
+                 "categoryRefs": ["test:category-1", "test:category-2"]}
+            ],
+            "linked": {
+                "assets": [
+                    {"ref": "test:asset-1", "title": "asset 1"}
+                ],
+                "categories": [
+                    {"ref": "test:category-1", "title": "a tag category", "scheme": "tags", "value": "tag"},
+                    {"ref": "test:category-2", "title": "a tag category", "scheme": "tags", "value": "tag"}
+                ]}}
+        http_response_list = [
+            {'json': json_response_200_empty, 'status_code': 200},
+            {'json': json_response_200_empty, 'status_code': 200},
+            {'json': json_response_200, 'status_code': 200}
+        ]
+        self.retry_when_empty_result_test(http_response_list, max_tries=5, retry_when_empty_result={
+            'contents': True
+        }, expected_http_status_code=200, expected_json_response=json_response_200, expected_requests_number=3)
+
+    def test_retries_when_include_resource_is_empty(self):
+        """
+        As assets is empty in the response the query is retried, when the limit of retries is reached the latest
+        http response is returned
+        """
+        json_response_200 = {
+            "meta": {
+                "perPage": 100, "page": 1,
+                "first": "/data/contents?include=assets%2Ccategories&owner=test&withRef=test%3Ac0007&page=1&perPage=100",
+                "linked": {
+                    "assets": [{"perPage": 100,
+                                "request": "/data/assets?owner=test&fields=ref%2Cname%2CcontentRef%2Ctype%2Curl%2CfileFormat%2Ctitle%2CfileSize%2Ctags&continue=true&withContentRef=test%3Ac0007"}],
+                    "categories": [{"perPage": 100, "page": 1,
+                                    "first": "/data/categories?owner=test&withRef=test%3Acategory-1%7C%7Ctest%3Acategory-2&page=1&perPage=100",
+                                    "request": "/data/categories?owner=test&withRef=test%3Acategory-1%7C%7Ctest%3Acategory-2"}
+                                   ]}},
+            "contents": [
+                {"ref": "test:c0007", "owner": "test", "name": "c0007", "title": "Interstellar",
+                 "memberRefs": ["test:content-2", "test:content-3"],
+                 "categoryRefs": ["test:category-1", "test:category-2"]}
+            ],
+            "linked": {
+                "assets": [],
+                "categories": [
+                    {"ref": "test:category-1", "title": "a tag category", "scheme": "tags", "value": "tag",
+                     "active": True},
+                    {"ref": "test:category-2", "title": "a tag category", "scheme": "tags", "value": "tag",
+                     "active": True}
+                ]}}
+        http_response_list = [
+            {'json': json_response_200, 'status_code': 200}
+        ]
+        self.retry_when_empty_result_test(http_response_list, max_tries=5, retry_when_empty_result={
+            'contents': True,
+            'assets': True,
+            'categories': True
+        }, expected_http_status_code=200, expected_json_response=json_response_200, expected_requests_number=5)
+
+        # self.retry_when_empty_result_test(http_response_list, max_tries=5, retry_when_empty_result=True,
+        #                                   expected_http_status_code=200, expected_json_response=json_response_200,
+        #                                   expected_requests_number=5)
+
+    def test_retries_when_include_resource_is_empty_but_not_required(self):
+        """
+        Although assets is empty in the response the query is not retried because assets is not required in the
+        param retry_when_empty_result
+        """
+        json_response_200 = {
+            "meta": {
+                "perPage": 100, "page": 1,
+                "first": "/data/contents?include=assets%2Ccategories&owner=test&withRef=test%3Ac0007&page=1&perPage=100",
+                "linked": {
+                    "assets": [{"perPage": 100,
+                                "request": "/data/assets?owner=test&fields=ref%2Cname%2CcontentRef%2Ctype%2Curl%2CfileFormat%2Ctitle%2CfileSize%2Ctags&continue=true&withContentRef=test%3Ac0007"}],
+                    "categories": [{"perPage": 100, "page": 1,
+                                    "first": "/data/categories?owner=test&withRef=test%3Acategory-1%7C%7Ctest%3Acategory-2&page=1&perPage=100",
+                                    "request": "/data/categories?owner=test&withRef=test%3Acategory-1%7C%7Ctest%3Acategory-2"}
+                                   ]}},
+            "contents": [
+                {"ref": "test:c0007", "owner": "test", "name": "c0007", "title": "Interstellar",
+                 "categoryRefs": ["test:category-1", "test:category-2"]}
+            ],
+            "linked": {
+                "assets": [],
+                "categories": [
+                    {"ref": "test:category-1", "title": "a tag category", "scheme": "tags", "value": "tag",
+                     "active": True},
+                    {"ref": "test:category-2", "title": "a tag category", "scheme": "tags", "value": "tag",
+                     "active": True}
+                ]}}
+        http_response_list = [
+            {'json': json_response_200, 'status_code': 200}
+        ]
+        self.retry_when_empty_result_test(http_response_list, max_tries=5, retry_when_empty_result={
+            'contents': True,
+            'assets': False,
+            'categories': True
+        }, expected_http_status_code=200, expected_json_response=json_response_200, expected_requests_number=1)
+
+        # self.retry_when_empty_result_test(http_response_list, max_tries=5, retry_when_empty_result={
+        #     'contents': True,
+        #     'categories': True
+        # }, expected_http_status_code=200, expected_json_response=json_response_200, expected_requests_number=1)
+
+    def retry_when_empty_result_test(self, mock_http_response_list, max_tries, retry_when_empty_result,
+                                     expected_http_status_code, expected_json_response, expected_requests_number):
+        self.adapter.register_uri(
+            method='GET',
+            url='mock://metadata.pikselpalette.com/data/contents?include=assets,categories&owner=test&withRef=test:c0007',
+            response_list=mock_http_response_list)
+        http_executor = http.HttpExecutor(
+            auth.AuthFactory.create(auth_type=auth.AuthType.BYO_TOKEN, byo_token='tkn'),
+            session=self.session_mock,
+            user_agent='backoff_test',
+            backoff_strategy={
+                'max_tries': max_tries,
+                'retry_when_empty_result': retry_when_empty_result
+            })
+        actual_response = http_executor.request(
+            method="GET",
+            url="mock://metadata.pikselpalette.com/data/contents?include=assets,categories&owner=test&withRef=test:c0007",
+            resource_name='contents'
+        )
+        assert_that(actual_response.status, is_(expected_http_status_code))
+        assert_that(actual_response.data, equal_to(expected_json_response))
+        assert_that(self.adapter.call_count, is_(expected_requests_number))
+        for i in range(expected_requests_number):
+            assert_that(self.adapter.request_history[i].method, is_('GET'))
+            assert_that(self.adapter.request_history[i].url, is_('mock://metadata.pikselpalette.com/data/contents?include=assets,categories&owner=test&withRef=test:c0007'))

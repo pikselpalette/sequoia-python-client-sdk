@@ -90,3 +90,7 @@ History
 * Requirements upgraded.
 * Drop the use of some libraries: jsonpickle, twine.
 * Tox is installed in the Makefile when used.
+
+4.3.0 (2021-04-XX)
+==================
+* New keyword `retry_when_empty_result` for the `backoff_strategy` to retry when the queried resources are missing.

@@ -83,7 +83,7 @@ class HttpExecutor:
     def _set_backoff_strategy(self, backoff_strategy):
         self.backoff_strategy = copy.deepcopy(backoff_strategy) or HttpExecutor.DEFAULT_BACKOFF_CONF
         self._remove_none_to_avoid_infinite_retries()
-        self.retry_when_empty_result = self.backoff_strategy.pop('retry_when_empty_result', None)
+        self.retry_when_empty_result = self.backoff_strategy.pop('retry_when_empty_result', dict())
 
     def _remove_none_to_avoid_infinite_retries(self):
         if 'max_time' in self.backoff_strategy and not self.backoff_strategy['max_time']:
@@ -133,7 +133,7 @@ class HttpExecutor:
         if self.retry_when_empty_result:
             decorated_request = backoff.on_predicate(
                 wait_gen=self.backoff_strategy.pop('wait_gen', backoff.constant),
-                predicate=lambda x: not x.json,
+                predicate=self._response_does_not_have_data,
                 max_time=self.backoff_strategy.pop('max_time', self.MAX_TIME_SECONDS),
                 **copy.deepcopy(self.backoff_strategy)
             )(decorated_request)
@@ -142,6 +142,15 @@ class HttpExecutor:
                                  params=params, headers=headers,
                                  retry_count=retry_count,
                                  resource_name=resource_name)
+
+    def _response_does_not_have_data(self, ret):
+        linked_resources_have_data = [False]
+        if 'linked' in ret.data and self.retry_when_empty_result:
+            linked_resources_have_data = [(k in ret.data['linked'] and not bool(ret.data['linked'][k]))
+                                          for k, v in self.retry_when_empty_result.items() if v]
+
+        main_resource_has_data = ret.resource_name and not bool(ret.data[ret.resource_name])
+        return main_resource_has_data or any(linked_resources_have_data)
 
     def _request(self, method, url, data=None, params=None, headers=None, retry_count=0,
                  token_retry_count=0, resource_name=None):
