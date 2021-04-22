@@ -550,7 +550,11 @@ class HttpExecutorTest(unittest.TestCase):
             'contents': True
         }, expected_http_status_code=200, expected_json_response=json_response_200, expected_requests_number=5)
 
-    def test_retries_when_main_resource_is_empty_then_it_is_not(self):
+        self.retry_when_empty_result_test(http_response_list, max_tries=5, retry_when_empty_result=True,
+                                          expected_http_status_code=200, expected_json_response=json_response_200,
+                                          expected_requests_number=5+5)
+
+    def test_retries_when_main_resource_is_empty_and_eventually_it_is_not(self):
         """
         As the main resource is empty for the first queries, the query is retried until the main resource is not empty
         anymore in the response, then the response is returned.
@@ -607,6 +611,10 @@ class HttpExecutorTest(unittest.TestCase):
             'contents': True
         }, expected_http_status_code=200, expected_json_response=json_response_200, expected_requests_number=3)
 
+        self.retry_when_empty_result_test(http_response_list, max_tries=5, retry_when_empty_result=True,
+                                          expected_http_status_code=200, expected_json_response=json_response_200,
+                                          expected_requests_number=3+3)
+
     def test_retries_when_include_resource_is_empty(self):
         """
         As assets is empty in the response the query is retried, when the limit of retries is reached the latest
@@ -625,16 +633,13 @@ class HttpExecutorTest(unittest.TestCase):
                                    ]}},
             "contents": [
                 {"ref": "test:c0007", "owner": "test", "name": "c0007", "title": "Interstellar",
-                 "memberRefs": ["test:content-2", "test:content-3"],
                  "categoryRefs": ["test:category-1", "test:category-2"]}
             ],
             "linked": {
                 "assets": [],
                 "categories": [
-                    {"ref": "test:category-1", "title": "a tag category", "scheme": "tags", "value": "tag",
-                     "active": True},
-                    {"ref": "test:category-2", "title": "a tag category", "scheme": "tags", "value": "tag",
-                     "active": True}
+                    {"ref": "test:category-1", "title": "a tag category", "scheme": "tags", "value": "tag"},
+                    {"ref": "test:category-2", "title": "a tag category", "scheme": "tags", "value": "tag"}
                 ]}}
         http_response_list = [
             {'json': json_response_200, 'status_code': 200}
@@ -645,9 +650,9 @@ class HttpExecutorTest(unittest.TestCase):
             'categories': True
         }, expected_http_status_code=200, expected_json_response=json_response_200, expected_requests_number=5)
 
-        # self.retry_when_empty_result_test(http_response_list, max_tries=5, retry_when_empty_result=True,
-        #                                   expected_http_status_code=200, expected_json_response=json_response_200,
-        #                                   expected_requests_number=5)
+        self.retry_when_empty_result_test(http_response_list, max_tries=5, retry_when_empty_result=True,
+                                          expected_http_status_code=200, expected_json_response=json_response_200,
+                                          expected_requests_number=5+5)
 
     def test_retries_when_include_resource_is_empty_but_not_required(self):
         """
@@ -672,10 +677,8 @@ class HttpExecutorTest(unittest.TestCase):
             "linked": {
                 "assets": [],
                 "categories": [
-                    {"ref": "test:category-1", "title": "a tag category", "scheme": "tags", "value": "tag",
-                     "active": True},
-                    {"ref": "test:category-2", "title": "a tag category", "scheme": "tags", "value": "tag",
-                     "active": True}
+                    {"ref": "test:category-1", "title": "a tag category", "scheme": "tags", "value": "tag"},
+                    {"ref": "test:category-2", "title": "a tag category", "scheme": "tags", "value": "tag"}
                 ]}}
         http_response_list = [
             {'json': json_response_200, 'status_code': 200}
@@ -686,10 +689,10 @@ class HttpExecutorTest(unittest.TestCase):
             'categories': True
         }, expected_http_status_code=200, expected_json_response=json_response_200, expected_requests_number=1)
 
-        # self.retry_when_empty_result_test(http_response_list, max_tries=5, retry_when_empty_result={
-        #     'contents': True,
-        #     'categories': True
-        # }, expected_http_status_code=200, expected_json_response=json_response_200, expected_requests_number=1)
+        self.retry_when_empty_result_test(http_response_list, max_tries=5, retry_when_empty_result={
+            'contents': True,
+            'categories': True
+        }, expected_http_status_code=200, expected_json_response=json_response_200, expected_requests_number=1+1)
 
     def retry_when_empty_result_test(self, mock_http_response_list, max_tries, retry_when_empty_result,
                                      expected_http_status_code, expected_json_response, expected_requests_number):

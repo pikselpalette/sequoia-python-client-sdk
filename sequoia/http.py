@@ -145,9 +145,12 @@ class HttpExecutor:
 
     def _response_does_not_have_data(self, ret):
         linked_resources_have_data = [False]
-        if 'linked' in ret.data and self.retry_when_empty_result:
+        if 'linked' in ret.data and self.retry_when_empty_result and isinstance(self.retry_when_empty_result, dict):
             linked_resources_have_data = [(k in ret.data['linked'] and not bool(ret.data['linked'][k]))
                                           for k, v in self.retry_when_empty_result.items() if v]
+        elif 'linked' in ret.data and self.retry_when_empty_result:
+            linked_resources_have_data = [not bool(ret.data['linked'][k])
+                                          for k in ret.data['linked'].keys()]
 
         main_resource_has_data = ret.resource_name and not bool(ret.data[ret.resource_name])
         return main_resource_has_data or any(linked_resources_have_data)

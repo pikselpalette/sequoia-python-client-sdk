@@ -354,6 +354,25 @@ as you can see in this example:
                         grant_client_id="clientId",
                         grant_client_secret="clientSecret",
                         backoff_strategy={
+                            'retry_when_empty_result': True
+                            }
+                        )
+
+This way you are asking to retry the query when the response has no data for the main resource and for the inclusions
+you are querying for.
+
+This is, if your query look like `https://metadata-sandbox.sequoia.piksel.com/data/contents?include=assets,categories&owner=test&withRef=test:c0007`
+the query will be retried until the content test:c0007 is returned and it has at least one asset and
+one category in the response too. Or the retries reach the limit.
+
+A finer configuration is allowed so you can specify which resources have to be checked this way:
+
+    .. code-block:: python
+
+        client = Client("https://registry-sandbox.sequoia.piksel.com/services/testmock",
+                        grant_client_id="clientId",
+                        grant_client_secret="clientSecret",
+                        backoff_strategy={
                             'retry_when_empty_result': {
                                 'contents': True,
                                 'assets': False,
