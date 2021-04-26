@@ -93,4 +93,4 @@ History
 
 4.3.0 (2021-04-XX)
 ==================
-* New keyword `retry_when_empty_result` for the `backoff_strategy` to retry when the queried resources are missing.
+* New parameter `retry_when_empty_result` for the `read`, `browse`, `get` and `request` methods to retry the query when resources are missing in the response.

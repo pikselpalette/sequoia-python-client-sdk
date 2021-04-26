@@ -345,8 +345,15 @@ You can also set up the retries policy for the case in that the resources you ar
 response. This is useful when you are quite sure the data you are querying will eventually exist in the service even
 though it doesn't exist yet.
 
-The way to configure this is by setting the keyword `retry_when_empty_result` in the `backoff_strategy` dictionary
-as you can see in this example:
+The way to configure this is by using the parameter `retry_when_empty_result` in the method you use to query the
+service, this is valid for `read`, `browse`, `get` and `request` methods.
+
+The parameter `retry_when_empty_result` accepts either a **boolean value** to specify all resources are expected,
+either they are the main resources or the linked ones, or a **dictionary** in which you can explicitly specify the
+type of resources you are expecting to have in the response.
+In cases these resources are missing the query will be retried.
+
+Let's see an example:
 
     .. code-block:: python
 
@@ -357,6 +364,15 @@ as you can see in this example:
                             'retry_when_empty_result': True
                             }
                         )
+        assets_endpoint = client.metadata.contents
+        response = assets_endpoint.browse(
+            self.owner,
+            criteria.Criteria()
+                .add_criterion(criteria.StringExpressionFactory.field('ref').equal_to('test:c0007'))
+                .add_inclusion(criteria.Inclusion.resource('categories'))
+                .add_inclusion(criteria.Inclusion.resource('assets')),
+            retry_when_empty_result=True
+        )
 
 This way you are asking to retry the query when the response has no data for the main resource and for the inclusions
 you are querying for.
@@ -365,7 +381,7 @@ This is, if your query look like `https://metadata-sandbox.sequoia.piksel.com/da
 the query will be retried until the content test:c0007 is returned and it has at least one asset and
 one category in the response too. Or the retries reach the limit.
 
-A finer configuration is allowed so you can specify which resources have to be checked this way:
+A finer configuration using a dictionary is allowed so you can specify which resources have to be checked this way:
 
     .. code-block:: python
 
@@ -380,7 +396,7 @@ A finer configuration is allowed so you can specify which resources have to be c
                             }}
                         )
 
-In that example both resources contents and categories are checked to be returned.
+In that example both resources contents and categories are checked to be returned, but not assets.
 
 In case the limit of retries is reached and that condition is not fulfilled the latest response is returned.
 Bear in mind that the response can very likely have a status code of 200 and a body with data.

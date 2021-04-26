@@ -707,13 +707,13 @@ class HttpExecutorTest(unittest.TestCase):
             user_agent='backoff_test',
             backoff_strategy={
                 'max_tries': max_tries,
-                'interval': 0,
-                'retry_when_empty_result': retry_when_empty_result
+                'interval': 0
             })
         actual_response = http_executor.request(
             method="GET",
             url="mock://metadata.pikselpalette.com/data/contents?include=assets,categories&owner=test&withRef=test:c0007",
-            resource_name='contents'
+            resource_name='contents',
+            retry_when_empty_result=retry_when_empty_result
         )
         assert_that(actual_response.status, is_(expected_http_status_code))
         assert_that(actual_response.data, equal_to(expected_json_response))

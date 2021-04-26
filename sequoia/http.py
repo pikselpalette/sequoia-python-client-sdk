@@ -61,6 +61,7 @@ class HttpExecutor:
             self.user_agent = user_agent + self.user_agent
 
         self._set_backoff_strategy(backoff_strategy)
+        self.retry_when_empty_result = None
 
         self.get_delay = get_delay
         self.session = session or Session()
@@ -83,7 +84,6 @@ class HttpExecutor:
     def _set_backoff_strategy(self, backoff_strategy):
         self.backoff_strategy = copy.deepcopy(backoff_strategy) or HttpExecutor.DEFAULT_BACKOFF_CONF
         self._remove_none_to_avoid_infinite_retries()
-        self.retry_when_empty_result = self.backoff_strategy.pop('retry_when_empty_result', dict())
 
     def _remove_none_to_avoid_infinite_retries(self):
         if 'max_time' in self.backoff_strategy and not self.backoff_strategy['max_time']:
@@ -102,7 +102,8 @@ class HttpExecutor:
     def return_response(response, resource_name):
         return HttpResponse(response, resource_name)
 
-    def request(self, method, url, data=None, params=None, headers=None, retry_count=0, resource_name=None):
+    def request(self, method, url, data=None, params=None, headers=None, retry_count=0, resource_name=None,
+                retry_when_empty_result=None):
 
         def http_status_codes_to_retry():
             retry_codes = self.backoff_strategy.pop(RETRY_HTTP_STATUS_CODES, [])
@@ -130,7 +131,8 @@ class HttpExecutor:
             **copy.deepcopy(self.backoff_strategy)
         )(self._request)
 
-        if self.retry_when_empty_result:
+        if retry_when_empty_result:
+            self.retry_when_empty_result = retry_when_empty_result
             decorated_request = backoff.on_predicate(
                 wait_gen=self.backoff_strategy.pop('wait_gen', backoff.constant),
                 predicate=self._response_does_not_have_data,
@@ -210,8 +212,9 @@ class HttpExecutor:
         # error with status code
         raise self.create_http_error(response)
 
-    def get(self, url, params=None, resource_name=None):
-        return self.request('GET', url, params=params, resource_name=resource_name)
+    def get(self, url, params=None, resource_name=None, retry_when_empty_result=None):
+        return self.request('GET', url, params=params, resource_name=resource_name,
+                            retry_when_empty_result=retry_when_empty_result)
 
     def post(self, url, data, params=None, headers=None, resource_name=None):
         return self.request('POST', url, data=util.wrap(data, resource_name), params=params, headers=headers,
