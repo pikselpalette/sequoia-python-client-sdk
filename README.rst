@@ -387,14 +387,21 @@ A finer configuration using a dictionary is allowed so you can specify which res
 
         client = Client("https://registry-sandbox.sequoia.piksel.com/services/testmock",
                         grant_client_id="clientId",
-                        grant_client_secret="clientSecret",
-                        backoff_strategy={
-                            'retry_when_empty_result': {
+                        grant_client_secret="clientSecret"
+                        )
+        assets_endpoint = client.metadata.contents
+        response = assets_endpoint.browse(
+            self.owner,
+            criteria.Criteria()
+                .add_criterion(criteria.StringExpressionFactory.field('ref').equal_to('test:c0007'))
+                .add_inclusion(criteria.Inclusion.resource('categories'))
+                .add_inclusion(criteria.Inclusion.resource('assets')),
+            retry_when_empty_result={
                                 'contents': True,
                                 'assets': False,
                                 'categories': True
-                            }}
-                        )
+                            }
+        )
 
 In that example both resources contents and categories are checked to be returned, but not assets.
 
