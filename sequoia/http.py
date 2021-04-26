@@ -61,6 +61,7 @@ class HttpExecutor:
             self.user_agent = user_agent + self.user_agent
 
         self._set_backoff_strategy(backoff_strategy)
+        self.retry_when_empty_result = None
 
         self.get_delay = get_delay
         self.session = session or Session()
@@ -85,9 +86,8 @@ class HttpExecutor:
         self._remove_none_to_avoid_infinite_retries()
 
     def _remove_none_to_avoid_infinite_retries(self):
-        if ('max_time' in self.backoff_strategy and not self.backoff_strategy['max_time']) or \
-           'max_time' not in self.backoff_strategy:
-            self.backoff_strategy['max_time'] = self.MAX_TIME_SECONDS
+        if 'max_time' in self.backoff_strategy and not self.backoff_strategy['max_time']:
+            del self.backoff_strategy['max_time']
 
     @staticmethod
     def create_http_error(response):
@@ -102,7 +102,8 @@ class HttpExecutor:
     def return_response(response, resource_name):
         return HttpResponse(response, resource_name)
 
-    def request(self, method, url, data=None, params=None, headers=None, retry_count=0, resource_name=None):
+    def request(self, method, url, data=None, params=None, headers=None, retry_count=0, resource_name=None,
+                retry_when_empty_result=None):
 
         def http_status_codes_to_retry():
             retry_codes = self.backoff_strategy.pop(RETRY_HTTP_STATUS_CODES, [])
@@ -122,15 +123,39 @@ class HttpExecutor:
             logging.getLogger('backoff').addHandler(logging.StreamHandler())
 
         enable_backoff_logs()
-        decorated_request = backoff.on_exception(self.backoff_strategy.pop('wait_gen', backoff.constant),
-                                                 (error.ConnectionError, error.Timeout, error.TooManyRedirects,
-                                                  error.HttpError),
-                                                 giveup=fatal_code,
-                                                 **copy.deepcopy(self.backoff_strategy))(self._request)
+        decorated_request = backoff.on_exception(
+            self.backoff_strategy.pop('wait_gen', backoff.constant),
+            (error.ConnectionError, error.Timeout, error.TooManyRedirects, error.HttpError),
+            max_time=self.backoff_strategy.pop('max_time', self.MAX_TIME_SECONDS),
+            giveup=fatal_code,
+            **copy.deepcopy(self.backoff_strategy)
+        )(self._request)
+
+        if retry_when_empty_result:
+            self.retry_when_empty_result = retry_when_empty_result
+            decorated_request = backoff.on_predicate(
+                wait_gen=self.backoff_strategy.pop('wait_gen', backoff.constant),
+                predicate=self._response_does_not_have_data,
+                max_time=self.backoff_strategy.pop('max_time', self.MAX_TIME_SECONDS),
+                **copy.deepcopy(self.backoff_strategy)
+            )(decorated_request)
+
         return decorated_request(method, url, data=data,
                                  params=params, headers=headers,
                                  retry_count=retry_count,
                                  resource_name=resource_name)
+
+    def _response_does_not_have_data(self, ret):
+        linked_resources_have_data = [False]
+        if 'linked' in ret.data and self.retry_when_empty_result and isinstance(self.retry_when_empty_result, dict):
+            linked_resources_have_data = [(k in ret.data['linked'] and not bool(ret.data['linked'][k]))
+                                          for k, v in self.retry_when_empty_result.items() if v]
+        elif 'linked' in ret.data and self.retry_when_empty_result:
+            linked_resources_have_data = [not bool(ret.data['linked'][k])
+                                          for k in ret.data['linked'].keys()]
+
+        main_resource_has_data = ret.resource_name and not bool(ret.data[ret.resource_name])
+        return main_resource_has_data or any(linked_resources_have_data)
 
     def _request(self, method, url, data=None, params=None, headers=None, retry_count=0,
                  token_retry_count=0, resource_name=None):
@@ -187,8 +212,9 @@ class HttpExecutor:
         # error with status code
         raise self.create_http_error(response)
 
-    def get(self, url, params=None, resource_name=None):
-        return self.request('GET', url, params=params, resource_name=resource_name)
+    def get(self, url, params=None, resource_name=None, retry_when_empty_result=None):
+        return self.request('GET', url, params=params, resource_name=resource_name,
+                            retry_when_empty_result=retry_when_empty_result)
 
     def post(self, url, data, params=None, headers=None, resource_name=None):
         return self.request('POST', url, data=util.wrap(data, resource_name), params=params, headers=headers,

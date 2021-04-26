@@ -3,9 +3,9 @@ import logging
 import re
 import uuid
 from string import Template
-from urllib.parse import urlencode, urlparse, parse_qs, quote
+from urllib.parse import parse_qs, quote, urlencode, urlparse
 
-from sequoia import error, http, registry, env
+from sequoia import env, error, http, registry
 from sequoia.auth import AuthFactory, AuthType
 from sequoia.http import HttpResponse
 
@@ -151,15 +151,17 @@ class ResourceEndpointProxy(GenericEndpointProxy):
         self.url = service.location + '/data/' + resource
         self.descriptor = descriptor
 
-    def read(self, owner, ref):
+    def read(self, owner, ref, retry_when_empty_result=None):
         self._add_correlation_id()
-        return self.http.get(self.url + '/' + ref, self._create_owner_param(owner), resource_name=self.resource)
+        return self.http.get(self.url + '/' + ref, self._create_owner_param(owner), resource_name=self.resource,
+                             retry_when_empty_result=retry_when_empty_result)
 
     def store(self, owner, json_object):
         self._add_correlation_id()
         return self.http.post(self.url + '/', json_object, self._create_owner_param(owner), resource_name=self.resource)
 
-    def browse(self, owner, criteria=None, fields=None, query_string=None, prefetch_pages=1):
+    def browse(self, owner, criteria=None, fields=None, query_string=None, prefetch_pages=1,
+               retry_when_empty_result=None):
 
         self._add_correlation_id()
         params = criteria.get_criteria_params() if criteria else {}
@@ -167,7 +169,8 @@ class ResourceEndpointProxy(GenericEndpointProxy):
         params.update(self._create_fields_params(fields))
 
         return PageBrowser(endpoint=self, resource_name=self.resource, criteria=criteria,
-                           query_string=query_string, params=params, prefetch_pages=prefetch_pages)
+                           query_string=query_string, params=params, prefetch_pages=prefetch_pages,
+                           retry_when_empty_result=retry_when_empty_result)
 
     def _create_fields_params(self, fields):
         if fields:
@@ -307,12 +310,13 @@ class PageBrowser(object):
     """
 
     def __init__(self, endpoint=None, resource_name=None, criteria=None, query_string=None, params=None,
-                 prefetch_pages=1):
+                 prefetch_pages=1, retry_when_empty_result=None):
         self._response_cache = []
         self._resource_name = resource_name
         self._endpoint = endpoint
         self.params = params
         self._criteria = criteria
+        self._retry_when_empty_result = retry_when_empty_result
         self.response_builder = ResponseBuilder(descriptor=endpoint.descriptor, criteria=self._criteria)
         self.query_string = query_string
         self.url = self._build_url()
@@ -335,7 +339,8 @@ class PageBrowser(object):
         url = self.next_url or self.url
         params = self._get_params_for_request()
         self._remove_owner_if_needed(self.params, url)
-        response = self._endpoint.http.get(url, params=params, resource_name=self._resource_name)
+        response = self._endpoint.http.get(url, params=params, resource_name=self._resource_name,
+                                           retry_when_empty_result=self._retry_when_empty_result)
         response_wrapper = self._get_response(self._endpoint, response)
 
         return self._get_next_url(response), response_wrapper
