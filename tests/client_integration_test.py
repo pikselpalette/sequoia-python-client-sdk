@@ -1,11 +1,12 @@
+import logging
 import os
 import uuid
 from time import sleep
 
 import pytest
-from hamcrest import assert_that, none, has_length, is_
+from hamcrest import assert_that, has_length, is_, none
 
-from sequoia import criteria, auth
+from sequoia import auth, criteria
 from sequoia.client import Client
 from sequoia.error import HttpError, NotMatchingVersion
 from tests import mocking
@@ -365,6 +366,64 @@ class TestEndpointProxy(TestGeneric):
 
         return assets_flatted_tuple
 
+    def test_retry_when_empty_then_browse_with_content_ref_should_not_retrieve_assets(self):
+        self._configure_logging()
+        unique_name = str(uuid.uuid4())
+
+        import backoff
+        client = Client(self.registry,
+                        grant_client_id=self.config.sequoia.username,
+                        grant_client_secret=self.config.sequoia.password,
+                        user_agent='backoff_test',
+                        backoff_strategy={
+                            'wait_gen': backoff.expo,
+                            # 'max_tries': 3,
+                            'max_time': 10,
+                            'retry_http_status_codes': '404'
+                        }
+                        )
+        contents_endpoint = client.metadata.contents
+        categories_endpoint = client.metadata.categories
+
+        content = content_template_unique % (unique_name, unique_name, unique_name)
+        categories = category_template_unique % (unique_name, unique_name)
+
+        contents_endpoint.store(self.owner, content)
+        categories_endpoint.store(self.owner, categories)
+        sleep(1)
+
+        response = contents_endpoint.browse(
+            self.owner,
+            criteria.Criteria()
+                .add_criterion(criteria.StringExpressionFactory.field('ref').equal_to(f'testmock:{unique_name}'))
+                .add_inclusion(criteria.Inclusion.resource('categories'))
+                .add_inclusion(criteria.Inclusion.resource('assets')),
+            retry_when_empty_result={
+                'contents': True,
+                'assets': True,
+                'categories': True
+            }
+        )
+
+        from pprint import pprint
+        pprint(response.resources)
+
+        assert len(response.resources) == 1
+        assert len(response.resources[0]['categoryRefs']) == 2
+
+    def _configure_logging(self):
+        root = logging.getLogger()
+        root.setLevel(logging.DEBUG)
+        import sys
+        console = logging.StreamHandler(sys.stdout)
+        console.setLevel(logging.DEBUG)
+        formatter = logging.Formatter('%(asctime)s - %(levelname)-6s - %(name)-12s - %(message)s')
+        console.setFormatter(formatter)
+        root.addHandler(console)
+
+        logging.getLogger('urllib3').setLevel(logging.WARN)
+        logging.getLogger('requests_oauthlib').setLevel(logging.WARN)
+
 
 rule_to_post = {
     "rules": [
@@ -469,6 +528,53 @@ profile_template = """
             }
           ]
     """
+
+content_template_unique = """
+[
+    {
+      "owner": "testmock",
+      "name": "%s",
+      "type": "movie",
+      "title": "Interstellar",
+      "longSynopsis": "Long synopsis for Interstellar...",
+      "mediumSynopsis": "Medium synopsis for Interstellar...",
+      "shortSynopsis": "Short synopsis for Interstellar...",
+      "availabilityStartAt": "2016-04-01T12:00:00.000Z",
+      "availabilityEndAt": "2016-07-01T12:00:00.000Z",
+      "releaseYear": 2014,
+      "duration": "PT1H20M",
+      "ratings": {
+        "BBFC": "PG"
+      },
+      "active": true,
+      "categoryRefs": [
+        "testmock:category-1-%s",
+        "testmock:category-2-%s"
+      ]
+    }
+  ]
+"""
+
+category_template_unique = """
+[
+    {
+        "owner": "testmock",
+        "name": "category-1-%s",
+        "title": "Animation",
+        "scheme": "genre",
+        "value": "Animation",
+        "active": true
+    },
+    {
+        "owner": "testmock",
+        "name": "category-2-%s",
+        "title": "Animation",
+        "scheme": "genre",
+        "value": "Animation",
+        "active": true
+    }
+]
+"""
 
 content_template = """
             [

@@ -26,7 +26,7 @@ _REQUIRES = parse_requirements(_requirements_file)
 # Read description
 _LONG_DESCRIPTION = read_file('README.rst') + '\n\n' + read_file('HISTORY.rst')
 
-_CLASSIFIERS = (
+_CLASSIFIERS = [
     'Development Status :: 5 - Production/Stable',
     'Intended Audience :: Developers',
     'License :: OSI Approved :: Apache Software License',
@@ -37,7 +37,7 @@ _CLASSIFIERS = (
     'Programming Language :: Python :: 3.8',
     'Programming Language :: Python :: 3.9',
     'Topic :: Software Development :: Libraries :: Python Modules',
-)
+]
 
 _KEYWORDS = ' '.join([
     'python',

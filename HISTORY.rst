@@ -91,6 +91,6 @@ History
 * Drop the use of some libraries: jsonpickle, twine.
 * Tox is installed in the Makefile when used.
 
-4.3.0 (2021-04-XX)
+4.3.0 (2021-04-27)
 ==================
 * New parameter `retry_when_empty_result` for the `read`, `browse`, `get` and `request` methods to retry the query when resources are missing in the response.
