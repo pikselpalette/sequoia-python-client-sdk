@@ -60,7 +60,7 @@ class HttpExecutor:
         if user_agent is not None:
             self.user_agent = user_agent + self.user_agent
 
-        self._set_backoff_strategy(backoff_strategy)
+        self._set_backoff_strategy(backoff_strategy, HttpExecutor.DEFAULT_BACKOFF_CONF)
         self.retry_when_empty_result = None
 
         self.get_delay = get_delay
@@ -81,8 +81,8 @@ class HttpExecutor:
 
         self.request_timeout = request_timeout or env.DEFAULT_REQUEST_TIMEOUT_SECONDS
 
-    def _set_backoff_strategy(self, backoff_strategy):
-        self.backoff_strategy = copy.deepcopy(backoff_strategy) or HttpExecutor.DEFAULT_BACKOFF_CONF
+    def _set_backoff_strategy(self, backoff_strategy, default_backoff_strategy):
+        self.backoff_strategy = copy.deepcopy(backoff_strategy) or default_backoff_strategy
         self.backoff_max_time = self.backoff_strategy.pop('max_time', self.MAX_TIME_SECONDS) or self.MAX_TIME_SECONDS
 
     @staticmethod
@@ -99,10 +99,13 @@ class HttpExecutor:
         return HttpResponse(response, resource_name)
 
     def request(self, method, url, data=None, params=None, headers=None, retry_count=0, resource_name=None,
-                retry_when_empty_result=None):
+                retry_when_empty_result=None, backoff_strategy=None):
+
+        if not backoff_strategy:
+            backoff_strategy = copy.deepcopy(self.backoff_strategy)
 
         def http_status_codes_to_retry():
-            retry_codes = self.backoff_strategy.pop(RETRY_HTTP_STATUS_CODES, [])
+            retry_codes = backoff_strategy.pop(RETRY_HTTP_STATUS_CODES, [])
             retry_codes = list(map(int, retry_codes)) if isinstance(retry_codes, (list, tuple)) else [int(retry_codes)]
             retry_codes.append(429)
             return retry_codes
@@ -120,20 +123,20 @@ class HttpExecutor:
 
         enable_backoff_logs()
         decorated_request = backoff.on_exception(
-            self.backoff_strategy.pop('wait_gen', backoff.constant),
+            backoff_strategy.pop('wait_gen', backoff.constant),
             (error.ConnectionError, error.Timeout, error.TooManyRedirects, error.HttpError),
             max_time=self.backoff_max_time,
             giveup=fatal_code,
-            **copy.deepcopy(self.backoff_strategy)
+            **copy.deepcopy(backoff_strategy)
         )(self._request)
 
         if retry_when_empty_result:
             self.retry_when_empty_result = retry_when_empty_result
             decorated_request = backoff.on_predicate(
-                wait_gen=self.backoff_strategy.pop('wait_gen', backoff.constant),
+                wait_gen=backoff_strategy.pop('wait_gen', backoff.constant),
                 predicate=self._response_does_not_have_data,
                 max_time=self.backoff_max_time,
-                **copy.deepcopy(self.backoff_strategy)
+                **copy.deepcopy(backoff_strategy)
             )(decorated_request)
 
         return decorated_request(method, url, data=data,
@@ -208,9 +211,9 @@ class HttpExecutor:
         # error with status code
         raise self.create_http_error(response)
 
-    def get(self, url, params=None, resource_name=None, retry_when_empty_result=None):
+    def get(self, url, params=None, resource_name=None, retry_when_empty_result=None, backoff_strategy=None):
         return self.request('GET', url, params=params, resource_name=resource_name,
-                            retry_when_empty_result=retry_when_empty_result)
+                            retry_when_empty_result=retry_when_empty_result, backoff_strategy=backoff_strategy)
 
     def post(self, url, data, params=None, headers=None, resource_name=None):
         return self.request('POST', url, data=util.wrap(data, resource_name), params=params, headers=headers,

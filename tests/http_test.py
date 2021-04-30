@@ -722,3 +722,67 @@ class HttpExecutorTest(unittest.TestCase):
         for i in range(expected_requests_number):
             assert_that(self.adapter.request_history[i].method, is_('GET'))
             assert_that(self.adapter.request_history[i].url, is_('mock://metadata.pikselpalette.com/data/contents?include=assets,categories&owner=test&withRef=test:c0007'))
+
+    def test_given_backoff_strategy_at_method_level_has_priority_over_constructor_level(self):
+        # Prepare test
+        backoff_constructor_level = {
+            'max_tries': 6,
+            'interval': 0
+        }
+        backoff_method_level = {
+            'max_tries': 4,
+            'interval': 0,
+            'retry_http_status_codes': 404
+        }
+        json_response_found = {'resources': [{'message': 'Found'}]}
+        self.adapter.register_uri(
+            method='GET',
+            url='mock://metadata.pikselpalette.com/data/contents?include=assets&owner=test&withRef=test:c0007',
+            response_list=[
+                {'json': {'statusCode': 404, 'error': 'Not Found', 'message': 'Not Found'}, 'status_code': 404},
+                {'json': {'statusCode': 404, 'error': 'Not Found', 'message': 'Not Found'}, 'status_code': 404},
+                {'json': json_response_found, 'status_code': 200}
+            ])
+        self.adapter.register_uri(
+            method='GET',
+            url='mock://metadata.pikselpalette.com/data/contents?include=assets&owner=test&withRef=test:a',
+            response_list=[
+                {'json': {'statusCode': 404, 'error': 'Not Found', 'message': 'Not Found'}, 'status_code': 404}
+            ])
+
+        # Create the http_executor object
+        http_executor = http.HttpExecutor(
+            auth.AuthFactory.create(auth_type=auth.AuthType.BYO_TOKEN, byo_token='tkn'),
+            session=self.session_mock,
+            user_agent='backoff_test',
+            backoff_strategy=backoff_constructor_level)
+
+        # First request using a custom backoff_strategy
+        actual_response = http_executor.request(
+            method="GET",
+            url="mock://metadata.pikselpalette.com/data/contents?include=assets&owner=test&withRef=test:c0007",
+            resource_name='contents',
+            backoff_strategy=backoff_method_level
+        )
+
+        first_request_retries = 3
+        assert_that(actual_response.status, is_(200))
+        assert_that(actual_response.data, equal_to(json_response_found))
+        assert_that(self.adapter.call_count, is_(first_request_retries))
+        for i in range(first_request_retries):
+            assert_that(self.adapter.request_history[i].method, is_('GET'))
+            assert_that(self.adapter.request_history[i].url, is_('mock://metadata.pikselpalette.com/data/contents?include=assets&owner=test&withRef=test:c0007'))
+
+        # Second request using the constructor backoff_strategy
+        with pytest.raises(error.HttpError) as sequoia_error:
+            http_executor.request(
+                method="GET",
+                url="mock://metadata.pikselpalette.com/data/contents?include=assets&owner=test&withRef=test:a",
+                resource_name='contents'
+            )
+
+        second_request_retries = 1
+        assert_that(sequoia_error.value.status_code, is_(404))
+        assert_that(sequoia_error.value.message, is_({'statusCode': 404, 'error': 'Not Found', 'message': 'Not Found'}))
+        assert_that(sequoia_error.value.cause, none())
+        assert_that(self.adapter.call_count, is_(first_request_retries + second_request_retries))
