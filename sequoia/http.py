@@ -57,6 +57,7 @@ class HttpExecutor:
     # pylint: disable-msg=too-many-arguments
     def __init__(self, auth, session=None, proxies=None, user_agent=None, get_delay=None, request_timeout=None,
                  backoff_strategy=None, correlation_id=None, user_id=None, application_id=None, content_type=None):
+        self.logger = logging.getLogger(__name__)
         if user_agent is not None:
             self.user_agent = user_agent + self.user_agent
 
@@ -118,15 +119,20 @@ class HttpExecutor:
                    400 <= e.status_code < 500 and \
                    e.status_code not in retry_http_status_codes
 
-        def enable_backoff_logs():
-            logging.getLogger('backoff').addHandler(logging.StreamHandler())
+        def backoff_handler(details):
+            self.logger.warning('Retry `%s` (%.1fs) for args `%s` and kwargs `%s`', details['tries'], details['wait'],
+                                details['args'], details['kwargs'])
 
-        enable_backoff_logs()
+        def backoff_giveup_handler(details):
+            self.logger.error('Backoff giving up after %d tries', details['tries'])
+
         decorated_request = backoff.on_exception(
             backoff_strategy.pop('wait_gen', backoff.constant),
             (error.ConnectionError, error.Timeout, error.TooManyRedirects, error.HttpError),
             max_time=self.backoff_max_time,
             giveup=fatal_code,
+            on_backoff=backoff_handler,
+            on_giveup=backoff_giveup_handler,
             **copy.deepcopy(backoff_strategy)
         )(self._request)
 
@@ -136,6 +142,8 @@ class HttpExecutor:
                 wait_gen=backoff_strategy.pop('wait_gen', backoff.constant),
                 predicate=self._response_does_not_have_data,
                 max_time=self.backoff_max_time,
+                on_backoff=backoff_handler,
+                on_giveup=backoff_giveup_handler,
                 **copy.deepcopy(backoff_strategy)
             )(decorated_request)
 
@@ -169,8 +177,8 @@ class HttpExecutor:
         except RequestException as request_exception:
             raise self._raise_sequoia_error(request_error=request_exception)
         except error.TokenExpiredError as e:
-            logging.info('Token Expired Error: `%s`', str(e))
-            logging.info('Updating token and retrying request')
+            self.logger.info('Token Expired Error: `%s`', str(e))
+            self.logger.info('Updating token and retrying request')
             return self._update_token_and_retry_request(method, url, data=data, params=params,
                                                         headers=request_headers, retry_count=retry_count,
                                                         resource_name=resource_name)
@@ -182,7 +190,7 @@ class HttpExecutor:
         if response.status_code == 401 \
             and not isinstance(self.session.auth, BYOTokenAuth) \
             and token_retry_count < MAX_TOKEN_RETRIES:
-            logging.info('Updating token and retrying request')
+            self.logger.info('Updating token and retrying request')
             return self._update_token_and_retry_request(method, url, data=data, params=params,
                                                         headers=request_headers, retry_count=retry_count,
                                                         token_retry_count=token_retry_count + 1,
@@ -234,6 +242,7 @@ class HttpResponse(object):
     """
 
     def __init__(self, response, resource_name=None, model_builder=None):
+        self.logger = logging.getLogger(__name__)
         self.resource_name = resource_name
         self.raw = response
         if response.text:
@@ -244,7 +253,7 @@ class HttpResponse(object):
             if resource_name:
                 # fixme Remove unwrapping
                 self.json = util.unwrap(self.json, resource_name)
-            logging.debug("Got JSON response with status code `%s`", response.status_code)
+            self.logger.debug("Got JSON response with status code `%s`", response.status_code)
 
     @property
     def data(self):

@@ -98,4 +98,4 @@ History
 4.4.0 (2021-05-XX)
 ==================
 * The `backoff_strategy` can be specified in the `read`, `browse`, `get` and `request` methods so it can be different from the one passed in the constructor.
-
+* Set up the logger name to allow a better logging configuration

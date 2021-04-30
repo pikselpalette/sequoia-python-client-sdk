@@ -3,7 +3,7 @@ import logging
 
 import requests
 import requests_oauthlib
-from oauthlib.oauth2 import BackendApplicationClient, OAuth2Token, OAuth2Error, TokenExpiredError
+from oauthlib.oauth2 import BackendApplicationClient, OAuth2Error, OAuth2Token, TokenExpiredError
 from requests.auth import HTTPBasicAuth
 
 from sequoia import error
@@ -31,21 +31,22 @@ class AuthFactory:
                client_cert=None,
                client_key=None,
                server_cert=None):
+        logger = logging.getLogger(__name__)
         if auth_type == AuthType.CLIENT_GRANT and grant_client_id is not None and grant_client_secret is not None:
-            logging.debug('Client credential grant scheme used')
+            logger.debug('Client credential grant scheme used')
             return ClientGrantAuth(grant_client_id, grant_client_secret, token_url, byo_token=byo_token,
                                    request_timeout=request_timeout)
 
         if auth_type == AuthType.NO_AUTH:
-            logging.debug('No auth schema used')
+            logger.debug('No auth schema used')
             return NoAuth()
 
         if auth_type == AuthType.BYO_TOKEN:
-            logging.debug('BYO token scheme used')
+            logger.debug('BYO token scheme used')
             return BYOTokenAuth(byo_token)
 
         if auth_type == AuthType.MUTUAL:
-            logging.debug('Mutual auth used')
+            logger.debug('Mutual auth used')
             return MutualAuth(client_cert, client_key, server_cert)
 
         raise ValueError('No valid authentication sources found')

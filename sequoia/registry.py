@@ -3,6 +3,7 @@ import logging
 
 class Registry(dict):
     def __init__(self, registry_url, http):
+        self.logger = logging.getLogger(__name__)
         self.http = http
         self.registry_url = registry_url
         self.refresh()
@@ -13,7 +14,7 @@ class Registry(dict):
 
     def _parse_json_response(self, data):
         for service in data['services']:
-            logging.debug("Service registry entry loaded: %s - %s", service['name'], service['location'])
+            self.logger.debug("Service registry entry loaded: %s - %s", service['name'], service['location'])
             registered_service = RegisteredService(service)
             self[registered_service.name] = registered_service
 

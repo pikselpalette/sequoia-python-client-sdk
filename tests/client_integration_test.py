@@ -405,22 +405,29 @@ class TestEndpointProxy(TestGeneric):
             }
         )
 
-        from pprint import pprint
-        pprint(response.resources)
+        from pprint import pformat
+        logging.info(pformat(response.resources))
 
         assert len(response.resources) == 1
         assert len(response.resources[0]['categoryRefs']) == 2
 
     def _configure_logging(self):
-        root = logging.getLogger()
-        root.setLevel(logging.DEBUG)
         import sys
+        # formatter = logging.Formatter('[%(asctime)s] %(name)-12s [%(module)s] {%(pathname)s:%(lineno)d} %(levelname)s - %(message)s','%m-%d %H:%M:%S')
+        formatter = logging.Formatter('%(asctime)s - %(levelname)-6s - %(name)-12s - %(message)s')
         console = logging.StreamHandler(sys.stdout)
         console.setLevel(logging.DEBUG)
-        formatter = logging.Formatter('%(asctime)s - %(levelname)-6s - %(name)-12s - %(message)s')
         console.setFormatter(formatter)
-        root.addHandler(console)
+        file_handler = logging.FileHandler('sequoia.log')
+        file_handler.setFormatter(formatter)
+        logging.getLogger().addHandler(console)
+        logging.getLogger().addHandler(file_handler)
+        # root.addHandler(console)
 
+        logging.getLogger().setLevel(logging.INFO)
+        logging.getLogger('sequoia').setLevel(logging.DEBUG)
+        logging.getLogger('sequoia.registry').setLevel(logging.INFO)
+        logging.getLogger('backoff').setLevel('NOTSET')
         logging.getLogger('urllib3').setLevel(logging.WARN)
         logging.getLogger('requests_oauthlib').setLevel(logging.WARN)
 
