@@ -62,7 +62,6 @@ class HttpExecutor:
             self.user_agent = user_agent + self.user_agent
 
         self._set_backoff_strategy(backoff_strategy, HttpExecutor.DEFAULT_BACKOFF_CONF)
-        self.retry_when_empty_result = None
 
         self.get_delay = get_delay
         self.session = session or Session()
@@ -99,14 +98,28 @@ class HttpExecutor:
     def return_response(response, resource_name):
         return HttpResponse(response, resource_name)
 
+    # TODO retry_when_empty_result deprecated, it should be a key of the backoff_strategy dictionary. When removed
+    #  get rid of the pylint disable-too-many-locals
+    # pylint: disable=too-many-locals
     def request(self, method, url, data=None, params=None, headers=None, retry_count=0, resource_name=None,
                 retry_when_empty_result=None, backoff_strategy=None):
 
-        if not backoff_strategy:
-            backoff_strategy = copy.deepcopy(self.backoff_strategy)
+        if retry_when_empty_result:
+            self.logger.warning('The use of `retry_when_empty_result` parameter directly is deprecated '
+                                'and will be removed in future releases, '
+                                'please use it as a key of the dictionary `backoff_strategy`.')
+
+        _backoff_strategy = copy.deepcopy(self.backoff_strategy) if not backoff_strategy else backoff_strategy
+        _backoff_max_time = _backoff_strategy.pop('max_time', self.backoff_max_time)
+        _retry_when_empty_result = _backoff_strategy.pop('retry_when_empty_result') \
+            if 'retry_when_empty_result' in _backoff_strategy else retry_when_empty_result
+
+        if 'retry_when_empty_result' in _backoff_strategy and retry_when_empty_result:
+            self.logger.warning('The `retry_when_empty_result` within `backoff_strategy` precedes the direct '
+                                'argument `retry_when_empty_result`, which will be deprecated in a future release.')
 
         def http_status_codes_to_retry():
-            retry_codes = backoff_strategy.pop(RETRY_HTTP_STATUS_CODES, [])
+            retry_codes = _backoff_strategy.pop(RETRY_HTTP_STATUS_CODES, [])
             retry_codes = list(map(int, retry_codes)) if isinstance(retry_codes, (list, tuple)) else [int(retry_codes)]
             retry_codes.append(429)
             return retry_codes
@@ -119,6 +132,18 @@ class HttpExecutor:
                    400 <= e.status_code < 500 and \
                    e.status_code not in retry_http_status_codes
 
+        def _response_does_not_have_data(ret):
+            linked_resources_have_data = [False]
+            if 'linked' in ret.data and _retry_when_empty_result and isinstance(_retry_when_empty_result, dict):
+                linked_resources_have_data = [(k in ret.data['linked'] and not bool(ret.data['linked'][k]))
+                                              for k, v in _retry_when_empty_result.items() if v]
+            elif 'linked' in ret.data and _retry_when_empty_result:
+                linked_resources_have_data = [not bool(ret.data['linked'][k])
+                                              for k in ret.data['linked'].keys()]
+
+            main_resource_has_data = ret.resource_name and not bool(ret.data[ret.resource_name])
+            return main_resource_has_data or any(linked_resources_have_data)
+
         def backoff_handler(details):
             self.logger.warning('Retry `%s` (%.1fs) for args `%s` and kwargs `%s`', details['tries'], details['wait'],
                                 details['args'], details['kwargs'])
@@ -127,42 +152,29 @@ class HttpExecutor:
             self.logger.error('Backoff giving up after %d tries', details['tries'])
 
         decorated_request = backoff.on_exception(
-            backoff_strategy.pop('wait_gen', backoff.constant),
+            _backoff_strategy.pop('wait_gen', backoff.constant),
             (error.ConnectionError, error.Timeout, error.TooManyRedirects, error.HttpError),
-            max_time=self.backoff_max_time,
+            max_time=_backoff_max_time,
             giveup=fatal_code,
             on_backoff=backoff_handler,
             on_giveup=backoff_giveup_handler,
-            **copy.deepcopy(backoff_strategy)
+            **copy.deepcopy(_backoff_strategy)
         )(self._request)
 
-        if retry_when_empty_result:
-            self.retry_when_empty_result = retry_when_empty_result
+        if _retry_when_empty_result:
             decorated_request = backoff.on_predicate(
-                wait_gen=backoff_strategy.pop('wait_gen', backoff.constant),
-                predicate=self._response_does_not_have_data,
-                max_time=self.backoff_max_time,
+                wait_gen=_backoff_strategy.pop('wait_gen', backoff.constant),
+                predicate=_response_does_not_have_data,
+                max_time=_backoff_max_time,
                 on_backoff=backoff_handler,
                 on_giveup=backoff_giveup_handler,
-                **copy.deepcopy(backoff_strategy)
+                **copy.deepcopy(_backoff_strategy)
             )(decorated_request)
 
         return decorated_request(method, url, data=data,
                                  params=params, headers=headers,
                                  retry_count=retry_count,
                                  resource_name=resource_name)
-
-    def _response_does_not_have_data(self, ret):
-        linked_resources_have_data = [False]
-        if 'linked' in ret.data and self.retry_when_empty_result and isinstance(self.retry_when_empty_result, dict):
-            linked_resources_have_data = [(k in ret.data['linked'] and not bool(ret.data['linked'][k]))
-                                          for k, v in self.retry_when_empty_result.items() if v]
-        elif 'linked' in ret.data and self.retry_when_empty_result:
-            linked_resources_have_data = [not bool(ret.data['linked'][k])
-                                          for k in ret.data['linked'].keys()]
-
-        main_resource_has_data = ret.resource_name and not bool(ret.data[ret.resource_name])
-        return main_resource_has_data or any(linked_resources_have_data)
 
     def _request(self, method, url, data=None, params=None, headers=None, retry_count=0,
                  token_retry_count=0, resource_name=None):

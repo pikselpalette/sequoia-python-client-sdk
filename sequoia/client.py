@@ -309,6 +309,9 @@ class PageBrowser(object):
     and then will do lazy pagination load of rest of pages till finding a page with no next link.
     """
 
+    # TODO retry_when_empty_result deprecated, it should be a key of the backoff_strategy dictionary. When removed
+    #  get rid of the pylint disable-too-many-arguments
+    # pylint: disable-msg=too-many-arguments
     def __init__(self, endpoint=None, resource_name=None, criteria=None, query_string=None, params=None,
                  prefetch_pages=1, retry_when_empty_result=None, backoff_strategy=None):
         self._response_cache = []

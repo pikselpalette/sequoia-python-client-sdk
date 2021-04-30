@@ -525,7 +525,7 @@ class HttpExecutorTest(unittest.TestCase):
         As the main resource is empty, the query is retried until it reached the limit of retries, then the latest
         http response is returned.
         """
-        json_response_200 = {
+        json_response_empty_contents = {
             "meta": {
                 "perPage": 100, "page": 1,
                 "first": "/data/contents?include=assets%2Ccategories&owner=test&withRef=test%3Ac0007&page=1&perPage=100",
@@ -546,15 +546,51 @@ class HttpExecutorTest(unittest.TestCase):
                     {"ref": "test:category-2", "title": "a tag category", "scheme": "tags", "value": "tag"}
                 ]}}
         http_response_list = [
-            {'json': json_response_200, 'status_code': 200}
+            {'json': json_response_empty_contents, 'status_code': 200}
         ]
-        self.retry_when_empty_result_test(http_response_list, max_tries=5, retry_when_empty_result={
-            'contents': True
-        }, expected_http_status_code=200, expected_json_response=json_response_200, expected_requests_number=5)
+        expected_requests_test_1 = 5
+        expected_requests_test_2 = 5
+        expected_requests_test_3 = 2
 
-        self.retry_when_empty_result_test(http_response_list, max_tries=5, retry_when_empty_result=True,
-                                          expected_http_status_code=200, expected_json_response=json_response_200,
-                                          expected_requests_number=5+5)
+        def backoff_as_dict(expected_requests_test_1, http_response_list, json_response_empty_contents):
+            self.retry_when_empty_result_test(
+                mock_http_response_list=http_response_list,
+                backoff_strategy_constructor={'max_tries': 5, 'interval': 0, 'retry_when_empty_result':{'contents': True}},
+                backoff_strategy_request=None,
+                retry_when_empty_result=None,
+                expected_http_status_code=200,
+                expected_json_response=json_response_empty_contents,
+                expected_requests_number=expected_requests_test_1)
+
+        def backoff_as_boolean(expected_requests_test_1, expected_requests_test_2, http_response_list,
+                               json_response_empty_contents):
+            self.retry_when_empty_result_test(
+                mock_http_response_list=http_response_list,
+                backoff_strategy_constructor={'max_tries': 5, 'interval': 0, 'retry_when_empty_result': True},
+                backoff_strategy_request=None,
+                retry_when_empty_result=None,
+                expected_http_status_code=200,
+                expected_json_response=json_response_empty_contents,
+                expected_requests_number=expected_requests_test_1 + expected_requests_test_2)
+
+        def backoff_in_method_precedes_constructor(expected_requests_test_1, expected_requests_test_2,
+                                                   expected_requests_test_3, http_response_list,
+                                                   json_response_empty_contents):
+            self.retry_when_empty_result_test(
+                mock_http_response_list=http_response_list,
+                backoff_strategy_constructor={'max_tries': 5, 'interval': 0},
+                backoff_strategy_request={'max_tries': expected_requests_test_3, 'interval': 0, 'retry_when_empty_result': True},
+                retry_when_empty_result=None,
+                expected_http_status_code=200,
+                expected_json_response=json_response_empty_contents,
+                expected_requests_number=expected_requests_test_1 + expected_requests_test_2 + expected_requests_test_3)
+
+        backoff_as_dict(expected_requests_test_1, http_response_list, json_response_empty_contents)
+        backoff_as_boolean(expected_requests_test_1, expected_requests_test_2, http_response_list,
+                           json_response_empty_contents)
+        backoff_in_method_precedes_constructor(expected_requests_test_1, expected_requests_test_2,
+                                               expected_requests_test_3, http_response_list,
+                                               json_response_empty_contents)
 
     def test_retries_when_main_resource_is_empty_and_eventually_it_is_not(self):
         """
@@ -609,13 +645,25 @@ class HttpExecutorTest(unittest.TestCase):
             {'json': json_response_200_empty, 'status_code': 200},
             {'json': json_response_200, 'status_code': 200}
         ]
-        self.retry_when_empty_result_test(http_response_list, max_tries=5, retry_when_empty_result={
-            'contents': True
-        }, expected_http_status_code=200, expected_json_response=json_response_200, expected_requests_number=3)
+        expected_requests_test_1 = 3
+        expected_requests_test_2 = 3
+        self.retry_when_empty_result_test(
+            mock_http_response_list=http_response_list,
+            backoff_strategy_constructor={'max_tries': 5, 'interval': 0, 'retry_when_empty_result': {'contents': True}},
+            backoff_strategy_request=None,
+            retry_when_empty_result=None,
+            expected_http_status_code=200,
+            expected_json_response=json_response_200,
+            expected_requests_number=expected_requests_test_1)
 
-        self.retry_when_empty_result_test(http_response_list, max_tries=5, retry_when_empty_result=True,
-                                          expected_http_status_code=200, expected_json_response=json_response_200,
-                                          expected_requests_number=3+3)
+        self.retry_when_empty_result_test(
+            mock_http_response_list=http_response_list,
+            backoff_strategy_constructor={'max_tries': 5, 'interval': 0, 'retry_when_empty_result': True},
+            backoff_strategy_request=None,
+            retry_when_empty_result=None,
+            expected_http_status_code=200,
+            expected_json_response=json_response_200,
+            expected_requests_number=expected_requests_test_1 + expected_requests_test_2)
 
     def test_retries_when_include_resource_is_empty(self):
         """
@@ -646,15 +694,25 @@ class HttpExecutorTest(unittest.TestCase):
         http_response_list = [
             {'json': json_response_200, 'status_code': 200}
         ]
-        self.retry_when_empty_result_test(http_response_list, max_tries=5, retry_when_empty_result={
-            'contents': True,
-            'assets': True,
-            'categories': True
-        }, expected_http_status_code=200, expected_json_response=json_response_200, expected_requests_number=5)
+        expected_requests_test_1 = 5
+        expected_requests_test_2 = 5
+        self.retry_when_empty_result_test(
+            mock_http_response_list=http_response_list,
+            backoff_strategy_constructor={'max_tries': 5, 'interval': 0, 'retry_when_empty_result': {'contents': True, 'assets': True, 'categories': True}},
+            backoff_strategy_request=None,
+            retry_when_empty_result=None,
+            expected_http_status_code=200,
+            expected_json_response=json_response_200,
+            expected_requests_number=expected_requests_test_1)
 
-        self.retry_when_empty_result_test(http_response_list, max_tries=5, retry_when_empty_result=True,
-                                          expected_http_status_code=200, expected_json_response=json_response_200,
-                                          expected_requests_number=5+5)
+        self.retry_when_empty_result_test(
+            mock_http_response_list=http_response_list,
+            backoff_strategy_constructor={'max_tries': 5, 'interval': 0, 'retry_when_empty_result': True},
+            backoff_strategy_request=None,
+            retry_when_empty_result=None,
+            expected_http_status_code=200,
+            expected_json_response=json_response_200,
+            expected_requests_number=expected_requests_test_1 + expected_requests_test_2)
 
     def test_retries_when_include_resource_is_empty_but_not_required(self):
         """
@@ -685,18 +743,272 @@ class HttpExecutorTest(unittest.TestCase):
         http_response_list = [
             {'json': json_response_200, 'status_code': 200}
         ]
-        self.retry_when_empty_result_test(http_response_list, max_tries=5, retry_when_empty_result={
-            'contents': True,
-            'assets': False,
-            'categories': True
-        }, expected_http_status_code=200, expected_json_response=json_response_200, expected_requests_number=1)
+        expected_requests_test_1 = 1
+        expected_requests_test_2 = 1
+        self.retry_when_empty_result_test(
+            mock_http_response_list=http_response_list,
+            backoff_strategy_constructor={'max_tries': 5, 'interval': 0, 'retry_when_empty_result': {'contents': True, 'assets': False, 'categories': True}},
+            backoff_strategy_request=None,
+            retry_when_empty_result=None,
+            expected_http_status_code=200,
+            expected_json_response=json_response_200,
+            expected_requests_number=expected_requests_test_1)
 
-        self.retry_when_empty_result_test(http_response_list, max_tries=5, retry_when_empty_result={
-            'contents': True,
-            'categories': True
-        }, expected_http_status_code=200, expected_json_response=json_response_200, expected_requests_number=1+1)
+        self.retry_when_empty_result_test(
+            mock_http_response_list=http_response_list,
+            backoff_strategy_constructor={'max_tries': 5, 'interval': 0, 'retry_when_empty_result': {'contents': True, 'categories': True}},
+            backoff_strategy_request=None,
+            retry_when_empty_result=None,
+            expected_http_status_code=200,
+            expected_json_response=json_response_200,
+            expected_requests_number=expected_requests_test_1 + expected_requests_test_2)
 
-    def retry_when_empty_result_test(self, mock_http_response_list, max_tries, retry_when_empty_result,
+    def test_retries_when_main_resource_is_empty_using_deprecated_argument(self):
+        """
+        As the main resource is empty, the query is retried until it reached the limit of retries, then the latest
+        http response is returned.
+        """
+        json_response_empty_contents = {
+            "meta": {
+                "perPage": 100, "page": 1,
+                "first": "/data/contents?include=assets%2Ccategories&owner=test&withRef=test%3Ac0007&page=1&perPage=100",
+                "linked": {
+                    "assets": [{"perPage": 100,
+                                "request": "/data/assets?owner=test&fields=ref%2Cname%2CcontentRef%2Ctype%2Curl%2CfileFormat%2Ctitle%2CfileSize%2Ctags&continue=true&withContentRef=test%3Ac0007"}],
+                    "categories": [{"perPage": 100, "page": 1,
+                                    "first": "/data/categories?owner=test&withRef=test%3Acategory-1%7C%7Ctest%3Acategory-2&page=1&perPage=100",
+                                    "request": "/data/categories?owner=test&withRef=test%3Acategory-1%7C%7Ctest%3Acategory-2"}
+                                   ]}},
+            "contents": [],
+            "linked": {
+                "assets": [
+                    {"ref": "test:asset-1", "title": "asset 1"}
+                ],
+                "categories": [
+                    {"ref": "test:category-1", "title": "a tag category", "scheme": "tags", "value": "tag"},
+                    {"ref": "test:category-2", "title": "a tag category", "scheme": "tags", "value": "tag"}
+                ]}}
+        http_response_list = [
+            {'json': json_response_empty_contents, 'status_code': 200}
+        ]
+        expected_requests_test_1 = 5
+        expected_requests_test_2 = 5
+        expected_requests_test_3 = 2
+
+        def backoff_as_dict(expected_requests_test_1, http_response_list, json_response_empty_contents):
+            self.retry_when_empty_result_test(
+                mock_http_response_list=http_response_list,
+                backoff_strategy_constructor={'max_tries': 5, 'interval': 0},
+                backoff_strategy_request=None,
+                retry_when_empty_result={'contents': True},
+                expected_http_status_code=200,
+                expected_json_response=json_response_empty_contents,
+                expected_requests_number=expected_requests_test_1)
+
+        def backoff_as_boolean(expected_requests_test_1, expected_requests_test_2, http_response_list,
+                               json_response_empty_contents):
+            self.retry_when_empty_result_test(
+                mock_http_response_list=http_response_list,
+                backoff_strategy_constructor={'max_tries': 5, 'interval': 0},
+                backoff_strategy_request=None,
+                retry_when_empty_result=True,
+                expected_http_status_code=200,
+                expected_json_response=json_response_empty_contents,
+                expected_requests_number=expected_requests_test_1 + expected_requests_test_2)
+
+
+        def backoff_in_method_precedes_constructor(expected_requests_test_1, expected_requests_test_2,
+                                                   expected_requests_test_3, http_response_list,
+                                                   json_response_empty_contents):
+            self.retry_when_empty_result_test(
+                mock_http_response_list=http_response_list,
+                backoff_strategy_constructor={'max_tries': 5, 'interval': 0},
+                backoff_strategy_request={'max_tries': expected_requests_test_3, 'interval': 0},
+                retry_when_empty_result=True,
+                expected_http_status_code=200,
+                expected_json_response=json_response_empty_contents,
+                expected_requests_number=expected_requests_test_1 + expected_requests_test_2 + expected_requests_test_3)
+
+        backoff_as_dict(expected_requests_test_1, http_response_list, json_response_empty_contents)
+        backoff_as_boolean(expected_requests_test_1, expected_requests_test_2, http_response_list,
+                           json_response_empty_contents)
+        backoff_in_method_precedes_constructor(expected_requests_test_1, expected_requests_test_2,
+                                               expected_requests_test_3, http_response_list,
+                                               json_response_empty_contents)
+
+    def test_retries_when_main_resource_is_empty_and_eventually_it_is_not_using_deprecated_argument(self):
+        """
+        As the main resource is empty for the first queries, the query is retried until the main resource is not empty
+        anymore in the response, then the response is returned.
+        """
+        json_response_200_empty = {
+            "meta": {
+                "perPage": 100, "page": 1,
+                "first": "/data/contents?include=assets%2Ccategories&owner=test&withRef=test%3Ac0007&page=1&perPage=100",
+                "linked": {
+                    "assets": [{"perPage": 100,
+                                "request": "/data/assets?owner=test&fields=ref%2Cname%2CcontentRef%2Ctype%2Curl%2CfileFormat%2Ctitle%2CfileSize%2Ctags&continue=true&withContentRef=test%3Ac0007"}],
+                    "categories": [{"perPage": 100, "page": 1,
+                                    "first": "/data/categories?owner=test&withRef=test%3Acategory-1%7C%7Ctest%3Acategory-2&page=1&perPage=100",
+                                    "request": "/data/categories?owner=test&withRef=test%3Acategory-1%7C%7Ctest%3Acategory-2"}
+                                   ]}},
+            "contents": [],
+            "linked": {
+                "assets": [
+                    {"ref": "test:asset-1", "title": "asset 1"}
+                ],
+                "categories": [
+                    {"ref": "test:category-1", "title": "a tag category", "scheme": "tags", "value": "tag"},
+                    {"ref": "test:category-2", "title": "a tag category", "scheme": "tags", "value": "tag"}
+                ]}}
+        json_response_200 = {
+            "meta": {
+                "perPage": 100, "page": 1,
+                "first": "/data/contents?include=assets%2Ccategories&owner=test&withRef=test%3Ac0007&page=1&perPage=100",
+                "linked": {
+                    "assets": [{"perPage": 100,
+                                "request": "/data/assets?owner=test&fields=ref%2Cname%2CcontentRef%2Ctype%2Curl%2CfileFormat%2Ctitle%2CfileSize%2Ctags&continue=true&withContentRef=test%3Ac0007"}],
+                    "categories": [{"perPage": 100, "page": 1,
+                                    "first": "/data/categories?owner=test&withRef=test%3Acategory-1%7C%7Ctest%3Acategory-2&page=1&perPage=100",
+                                    "request": "/data/categories?owner=test&withRef=test%3Acategory-1%7C%7Ctest%3Acategory-2"}
+                                   ]}},
+            "contents": [
+                {"ref": "test:c0007", "owner": "test", "name": "c0007", "title": "Interstellar",
+                 "categoryRefs": ["test:category-1", "test:category-2"]}
+            ],
+            "linked": {
+                "assets": [
+                    {"ref": "test:asset-1", "title": "asset 1"}
+                ],
+                "categories": [
+                    {"ref": "test:category-1", "title": "a tag category", "scheme": "tags", "value": "tag"},
+                    {"ref": "test:category-2", "title": "a tag category", "scheme": "tags", "value": "tag"}
+                ]}}
+        http_response_list = [
+            {'json': json_response_200_empty, 'status_code': 200},
+            {'json': json_response_200_empty, 'status_code': 200},
+            {'json': json_response_200, 'status_code': 200}
+        ]
+        expected_requests_test_1 = 3
+        expected_requests_test_2 = 3
+        self.retry_when_empty_result_test(
+            mock_http_response_list=http_response_list,
+            backoff_strategy_constructor={'max_tries': 5, 'interval': 0},
+            backoff_strategy_request=None,
+            retry_when_empty_result={'contents': True},
+            expected_http_status_code=200,
+            expected_json_response=json_response_200,
+            expected_requests_number=expected_requests_test_1)
+
+        self.retry_when_empty_result_test(
+            mock_http_response_list=http_response_list,
+            backoff_strategy_constructor={'max_tries': 5, 'interval': 0},
+            backoff_strategy_request=None,
+            retry_when_empty_result=True,
+            expected_http_status_code=200,
+            expected_json_response=json_response_200,
+            expected_requests_number=expected_requests_test_1 + expected_requests_test_2)
+
+    def test_retries_when_include_resource_is_empty_using_deprecated_argument(self):
+        """
+        As assets is empty in the response the query is retried, when the limit of retries is reached the latest
+        http response is returned
+        """
+        json_response_200 = {
+            "meta": {
+                "perPage": 100, "page": 1,
+                "first": "/data/contents?include=assets%2Ccategories&owner=test&withRef=test%3Ac0007&page=1&perPage=100",
+                "linked": {
+                    "assets": [{"perPage": 100,
+                                "request": "/data/assets?owner=test&fields=ref%2Cname%2CcontentRef%2Ctype%2Curl%2CfileFormat%2Ctitle%2CfileSize%2Ctags&continue=true&withContentRef=test%3Ac0007"}],
+                    "categories": [{"perPage": 100, "page": 1,
+                                    "first": "/data/categories?owner=test&withRef=test%3Acategory-1%7C%7Ctest%3Acategory-2&page=1&perPage=100",
+                                    "request": "/data/categories?owner=test&withRef=test%3Acategory-1%7C%7Ctest%3Acategory-2"}
+                                   ]}},
+            "contents": [
+                {"ref": "test:c0007", "owner": "test", "name": "c0007", "title": "Interstellar",
+                 "categoryRefs": ["test:category-1", "test:category-2"]}
+            ],
+            "linked": {
+                "assets": [],
+                "categories": [
+                    {"ref": "test:category-1", "title": "a tag category", "scheme": "tags", "value": "tag"},
+                    {"ref": "test:category-2", "title": "a tag category", "scheme": "tags", "value": "tag"}
+                ]}}
+        http_response_list = [
+            {'json': json_response_200, 'status_code': 200}
+        ]
+        expected_requests_test_1 = 5
+        expected_requests_test_2 = 5
+        self.retry_when_empty_result_test(
+            mock_http_response_list=http_response_list,
+            backoff_strategy_constructor={'max_tries': 5, 'interval': 0},
+            backoff_strategy_request=None,
+            retry_when_empty_result={'contents': True, 'assets': True, 'categories': True},
+            expected_http_status_code=200,
+            expected_json_response=json_response_200,
+            expected_requests_number=expected_requests_test_1)
+
+        self.retry_when_empty_result_test(
+            mock_http_response_list=http_response_list,
+            backoff_strategy_constructor={'max_tries': 5, 'interval': 0},
+            backoff_strategy_request=None,
+            retry_when_empty_result=True,
+            expected_http_status_code=200,
+            expected_json_response=json_response_200,
+            expected_requests_number=expected_requests_test_1 + expected_requests_test_2)
+
+    def test_retries_when_include_resource_is_empty_but_not_required_using_deprecated_argument(self):
+        """
+        Although assets is empty in the response the query is not retried because assets is not required in the
+        param retry_when_empty_result
+        """
+        json_response_200 = {
+            "meta": {
+                "perPage": 100, "page": 1,
+                "first": "/data/contents?include=assets%2Ccategories&owner=test&withRef=test%3Ac0007&page=1&perPage=100",
+                "linked": {
+                    "assets": [{"perPage": 100,
+                                "request": "/data/assets?owner=test&fields=ref%2Cname%2CcontentRef%2Ctype%2Curl%2CfileFormat%2Ctitle%2CfileSize%2Ctags&continue=true&withContentRef=test%3Ac0007"}],
+                    "categories": [{"perPage": 100, "page": 1,
+                                    "first": "/data/categories?owner=test&withRef=test%3Acategory-1%7C%7Ctest%3Acategory-2&page=1&perPage=100",
+                                    "request": "/data/categories?owner=test&withRef=test%3Acategory-1%7C%7Ctest%3Acategory-2"}
+                                   ]}},
+            "contents": [
+                {"ref": "test:c0007", "owner": "test", "name": "c0007", "title": "Interstellar",
+                 "categoryRefs": ["test:category-1", "test:category-2"]}
+            ],
+            "linked": {
+                "assets": [],
+                "categories": [
+                    {"ref": "test:category-1", "title": "a tag category", "scheme": "tags", "value": "tag"},
+                    {"ref": "test:category-2", "title": "a tag category", "scheme": "tags", "value": "tag"}
+                ]}}
+        http_response_list = [
+            {'json': json_response_200, 'status_code': 200}
+        ]
+        expected_requests_test_1 = 1
+        expected_requests_test_2 = 1
+        self.retry_when_empty_result_test(
+            mock_http_response_list=http_response_list,
+            backoff_strategy_constructor={'max_tries': 5, 'interval': 0},
+            backoff_strategy_request=None,
+            retry_when_empty_result={'contents': True, 'assets': False, 'categories': True},
+            expected_http_status_code=200,
+            expected_json_response=json_response_200,
+            expected_requests_number=expected_requests_test_1)
+
+        self.retry_when_empty_result_test(
+            mock_http_response_list=http_response_list,
+            backoff_strategy_constructor={'max_tries': 5, 'interval': 0},
+            backoff_strategy_request=None,
+            retry_when_empty_result={'contents': True, 'categories': True},
+            expected_http_status_code=200,
+            expected_json_response=json_response_200,
+            expected_requests_number=expected_requests_test_1 + expected_requests_test_2)
+
+    def retry_when_empty_result_test(self, mock_http_response_list,
+                                     backoff_strategy_constructor, backoff_strategy_request, retry_when_empty_result,
                                      expected_http_status_code, expected_json_response, expected_requests_number):
         self.adapter.register_uri(
             method='GET',
@@ -706,14 +1018,12 @@ class HttpExecutorTest(unittest.TestCase):
             auth.AuthFactory.create(auth_type=auth.AuthType.BYO_TOKEN, byo_token='tkn'),
             session=self.session_mock,
             user_agent='backoff_test',
-            backoff_strategy={
-                'max_tries': max_tries,
-                'interval': 0
-            })
+            backoff_strategy=backoff_strategy_constructor)
         actual_response = http_executor.request(
             method="GET",
             url="mock://metadata.pikselpalette.com/data/contents?include=assets,categories&owner=test&withRef=test:c0007",
             resource_name='contents',
+            backoff_strategy=backoff_strategy_request,
             retry_when_empty_result=retry_when_empty_result
         )
         assert_that(actual_response.status, is_(expected_http_status_code))

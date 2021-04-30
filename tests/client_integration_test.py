@@ -374,13 +374,7 @@ class TestEndpointProxy(TestGeneric):
         client = Client(self.registry,
                         grant_client_id=self.config.sequoia.username,
                         grant_client_secret=self.config.sequoia.password,
-                        user_agent='backoff_test',
-                        backoff_strategy={
-                            'wait_gen': backoff.expo,
-                            # 'max_tries': 3,
-                            'max_time': 10,
-                            'retry_http_status_codes': '404'
-                        }
+                        user_agent='backoff_test'
                         )
         contents_endpoint = client.metadata.contents
         categories_endpoint = client.metadata.categories
@@ -388,8 +382,8 @@ class TestEndpointProxy(TestGeneric):
         content = content_template_unique % (unique_name, unique_name, unique_name)
         categories = category_template_unique % (unique_name, unique_name)
 
-        contents_endpoint.store(self.owner, content)
-        categories_endpoint.store(self.owner, categories)
+        contents_result = contents_endpoint.store(self.owner, content)
+        categories_result = categories_endpoint.store(self.owner, categories)
         sleep(1)
 
         response = contents_endpoint.browse(
@@ -398,10 +392,16 @@ class TestEndpointProxy(TestGeneric):
                 .add_criterion(criteria.StringExpressionFactory.field('ref').equal_to(f'testmock:{unique_name}'))
                 .add_inclusion(criteria.Inclusion.resource('categories'))
                 .add_inclusion(criteria.Inclusion.resource('assets')),
-            retry_when_empty_result={
-                'contents': True,
-                'assets': True,
-                'categories': True
+            backoff_strategy={
+                'wait_gen': backoff.expo,
+                'max_tries': 3,
+                # 'max_time': 10,
+                'retry_http_status_codes': '404',
+                'retry_when_empty_result': {
+                    'contents': True,
+                    'assets': True,
+                    'categories': True
+                }
             }
         )
 
@@ -409,7 +409,13 @@ class TestEndpointProxy(TestGeneric):
         logging.info(pformat(response.resources))
 
         assert len(response.resources) == 1
-        assert len(response.resources[0]['categoryRefs']) == 2
+        assert len(response.linked('categories').resources) == 2
+        assert len(response.linked('assets').resources) == 0
+        # This test returns the data it has found after retrying the query as there's no assets and they are required
+
+        categories_endpoint.delete(self.owner, categories_result.resources[0]['ref'])
+        categories_endpoint.delete(self.owner, categories_result.resources[1]['ref'])
+        contents_endpoint.delete(self.owner, contents_result.resources[0]['ref'])
 
     def _configure_logging(self):
         import sys
