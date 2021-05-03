@@ -312,7 +312,40 @@ We can set a different backoff strategy.
                         backoff_strategy={'wait_gen': backoff.expo, 'max_tries': 5, 'max_time': 300}
                         )
 
-Here an exponential strategy will be used, with a base of 2 and factor 1.
+Here an exponential strategy will be used, set in the constructor.
+
+For a more fine grain customization the retry policy can also be set for specific requests by passing the parameter
+at method level. This is valid for `read`, `browse`, `get` and `request` methods.
+The backoff strategy configured in the constructor will be used for all the other queries in which another backoff
+strategy is not given.
+Here you can see an example:
+
+    .. code-block:: python
+
+        client = Client("https://registry-sandbox.sequoia.piksel.com/services/testmock",
+                        grant_client_id="clientId",
+                        grant_client_secret="clientSecret",
+                        backoff_strategy={'wait_gen': backoff.expo, 'max_tries': 5, 'max_time': 300}
+                        )
+        assets_endpoint = client.metadata.contents
+        response1 = assets_endpoint.browse(
+            self.owner,
+            criteria.Criteria()
+                .add_criterion(criteria.StringExpressionFactory.field('ref').equal_to('test:c0007'))
+                .add_inclusion(criteria.Inclusion.resource('assets')),
+            backoff_strategy={'wait_gen': backoff.constant, 'interval': 0, 'max_tries': 20}
+        )
+        response2 = assets_endpoint.browse(
+            self.owner,
+            criteria.Criteria()
+                .add_criterion(criteria.StringExpressionFactory.field('ref').equal_to('test:c02'))
+                .add_inclusion(criteria.Inclusion.resource('categories'))
+        )
+
+
+For that example, the first browse will retry the query up to 20 times while the second browse will do up to 5
+or until the the max time is reached.
+
 
 Retry when status code
 ----------------------
