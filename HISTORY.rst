@@ -95,7 +95,7 @@ History
 ==================
 * New parameter `retry_when_empty_result` for the `read`, `browse`, `get` and `request` methods to retry the query when resources are missing in the response.
 
-4.4.0 (2021-05-XX)
+4.4.0 (2021-05-03)
 ==================
 * The `backoff_strategy` can be specified in the `read`, `browse`, `get` and `request` methods so it can be different from the one passed in the constructor.
 * Set up the logger name to allow a better logging configuration
